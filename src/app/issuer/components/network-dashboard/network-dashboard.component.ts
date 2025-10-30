@@ -28,7 +28,7 @@ import { NgModel, FormsModule } from '@angular/forms';
 import { Issuer } from '../../../issuer/models/issuer.model';
 import { PublicApiService } from '../../../public/services/public-api.service';
 import { MessageService } from '../../../common/services/message.service';
-import { NgStyle } from '@angular/common';
+import { NgStyle, NgClass } from '@angular/common';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FormFieldSelectOption } from '../../../components/select.component';
 import { NetworkApiService } from '../../../issuer/services/network-api.service';
@@ -58,9 +58,18 @@ import { Network } from '~/issuer/network.model';
 		BgBreadcrumbsComponent,
 		NetworkBadgesComponent,
 		RouterLink,
+		NgClass,
 	],
 })
 export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponent implements OnInit, AfterContentInit {
+	private networkManager = inject(NetworkManager);
+	protected title = inject(Title);
+	protected translate = inject(TranslateService);
+	private configService = inject(AppConfigService);
+	private publicApiService = inject(PublicApiService);
+	private messageService = inject(MessageService);
+	private networkApiService = inject(NetworkApiService);
+
 	networkLoaded: Promise<unknown>;
 	networkSlug: string;
 	crumbs: LinkEntry[];
@@ -99,18 +108,14 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 	@ViewChild('issuerSearchInputModel') issuerSearchInputModel: NgModel;
 
-	constructor(
-		loginService: SessionService,
-		router: Router,
-		route: ActivatedRoute,
-		private networkManager: NetworkManager,
-		protected title: Title,
-		protected translate: TranslateService,
-		private configService: AppConfigService,
-		private publicApiService: PublicApiService,
-		private messageService: MessageService,
-		private networkApiService: NetworkApiService,
-	) {
+	/** Inserted by Angular inject() migration for backwards compatibility */
+	constructor(...args: unknown[]);
+
+	constructor() {
+		const loginService = inject(SessionService);
+		const router = inject(Router);
+		const route = inject(ActivatedRoute);
+
 		super(router, route, loginService);
 
 		this.networkSlug = this.route.snapshot.params['networkSlug'];
@@ -179,6 +184,7 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	private readonly _hlmDialogService = inject(HlmDialogService);
 
 	public openDialog() {
+		if (this.network().current_user_network_role != 'owner') return;
 		const dialogRef = this._hlmDialogService.open(DialogComponent, {
 			context: {
 				headerTemplate: this.headerTemplate,
@@ -208,18 +214,6 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 			this.dialogRef.close();
 		}
 	}
-
-	public openSuccessDialog() {
-		const dialogRef = this._hlmDialogService.open(DialogComponent, {
-			context: {
-				content: this.inviteSuccessContent,
-				variant: 'success',
-			},
-		});
-		this.dialogRef = dialogRef;
-	}
-
-	closeDialog() {}
 
 	async issuerSearchChange() {
 		if (this.issuerSearchQuery.length >= 3) {
@@ -270,14 +264,6 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 	collapseRoles() {
 		this.rightsAndRolesExpanded = !this.rightsAndRolesExpanded;
-	}
-
-	inviteInstitutions(issuers: Issuer[]) {
-		this.networkApiService.inviteInstitutions(this.network().slug, issuers).then((res) => {
-			if (res) {
-				this.openSuccessDialog();
-			}
-		});
 	}
 
 	get role() {

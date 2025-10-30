@@ -30,12 +30,15 @@ export const buttonVariants = cva(
 			},
 			size: {
 				default:
-					'md:tw-py-[15px] sm:tw-px-[42px] md:tw-px-[60px] md:tw-text-[20px] md:tw-leading-[30px] tw-py-[10.5px] tw-px-[30px] tw-text-[14px] tw-leading-[21px] tw-border-2 tw-font-bold',
-				md: 'tw-py-[10px] tw-px-[25px] md:tw-rounded-[10px] tw-rounded-[7px] tw-text-[20px] tw-leading-[28px] tw-border tw-font-bold',
-				sm: 'tw-py-[6px] tw-px-[20px] md:tw-rounded-[10px] tw-rounded-[7px] tw-text-[16px] tw-leading-[24px] tw-border tw-font-bold',
+					'md:tw-py-[15px] sm:tw-px-[42px] md:tw-px-[60px] md:tw-text-[20px] md:tw-leading-[30px] tw-py-[10.5px] tw-px-[30px] tw-text-[14px] tw-leading-[21px] tw-border-2',
+				md: 'tw-py-[10px] tw-px-[25px] md:tw-rounded-[10px] tw-rounded-[7px] tw-text-[20px] tw-leading-[28px] tw-border',
+				sm: 'tw-py-[6px] tw-px-[20px] md:tw-rounded-[10px] tw-rounded-[7px] tw-text-[16px] tw-leading-[24px] tw-border',
 				xs: 'tw-py-[4px] tw-px-[16px] md:tw-rounded-[10px] tw-rounded-[7px] tw-border',
 				xxs: 'tw-py-[3px] tw-px-[9px] md:tw-rounded-[10px] tw-rounded-[7px] tw-border',
 				icon: 'tw-h-12 tw-w-12 ',
+				iconSm: 'tw-h-[32px] tw-w-[32px] tw-p-0',
+				iconMd: 'tw-h-[40px] tw-w-[40px] tw-p-0',
+				iconLg: 'tw-h-[48px] tw-w-[48px] tw-p-0',
 				bigIcon: 'tw-h-[76px] tw-w-[76px] tw-text-[40px]',
 				mediumText:
 					'md:tw-py-[15px] sm:tw-px-[32px] md:tw-px-[50px] md:tw-text-[20px] md:tw-leading-[30px] tw-py-[10.5px] tw-px-[30px] tw-text-[14px] tw-leading-[21px] tw-border-2 tw-font-medium',
@@ -45,12 +48,19 @@ export const buttonVariants = cva(
 				default: '',
 				max_content: 'tw-w-max',
 				full_width: 'tw-w-full',
+				min_320: 'tw-min-w-80',
+			},
+			weight: {
+				normal: '!tw-font-normal',
+				medium: 'tw-font-medium',
+				bold: 'tw-font-bold',
 			},
 		},
 		defaultVariants: {
 			variant: 'default',
 			size: 'default',
 			width: 'default',
+			weight: 'bold',
 		},
 	},
 );
@@ -74,7 +84,7 @@ export class HlmButton {
 
 	protected readonly _computedClass = computed(() =>
 		hlm(
-			buttonVariants({ variant: this.variant(), size: this.size(), width: this.width() }),
+			buttonVariants({ variant: this.variant(), size: this.size(), width: this.width(), weight: this.weight() }),
 			this.userClass(),
 			this._additionalClasses(),
 		),
@@ -85,6 +95,8 @@ export class HlmButton {
 	public readonly size = input<ButtonVariants['size']>(this._config.size);
 
 	public readonly width = input<ButtonVariants['width']>(this._config.width);
+
+	public readonly weight = input<ButtonVariants['weight']>(this._config.weight);
 
 	setClass(classes: string): void {
 		this._additionalClasses.set(classes);

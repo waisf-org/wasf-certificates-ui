@@ -6,6 +6,7 @@ on:
         tags: ['v*.*.*']
     pull_request:
         branches:
+            - production
             - main
             - develop
     merge_group:
@@ -25,7 +26,7 @@ jobs:
             - name: ⬇️  Checkout repository
               uses: actions/checkout@v5.0.0
             - name: 🔨 Setup node
-              uses: actions/setup-node@v5.0.0
+              uses: actions/setup-node@v6.0.0
               with:
                   node-version-file: '.nvmrc'
             - name: 📲 Install dependencies
@@ -42,7 +43,7 @@ jobs:
             - name: ⬇️  Checkout repository
               uses: actions/checkout@v5.0.0
             - name: 🔨 Setup node
-              uses: actions/setup-node@v5.0.0
+              uses: actions/setup-node@v6.0.0
               with:
                   node-version-file: '.nvmrc'
             - name: 📲 Install dependencies
