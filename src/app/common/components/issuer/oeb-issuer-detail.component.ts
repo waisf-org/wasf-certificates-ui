@@ -16,11 +16,14 @@ import { UserProfileManager } from '../../../common/services/user-profile-manage
 import { AppConfigService } from '../../../common/app-config.service';
 import { Issuer } from '../../../issuer/models/issuer.model';
 import { BadgeClass } from '../../../issuer/models/badgeclass.model';
+import { PDFTemplate } from '../../../issuer/models/pdftemplate.model';
 import { IssuerManager } from '../../../issuer/services/issuer-manager.service';
 import { MenuItem } from '../badge-detail/badge-detail.component.types';
 import { TranslateService, TranslatePipe, TranslateModule } from '@ngx-translate/core';
 import { ApiLearningPath } from '../../../common/model/learningpath-api.model';
+import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 import { LearningPathApiService } from '../../../common/services/learningpath-api.service';
+import { PDFTemplateApiService } from '../../../common/services/pdftemplate-api.service';
 import { DangerDialogComponentTemplate } from '../../dialogs/oeb-dialogs/danger-dialog-template.component';
 import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
 import { InfoDialogComponent } from '../../dialogs/oeb-dialogs/info-dialog.component';
@@ -39,6 +42,7 @@ import { FormsModule } from '@angular/forms';
 import { BgBadgecard } from '../bg-badgecard';
 import { LearningPathDatatableComponent } from '../../../components/datatable-learningpaths.component';
 import { BgLearningPathCard } from '../bg-learningpathcard';
+import { BgPDFTemplateCard } from '../bg-pdftemplatecard';
 import { PublicApiBadgeClass, PublicApiIssuer, PublicApiLearningPath } from '../../../public/models/public-api.model';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmH1, HlmP } from '@spartan-ng/helm/typography';
@@ -46,6 +50,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { NetworkApiService } from '~/issuer/services/network-api.service';
 import { CommonEntityManager } from '~/entity-manager/services/common-entity-manager.service';
 import { IssuerApiService } from '~/issuer/services/issuer-api.service';
+import { CommonModule } from '@angular/common';
 
 interface NetworkBadgeGroup {
 	issuerName: string;
@@ -78,9 +83,11 @@ import { environment } from 'src/environments/environment';
 		BgBadgecard,
 		LearningPathDatatableComponent,
 		BgLearningPathCard,
+		BgPDFTemplateCard,
 		TranslatePipe,
 		TranslateModule,
 		NgTemplateOutlet,
+		CommonModule,
 	],
 })
 export class OebIssuerDetailComponent implements OnInit, AfterViewInit {
@@ -89,12 +96,14 @@ export class OebIssuerDetailComponent implements OnInit, AfterViewInit {
 	@Input() issuerActionsMenu: any;
 	@Input() badges: BadgeClass[] | PublicApiBadgeClass[];
 	@Input() learningPaths: (ApiLearningPath | PublicApiLearningPath)[];
+	@Input() pdfTemplates: ApiPDFTemplate[];
 	@Input() networks: PublicApiIssuer[];
 	@Input() partner_issuers: PublicApiIssuer[];
 	@Input() public: boolean = false;
 	@Output() issuerDeleted = new EventEmitter();
 
 	learningPathsPromise: Promise<unknown>;
+	pdfTemplatesPromise: Promise<unknown>;
 	requestsLoaded: Promise<Map<string, ApiQRCode[]>>;
 	networkRequestsLoaded: Promise<Map<string, ApiQRCode[]>>;
 	userIsMember = false;
@@ -114,6 +123,7 @@ export class OebIssuerDetailComponent implements OnInit, AfterViewInit {
 		private sessionService: SessionService,
 		private networkApiService: NetworkApiService,
 		private issuerApiService: IssuerApiService,
+		private pdfTemplateApiService: PDFTemplateApiService,
 	) {
 		if (this.sessionService.isLoggedIn) {
 			this.issuerManager.myIssuers$.subscribe((issuers) => {
@@ -169,6 +179,7 @@ export class OebIssuerDetailComponent implements OnInit, AfterViewInit {
 	@ViewChild('learningPathTemplate', { static: false }) learningPathTemplate: TemplateRef<any>;
 	@ViewChild('issuerBadgesTemplate', { static: false }) issuerBadgesTemplate: TemplateRef<any>;
 	@ViewChild('networkBadgesTemplate', { static: false }) networkBadgesTemplate: TemplateRef<any>;
+	@ViewChild('pdfTemplatesTemplate', { static: false }) pdfTemplatesTemplate: TemplateRef<any>;
 
 	ngAfterViewInit() {
 		this.tabs = [
@@ -181,6 +192,11 @@ export class OebIssuerDetailComponent implements OnInit, AfterViewInit {
 				key: 'micro-degrees',
 				title: 'LearningPath.learningpathsPlural',
 				component: this.learningPathTemplate,
+			},
+			{
+				key: 'pdf-templates',
+				title: 'PDFTemplate.pdfTemplates',
+				component: this.pdfTemplatesTemplate,
 			},
 		];
 	}
@@ -396,7 +412,10 @@ export class OebIssuerDetailComponent implements OnInit, AfterViewInit {
 
 	async ngOnInit() {
 		await Promise.all([this.updateResults(), this.updateNetworkResults(), this.updateSharedNetworkResults()]);
-		if (!this.public) this.getLearningPathsForIssuerApi(this.issuer.slug);
+		if (!this.public) {
+			this.getLearningPathsForIssuerApi(this.issuer.slug);
+			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
+		}
 		this.badgeTemplateTabs = [
 			{
 				key: 'issuer-badges',
@@ -475,6 +494,27 @@ export class OebIssuerDetailComponent implements OnInit, AfterViewInit {
 		});
 	}
 
+	openEditDialog() {
+		console.log("!!!");
+
+		const dialogRef = this._hlmDialogService.open(InfoDialogComponent, {
+			context: {
+				variant: 'info',
+				caption: this.translate.instant('PDFTemplate.openEditDialogTitle'),
+				// subtitle: this.translate.instant('Badge.endOfEditDialogText'),
+				text: this.translate.instant('PDFTemplate.openEditDialogText'),
+				cancelText: this.translate.instant('General.cancel'),
+				forwardText: this.translate.instant('PDFTemplate.openEditDialogForward'),
+			},
+		});
+		dialogRef.closed$.subscribe((result) => {
+			if (result === 'continue')
+				console.log("???");
+		});
+
+		// '/issuer/issuers/'+  issuerSlug + '/pdftemplates/' + slug + '/edit'
+	}
+
 	routeToBadgeDetail(badge, issuer, focusRequests: boolean = false) {
 		const extras = focusRequests
 			? {
@@ -512,6 +552,17 @@ export class OebIssuerDetailComponent implements OnInit, AfterViewInit {
 			.then(
 				(learningPaths) =>
 					(this.learningPaths = learningPaths.sort(
+						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+					)),
+			);
+	}
+
+	getPDFTemplatesForIssuerApi(issuerSlug) {
+		this.pdfTemplatesPromise = this.pdfTemplateApiService
+			.getPDFTemplatesForIssuer(issuerSlug)
+			.then(
+				(pdfTemplates) =>
+					(this.pdfTemplates = pdfTemplates.sort(
 						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
 					)),
 			);

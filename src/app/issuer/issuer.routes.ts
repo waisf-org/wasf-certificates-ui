@@ -19,6 +19,8 @@ import { BadgeClassEditCopyPermissionsComponent } from './components/badgeclass-
 import { NetworkCreateComponent } from './components/network-create/network-create.component';
 import { NetworkDashboardComponent } from './components/network-dashboard/network-dashboard.component';
 import { NetworkInviteConfirmationComponent } from './components/network-invite-confirmation/network-invite-confirmation.component';
+import { PDFTemplateCreateComponent } from './components/pdftemplate-create/pdftemplate-create.component';
+import { PDFTemplateEditComponent } from './components/pdftemplate-edit/pdftemplate-edit.component';
 
 export const routes = [
 	/* Issuer */
@@ -109,6 +111,14 @@ export const routes = [
 	{
 		path: 'issuers/:issuerSlug/badges/:badgeSlug/bulk-import',
 		component: BadgeClassIssueBulkAwardComponent,
+	},
+	{
+		path: 'issuers/:issuerSlug/pdftemplates/create',
+		component: PDFTemplateCreateComponent,
+	},
+	{
+		path: 'issuers/:issuerSlug/pdftemplates/:pdfTemplateSlug/edit',
+		component: PDFTemplateEditComponent,
 	},
 	{
 		path: '**',
