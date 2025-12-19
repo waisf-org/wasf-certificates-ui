@@ -1154,8 +1154,25 @@
 		"shortDescriptionLine1": "Summary description of the learning program.",
 		"shortDescriptionLine2": "This short description will be saved in the Micro Degree completion badge."
 	},
+	"OEBComponents": {
+		"fieldIsRequired": "This field is required"
+	},
+	"ErrorDialog": {
+		"title": "An error has occurred!",
+		"message": "Below you can see the error message. If you believe the error is on our side, you can copy the error message and send it to us by email, or you can create an issue on GitHub.",
+		"copyButton": "Copy",
+		"copyButtonAfter": "Copied!",
+		"createIssue": "Go to GitHub Issues",
+		"sendEmail": "Send an email"
+	},
+	"NounProject": {
+		"searchIcon": "Search Icon",
+		"loading": "Loading...",
+		"noIconsFoundFor": "No icons found for"
+	},
 	"PDFTemplate": {
 		"pdfTemplates": "PDF Templates",
+		"preview": "Preview",
 		"descriptionText": "Each badge automatically comes with a PDF certificate in the OEB design sent to your learners. Here you can upload <strong>personalized PDF backgrounds for your institution</strong>, which can then be selected alongside the OEB design <strong>when awarding badges</strong>.",
 		"downloadExample": "Download example file",
 		"createdTemplates": "Created templates",
@@ -1173,27 +1190,44 @@
 		"alignment": "Alignment",
 		"chooseAlignment": "Choose alignment",
 		"enterDetails": "Enter details",
+		"format": "Format",
 		"formatLandscape": "landscape format",
 		"formatPortrait": "portrait format",
+		"backgroundLabel": "PDF background",
+		"backgroundUploadDesc1": "Upload your own PDF background",
+		"backgroundUploadDesc2": "(A4, File Types: PNG, SVG, JPG)",
+		"previewCurrent": "Current: OEB Design",
+		"previewLandscape" : "Upload your own landscape design.",
+		"previewLandscapeCTA": "Upload background image in the box on the left<br>to see the PDF preview.",
+		"uploadFormatDesc": "The template must be A4 size in order for the badge to be displayed on it.",
+		"imageRequiredError": "Please choose a background image.",
+		"imageRatioError": "Please choose a background image in A4 format.",
+		"pdfPreview": "PDF preview",
+		"alignmentOfBagdeInfos": "Alignment badge infos",
+		"positionOfBagdeInfos": "Position of badge infos",
+		"positionOfBagdeInfosDesc1": "You can <strong>drag + drop</strong> the badge info block marked in red to the right place.",
+		"positionOfBagdeInfosDesc2": "You can also fine-tune your design using the coordinate values of the X and Y positions:",
+		"posMinMaxError": "Please enter a valid number (0 to ???).",
+		"posX": "X-Position",
+		"posY": "Y-Position",
+		"textBlockOutsideError": "Please position the badge infos within the PDF.",
+		"sizeOfBagdeInfos": "Size of badge infos",
+		"scaleMinMaxError": "Please enter a valid number (0 to 100).",
+		"scale": "Resizing",
 		"selectAlignment": "Please select a text alignment",
 		"selectFormat": "Please select a PDF format",
+		"titleLabel": "Name of the template",
 		"openEditDialogTitle": "Do you really want to make changes?",
-		"openEditDialogForward": "Edit template"
-	},
-	"OEBComponents": {
-		"fieldIsRequired": "This field is required"
-	},
-	"ErrorDialog": {
-		"title": "An error has occurred!",
-		"message": "Below you can see the error message. If you believe the error is on our side, you can copy the error message and send it to us by email, or you can create an issue on GitHub.",
-		"copyButton": "Copy",
-		"copyButtonAfter": "Copied!",
-		"createIssue": "Go to GitHub Issues",
-		"sendEmail": "Send an email"
-	},
-	"NounProject": {
-		"searchIcon": "Search Icon",
-		"loading": "Loading...",
-		"noIconsFoundFor": "No icons found for"
+		"openEditDialogText": "When learners download their received badge PDF from OEB, it contains the changes. Therefore, only edit the template if basic information has changed, such as your logo or address. If the time period changes on the background (e.g., year, semester), create a new template.",
+		"openEditDialogForward": "Edit template",
+		"openDeleteDialogTitle": "Are you sure you want to delete the {{ title }} PDF template?",
+		"deleteNotPossibleDialogTitle": "PDF templates that have already been used for badge awards cannot be deleted.",
+		"nextButtonText": "Edit template",
+		"submitButtonText": "Save your own PDF template",
+		"oebDesign": "OEB design",
+		"uploadCustomPDFBackground": "Upload own PDF background",
+		"createCustomPDFTemplate": "Create own PDF template",
+		"ownPDFBackground": "Own PDF background",
+		"noTemplateDefaultDesign": "If you don't use your own template, the PDF for the badge will receive our OEB design."
 	}
 }

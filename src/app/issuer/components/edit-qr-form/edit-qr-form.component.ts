@@ -1,6 +1,6 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, inject, OnInit } from '@angular/core';
 import { LinkEntry } from '../../../common/components/bg-breadcrumbs/bg-breadcrumbs.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BadgeClassManager } from '../../services/badgeclass-manager.service';
 import { BaseAuthenticatedRoutableComponent } from '../../../common/pages/base-authenticated-routable.component';
 import { SessionService } from '../../../common/services/session.service';
@@ -23,6 +23,10 @@ import { IssuerManager } from '~/issuer/services/issuer-manager.service';
 import { Issuer } from '~/issuer/models/issuer.model';
 import { environment } from '../../../../environments/environment';
 import { DateRangeValidator } from '~/common/validators/date-range.validator';
+import { OebSelectComponent } from '../../../components/select.component';
+import { FormFieldSelectOption } from '~/common/components/formfield-select';
+import { PDFTemplateApiService } from '../../../common/services/pdftemplate-api.service';
+import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 
 @Component({
 	selector: 'edit-qr-form',
@@ -36,14 +40,17 @@ import { DateRangeValidator } from '~/common/validators/date-range.validator';
 		OebCheckboxComponent,
 		OebButtonComponent,
 		TranslatePipe,
+		OebSelectComponent,
+		RouterLink,
 	],
 })
-export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent {
+export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent implements OnInit {
 	protected translate = inject(TranslateService);
 	protected qrCodeApiService = inject(QrCodeApiService);
 	protected badgeClassManager = inject(BadgeClassManager);
 	protected issuerManager = inject(IssuerManager);
 	protected _location = inject(Location);
+	private pdfTemplateApiService = inject(PDFTemplateApiService);
 
 	static datePipe = new DatePipe('de');
 
@@ -83,6 +90,10 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent {
 	issuerLoaded: Promise<unknown>;
 	crumbs: LinkEntry[];
 
+	pdfTemplatesPromise: Promise<unknown>;
+	pdfTemplates: ApiPDFTemplate[];
+	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
+
 	qrForm = typedFormGroup(this.missingStartDate.bind(this))
 		.addControl('title', '', Validators.required)
 		.addControl('createdBy', '', Validators.required)
@@ -100,7 +111,8 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent {
 		.addControl('expires_at', '', [DateValidator.validDate, this.validDateRange.bind(this)])
 		.addControl('badgeclass_id', '', Validators.required)
 		.addControl('issuer_id', '', Validators.required)
-		.addControl('notifications', false);
+		.addControl('notifications', false)
+		.addControl('pdftemplate', null);
 
 	/** Inserted by Angular inject() migration for backwards compatibility */
 	constructor(...args: unknown[]);
@@ -154,6 +166,10 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent {
 
 		if (this.qrSlug) {
 			this.qrCodeApiService.getQrCode(this.qrSlug).then((qrCode) => {
+				let pdftemplate = null;
+				if (qrCode.pdftemplate != null) {
+					pdftemplate = qrCode.pdftemplate.replace('PDFTemplate', '');
+				}
 				this.qrForm.setValue({
 					title: qrCode.title,
 					createdBy: qrCode.createdBy,
@@ -172,6 +188,7 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent {
 					badgeclass_id: qrCode.badgeclass_id,
 					issuer_id: qrCode.issuer_id,
 					notifications: qrCode.notifications,
+					pdftemplate: pdftemplate,
 				});
 			});
 		}
@@ -242,6 +259,7 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent {
 					badgeclass_id: this.badgeSlug,
 					issuer_id: this.issuerSlug,
 					notifications: formState.notifications,
+					pdftemplate: formState.pdftemplate,
 				})
 				.then((qrcode) => {
 					this.openSuccessDialog();
@@ -273,6 +291,7 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent {
 					expires_at: formState.expires_at ? new Date(formState.expires_at).toISOString() : undefined,
 					valid_from: formState.valid_from ? new Date(formState.valid_from).toISOString() : undefined,
 					notifications: formState.notifications,
+					pdftemplate: formState.pdftemplate,
 				})
 				.then((qrcode) => {
 					this.openSuccessDialog();
@@ -287,5 +306,37 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent {
 					]);
 				});
 		}
+	}
+
+	async ngOnInit() {
+		super.ngOnInit();
+
+		await this.issuerLoaded;
+
+		if (this.sessionService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
+			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
+			await this. pdfTemplatesPromise;
+
+
+			this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
+				label: t.name,
+				value: t.slug
+			}));
+			this.selectPDFTemplateOptions.push({
+				label: this.translate.instant('PDFTemplate.oebDesign'),
+				value: null
+			});
+		}
+	}
+
+	getPDFTemplatesForIssuerApi(issuerSlug) {
+		this.pdfTemplatesPromise = this.pdfTemplateApiService
+			.getPDFTemplatesForIssuer(issuerSlug)
+			.then(
+				(pdfTemplates) =>
+					(this.pdfTemplates = pdfTemplates.sort(
+						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+					)),
+			);
 	}
 }

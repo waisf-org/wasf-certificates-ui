@@ -92,7 +92,7 @@ export class PDFTemplateEditComponent extends BaseAuthenticatedRoutableComponent
 	pdfTemplateCreated(promise: Promise<PDFTemplate | ApiPDFTemplate>) {
 			promise.then(
 				(pt) => {
-					this.router.navigate(['issuer/issuers', this.issuerSlug, 'pdftemplates', pt.slug]).then(() => {
+					this.router.navigate(['issuer/issuers', this.issuerSlug]).then(() => {
 						this.openSuccessDialog();
 					});
 				},

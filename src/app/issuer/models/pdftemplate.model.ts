@@ -37,12 +37,47 @@ export class PDFTemplate extends ManagedEntity<ApiPDFTemplate, PDFTemplateRef> {
 		this.apiModel.alignment = alignment;
 	}
 
+	get posX(): number {
+		return this.apiModel.posX;
+	}
+
+	set posX(posX: number) {
+		this.apiModel.posX = posX;
+	}
+
+	get posY(): number {
+		return this.apiModel.posY;
+	}
+
+	set posY(posY: number) {
+		this.apiModel.posY = posY;
+	}
+
+	get scale(): number {
+		return this.apiModel.scale;
+	}
+
+	set scale(scale: number) {
+		this.apiModel.scale = scale;
+	}
+
+	get image(): string {
+		return this.apiModel.image;
+	}
+	set image(image: string) {
+		this.apiModel.image = image;
+	}
+
 	get issuer_id() {
 		return this.apiModel.issuer_id;
 	}
 
 	set issuer_id(slug: string) {
 		this.apiModel.issuer_id = slug;
+	}
+
+	get createdBy(): string {
+		return this.apiModel.created_by;
 	}
 
 	constructor(

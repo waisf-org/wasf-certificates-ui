@@ -17,6 +17,7 @@ import { PDFTemplateApiService } from '../../../common/services/pdftemplate-api.
 import { DangerDialogComponentTemplate } from '../../dialogs/oeb-dialogs/danger-dialog-template.component';
 import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
 import { InfoDialogComponent } from '../../dialogs/oeb-dialogs/info-dialog.component';
+import { DialogComponent } from '../../../../app/components/dialog.component';
 import { QrCodeApiService } from '../../../issuer/services/qrcode-api.service';
 import { ApiQRCode } from '../../../issuer/models/qrcode-api.model';
 import { SessionService } from '../../services/session.service';
@@ -465,6 +466,11 @@ export class OebIssuerDetailComponent implements OnInit {
 				component: this.pdfTemplatesTemplate,
 			},
 		];
+
+		const fragment = this.router.parseUrl(this.router.url).fragment;
+		if (fragment && this.tabs.find(tab => tab.key === fragment)) {
+			this.activeTab = fragment;
+		}
 	}
 
 	delete(event) {
@@ -527,14 +533,11 @@ export class OebIssuerDetailComponent implements OnInit {
 		});
 	}
 
-	openEditDialog() {
-		console.log("!!!");
-
+	openEditDialog(pdfTemplateSlug: string, issuerSlug: string) {
 		const dialogRef = this._hlmDialogService.open(InfoDialogComponent, {
 			context: {
 				variant: 'info',
 				caption: this.translate.instant('PDFTemplate.openEditDialogTitle'),
-				// subtitle: this.translate.instant('Badge.endOfEditDialogText'),
 				text: this.translate.instant('PDFTemplate.openEditDialogText'),
 				cancelText: this.translate.instant('General.cancel'),
 				forwardText: this.translate.instant('PDFTemplate.openEditDialogForward'),
@@ -542,10 +545,27 @@ export class OebIssuerDetailComponent implements OnInit {
 		});
 		dialogRef.closed$.subscribe((result) => {
 			if (result === 'continue')
-				console.log("???");
+				this.router.navigate(['/issuer/issuers/', issuerSlug, 'pdftemplates', pdfTemplateSlug, 'edit']);
+		});
+	}
+
+	openDeleteDialog(pdfTemplateName: string, pdfTemplateSlug: string, issuerSlug: string) {
+		const dialogRef = this._hlmDialogService.open(DangerDialogComponentTemplate, {
+			context: {
+				delete: () => this.deletePDFTemplateApi(pdfTemplateSlug, issuerSlug),
+				variant: 'danger',
+				title: this.translate.instant('PDFTemplate.openDeleteDialogTitle', {
+					title: pdfTemplateName
+				}),
+			},
 		});
 
-		// '/issuer/issuers/'+  issuerSlug + '/pdftemplates/' + slug + '/edit'
+		// const dialogRef = this._hlmDialogService.open(DialogComponent, {
+		// 	context: {
+		// 		variant: 'failure',
+		// 		message: this.translate.instant('PDFTemplate.deleteNotPossibleDialogTitle'),
+		// 	},
+		// });
 	}
 
 	routeToBadgeDetail(badge, issuer, focusRequests: boolean = false) {
@@ -604,6 +624,12 @@ export class OebIssuerDetailComponent implements OnInit {
 						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
 					)),
 			);
+	}
+
+	deletePDFTemplateApi(pdfTemplateSlug, issuerSlug) {
+		this.pdfTemplateApiService
+			.deletePDFTemplate(issuerSlug, pdfTemplateSlug)
+			.then(() => (this.pdfTemplates = this.pdfTemplates.filter((value) => value.slug != pdfTemplateSlug)));
 	}
 
 	get rawJsonUrl() {

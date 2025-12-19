@@ -12,10 +12,15 @@ export interface ApiPDFTemplateForCreation {
 	name: string;
 	format: PDFTemplateFormat;
 	alignment: PDFTemplateAlignment;
+	posX: number;
+	posY: number;
+	scale: number;
+	image: string;
 }
 
 export interface ApiPDFTemplate extends ApiPDFTemplateForCreation {
 	id: PDFTemplateSqlId;
 	slug: PDFTemplateSlug;
 	created_at?: Date | null;
+	created_by: string;
 }

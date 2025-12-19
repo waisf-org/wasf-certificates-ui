@@ -39,6 +39,7 @@ export interface ApiBadgeInstanceForCreation {
 	activity_start_date?: string;
 	activity_end_date?: string;
 	name?: string;
+	pdftemplate?: string;
 }
 
 export type RecipientIdentifierType = 'email' | 'openBadgeId' | 'telephone' | 'url';
@@ -80,4 +81,5 @@ export interface BadgeInstanceBatchAssertion {
 	extensions?: object;
 	activity_start_date?: string;
 	activity_end_date?: string;
+	pdftemplate?: string;
 }

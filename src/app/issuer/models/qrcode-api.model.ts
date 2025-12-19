@@ -12,6 +12,7 @@ export interface ApiQRCode {
 	issuer_id?: string;
 	request_count?: number;
 	notifications?: boolean;
+	pdftemplate?: string;
 }
 
 export interface NetworkQrCodeGroup {

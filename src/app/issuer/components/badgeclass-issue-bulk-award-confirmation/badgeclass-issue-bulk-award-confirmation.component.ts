@@ -12,7 +12,7 @@ import {
 	OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SessionService } from '../../../common/services/session.service';
 import { MessageService } from '../../../common/services/message.service';
 import { Title } from '@angular/platform-browser';
@@ -41,6 +41,12 @@ import { isValidEmail } from '~/common/util/is-valid-email';
 import { OebInputComponent } from '~/components/input.component';
 import { DateValidator } from '~/common/validators/date.validator';
 import { DateRangeValidator } from '~/common/validators/date-range.validator';
+import { IssuerManager } from '../../services/issuer-manager.service';
+import { Issuer } from '../../models/issuer.model';
+import { OebSelectComponent } from '../../../components/select.component';
+import { FormFieldSelectOption } from '~/common/components/formfield-select';
+import { PDFTemplateApiService } from '../../../common/services/pdftemplate-api.service';
+import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 
 @Component({
 	selector: 'badgeclass-issue-bulk-award-confirmation',
@@ -55,6 +61,8 @@ import { DateRangeValidator } from '~/common/validators/date-range.validator';
 		NgClass,
 		FormsModule,
 		OebInputComponent,
+		OebSelectComponent,
+		RouterLink,
 	],
 })
 export class BadgeclassIssueBulkAwardConformation
@@ -71,6 +79,8 @@ export class BadgeclassIssueBulkAwardConformation
 	protected title = inject(Title);
 	protected taskService = inject(TaskPollingManagerService);
 	protected translate = inject(TranslateService);
+	protected issuerManager = inject(IssuerManager);
+	private pdfTemplateApiService = inject(PDFTemplateApiService);
 
 	@Input() transformedImportData: TransformedImportData;
 	@Input() badgeSlug: string;
@@ -92,11 +102,12 @@ export class BadgeclassIssueBulkAwardConformation
 		.addControl('activity_end_date', '', [
 			DateValidator.validDate,
 			DateRangeValidator.endDateAfterStartDate('activity_start_date', 'activityEndBeforeStart'),
-		]);
+		])
+		.addControl('pdftemplate', null);
 
 	buttonDisabledClass = true;
 	buttonDisabledAttribute = true;
-	issuer: string;
+	issuer: Issuer;
 
 	issueBadgeFinished: Promise<unknown>;
 
@@ -104,6 +115,10 @@ export class BadgeclassIssueBulkAwardConformation
 	currentTaskStatus: TaskResult | null = null;
 
 	private focusedRow: BulkIssueData | null = null;
+
+	pdfTemplatesPromise: Promise<unknown>;
+	pdfTemplates: ApiPDFTemplate[];
+	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
 
 	/** Inserted by Angular inject() migration for backwards compatibility */
 	constructor(...args: unknown[]);
@@ -120,8 +135,26 @@ export class BadgeclassIssueBulkAwardConformation
 		this.route = route;
 	}
 
-	ngOnInit(): void {
+	async ngOnInit() {
 		this.enableActionButton();
+
+		await this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
+			this.issuer = issuer;
+		});
+
+		if (this.sessionService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
+			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
+			await this. pdfTemplatesPromise;
+
+			this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
+				label: t.name,
+				value: t.slug
+			}));
+			this.selectPDFTemplateOptions.push({
+				label: this.translate.instant('PDFTemplate.oebDesign'),
+				value: null
+			});
+		}
 	}
 
 	ngOnDestroy() {
@@ -220,6 +253,7 @@ export class BadgeclassIssueBulkAwardConformation
 				extensions: extensions,
 				activity_start_date: activityStartDate,
 				activity_end_date: activityEndDate,
+				pdftemplate: formState.pdftemplate,
 			};
 			assertions.push(assertion);
 		});
@@ -297,5 +331,16 @@ export class BadgeclassIssueBulkAwardConformation
 				variant: 'success',
 			},
 		});
+	}
+
+	getPDFTemplatesForIssuerApi(issuerSlug) {
+		this.pdfTemplatesPromise = this.pdfTemplateApiService
+			.getPDFTemplatesForIssuer(issuerSlug)
+			.then(
+				(pdfTemplates) =>
+					(this.pdfTemplates = pdfTemplates.sort(
+						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+					)),
+			);
 	}
 }

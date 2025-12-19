@@ -1153,8 +1153,25 @@
 		"shortDescriptionLine1": "Zusammenfassende Beschreibung des Lernangebots.",
 		"shortDescriptionLine2": "Diese Kurz-Beschreibung wird im Abschluss-Badge Micro Degree gespeichert."
 	},
+	"OEBComponents": {
+		"fieldIsRequired": "Dieses Feld ist erforderlich"
+	},
+	"ErrorDialog": {
+		"title": "Es ist ein Fehler passiert!",
+		"message": "Unten siehst du die Fehlermeldung. Wenn du glaubst, der Fehler liegt bei uns, kannst du die Fehlermeldung kopieren und uns per Mail schicken, oder du erstellst ein Issue auf GitHub.",
+		"copyButton": "Kopieren",
+		"copyButtonAfter": "Kopiert!",
+		"createIssue": "Zu den GitHub Issues",
+		"sendEmail": "Sende eine Mail"
+	},
+	"NounProject": {
+		"searchIcon": "Icon suchen",
+		"loading": "Lädt...",
+		"noIconsFoundFor": "Kein Icon gefunden für"
+	},
 	"PDFTemplate": {
 		"pdfTemplates": "PDF-Vorlagen",
+		"preview": "Vorschau",
 		"descriptionText": "Mit jedem Badge wird automatisch auch ein PDF-Zertifikat im OEB-Design an deine Lernenden geschickt. Hier kannst du <strong>personalisierte PDF-Hintergründe für deine Institution</strong> hochladen, die dann <strong>beim Badge-Vergeben</strong> neben dem OEB-Design ausgewählt werden können.",
 		"downloadExample": "Beispiel-Datei herunterladen",
 		"createdTemplates": "Erstellte Vorlagen",
@@ -1172,28 +1189,44 @@
 		"alignment": "Textausrichtung",
 		"chooseAlignment": "Wähle Textausrichtung",
 		"enterDetails": "Details eingeben",
+		"format": "Format",
 		"formatLandscape": "Querformat",
 		"formatPortrait": "Hochformat",
+		"backgroundLabel": "PDF-Hintergrund",
+		"backgroundUploadDesc1": "Upload eigener PDF-Hintergrund",
+		"backgroundUploadDesc2": "(A4, Datei-Typen: PNG, SVG, JPG)",
+		"previewCurrent": "Aktuell: OEB-Design",
+		"previewLandscape" : "Lade ein eigenes Querformat-Design hoch.",
+		"previewLandscapeCTA": "Im Feld links Hintergrund-Bild hochladen,<br>um die PDF-Vorschau zu sehen.",
+		"uploadFormatDesc": "Die Vorlage muss das Format A4 haben, damit der Badge darauf dargestellt werden kann.",
+		"imageRequiredError": "Bitte wähle ein Hintergrundbild aus.",
+		"imageRatioError": "Bitte wähle ein Hintergrundbild im A4 Format aus.",
+		"pdfPreview": "PDF-Vorschau",
+		"alignmentOfBagdeInfos": "Ausrichtung Badge-Infos",
+		"positionOfBagdeInfos": "Position der Badge-Infos",
+		"positionOfBagdeInfosDesc1": "Per <strong>Drag+Drop</strong> kannst du den rot markierten Badge-Info-Block an die richtige Stelle schieben.",
+		"positionOfBagdeInfosDesc2": "Auch über die Koordinaten-Werte der X- und Y-Position kannst du dein Design feinjustieren:",
+		"posMinMaxError": "Bitte geben Sie eine Zahl ein (0 bis ???).",
+		"posX": "X-Position",
+		"posY": "Y-Position",
+		"textBlockOutsideError": "Bitte positioniere die Badge-Infos innerhalb des PDFs.",
+		"sizeOfBagdeInfos": "Größe der Badge-Infos",
+		"scaleMinMaxError": "Bitte geben Sie eine Zahl ein (0 bis 100).",
+		"scale": "Skalierung",
 		"selectAlignment": "Bitte wähle eine Textausrichtung",
 		"selectFormat": "Bitte wähle ein PDF Format",
+		"titleLabel": "Name der Vorlage",
 		"openEditDialogTitle": "Möchtest du wirklich Änderungen vornehmen?",
-		"openEditDialogText": "<strong>Wenn</strong> Lernende ihr erhaltenes Badge-PDF neu von OEB herunterladen, enthält es die Änderungen.<br>Bearbeite die Vorlage daher nur, wenn sich grundlegende Informationen geändert haben – zum Beispiel euer Logo oder eure Adresse.</br>Wenn sich der Zeitraum auf dem Hintergrund ändert (z. B. Jahr, Semester), erstelle eine neue Vorlage.",
-		"openEditDialogForward": "Vorlage bearbeiten"
-	},
-	"OEBComponents": {
-		"fieldIsRequired": "Dieses Feld ist erforderlich"
-	},
-	"ErrorDialog": {
-		"title": "Es ist ein Fehler passiert!",
-		"message": "Unten siehst du die Fehlermeldung. Wenn du glaubst, der Fehler liegt bei uns, kannst du die Fehlermeldung kopieren und uns per Mail schicken, oder du erstellst ein Issue auf GitHub.",
-		"copyButton": "Kopieren",
-		"copyButtonAfter": "Kopiert!",
-		"createIssue": "Zu den GitHub Issues",
-		"sendEmail": "Sende eine Mail"
-	},
-	"NounProject": {
-		"searchIcon": "Icon suchen",
-		"loading": "Lädt...",
-		"noIconsFoundFor": "Kein Icon gefunden für"
+		"openEditDialogText": "Wenn Lernende ihr erhaltenes Badge-PDF neu von OEB herunterladen, enthält es die Änderungen. Bearbeite die Vorlage daher nur, wenn sich grundlegende Informationen geändert haben – zum Beispiel euer Logo oder eure Adresse. Wenn sich der Zeitraum auf dem Hintergrund ändert (z. B. Jahr, Semester), erstelle eine neue Vorlage.",
+		"openEditDialogForward": "Vorlage bearbeiten",
+		"openDeleteDialogTitle": "Möchtest du die PDF-Vorlage {{ title }} wirklich löschen?",
+		"deleteNotPossibleDialogTitle": "PDF-Vorlagen, die bereits bei Badge-Vergaben genutzt wurden, können nicht gelöscht werden.",
+		"nextButtonText": "Vorlage bearbeiten",
+		"submitButtonText": "Eigene PDF-Vorlage speichern",
+		"oebDesign": "OEB-Design",
+		"uploadCustomPDFBackground": "Eigenen PDF-Hintergrund hochladen",
+		"createCustomPDFTemplate": "Eigene PDF-Vorlage erstellen",
+		"ownPDFBackground": "Eigener PDF-Hintergrund",
+		"noTemplateDefaultDesign": "Wenn du keine eigene Vorlage nutzt, erhält das PDF zum Badge unser OEB-Design."
 	}
 }

@@ -42,6 +42,9 @@ import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { HlmH1, HlmP } from '@spartan-ng/helm/typography';
 import { OebCollapsibleComponent } from '~/components/oeb-collapsible.component';
 import { DateRangeValidator } from '~/common/validators/date-range.validator';
+import { FormFieldSelectOption } from '~/common/components/formfield-select';
+import { PDFTemplateApiService } from '../../../common/services/pdftemplate-api.service';
+import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 
 @Component({
 	selector: 'badgeclass-issue',
@@ -88,6 +91,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 	protected dialogService = inject(CommonDialogsService);
 	protected configService = inject(AppConfigService);
 	protected translate = inject(TranslateService);
+	private pdfTemplateApiService = inject(PDFTemplateApiService);
 
 	readonly badgeLoadingImageUrl = '../../../breakdown/static/images/badge-loading.svg';
 	readonly badgeFailedImageUrl = '../../../breakdown/static/images/badge-failed.svg';
@@ -173,7 +177,8 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 				.addControl('narrative', '')
 				.addControl('evidence_url', '', UrlValidator.validUrl)
 				.addControl('expiration', ''),
-		);
+		)
+		.addControl('pdftemplate', null);
 
 	badgeClass: BadgeClass;
 
@@ -188,6 +193,10 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		url: 'URL',
 		// telephone: "Telephone",
 	};
+
+	pdfTemplatesPromise: Promise<unknown>;
+	pdfTemplates: ApiPDFTemplate[];
+	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
 
 	constructor() {
 		const sessionService = inject(SessionService);
@@ -239,8 +248,24 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		});
 	}
 
-	ngOnInit() {
+	async ngOnInit() {
 		super.ngOnInit();
+
+		await this.issuerLoaded;
+
+		if (this.sessionService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
+			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
+			await this. pdfTemplatesPromise;
+
+			this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
+				label: t.name,
+				value: t.slug
+			}));
+			this.selectPDFTemplateOptions.push({
+				label: this.translate.instant('PDFTemplate.oebDesign'),
+				value: null
+			});
+		}
 	}
 
 	addEvidence() {
@@ -299,6 +324,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 				extensions,
 				activity_start_date: activityStartDate,
 				activity_end_date: activityEndDate,
+				pdftemplate: formState.pdftemplate,
 			})
 			.then(() => this.badgeClass.update())
 			.then(
@@ -353,5 +379,16 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 				variant: 'success',
 			},
 		});
+	}
+
+	getPDFTemplatesForIssuerApi(issuerSlug) {
+		this.pdfTemplatesPromise = this.pdfTemplateApiService
+			.getPDFTemplatesForIssuer(issuerSlug)
+			.then(
+				(pdfTemplates) =>
+					(this.pdfTemplates = pdfTemplates.sort(
+						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+					)),
+			);
 	}
 }

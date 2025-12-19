@@ -332,8 +332,11 @@
 								[slug]="pt.slug"
 								[issuerSlug]="issuer.slug"
 								[created_at]="pt.created_at | date: 'dd.MM.yyyy'"
+								[created_by]="pt.created_by"
 								[pdftemplateImage]="$any(pt).image"
-								(edit)="openEditDialog()"
+								[format]="pt.format"
+								(edit)="openEditDialog($event.slug, $event.issuer)"
+								(delete)="openDeleteDialog($event.name, $event.slug, $event.issuer)"
 							></bg-pdftemplatecard>
 						}
 					</div>

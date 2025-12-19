@@ -14,25 +14,35 @@ import { HlmP } from '@spartan-ng/helm/typography';
 	template: `
 		<div class="tw-flex tw-flex-col tw-justify-between tw-h-full">
 			<div class="tw-bg-[var(--color-lightgray)] tw-w-full tw-relative tw-h-[153.08px] tw-items-center tw-flex tw-justify-center tw-p-2 tw-rounded-[3px]">
-				<img
-					class="tw-w-[96.82px] tw-h-[137.08px]"
-					[loaded-src]="pdftemplateImage"
-					[loading-src]="pdfTemplateFailedImageUrl"
-					[error-src]="pdfTemplateFailedImageUrl"
-					width="97"
-				/>
+				@if (format === 0) {
+					<img
+						class="tw-w-[96.82px] tw-h-[137.08px]"
+						[loaded-src]="pdftemplateImage"
+						[loading-src]="pdfTemplateFailedImageUrl"
+						[error-src]="pdfTemplateFailedImageUrl"
+						width="97"
+					/>
+				} @else if (format === 1) {
+					<img
+						class="tw-w-[192px] tw-h-[137.08px]"
+						[loaded-src]="pdftemplateImage"
+						[loading-src]="pdfTemplateFailedImageUrl"
+						[error-src]="pdfTemplateFailedImageUrl"
+						width="97"
+					/>
+				}
 			</div>
 			<div class="tw-flex tw-flex-col tw-text-oebblack tw-mt-4 tw-gap-2">
 				<span class="tw-font-bold tw-text-[16px] tw-leading-[16.8px] oeb-break-words">{{ name }}</span>
 
 				<div class="tw-flex tw-flex-col">
 					<span class="tw-uppercase tw-text-[10px] tw-leading-[12px] tw-text-purple">{{ 'Issuer.createdOn' | translate }} {{ created_at }}</span>
-					<span class="tw-text-[10px] tw-leading-[12px] tw-text-purple">{{ 'General.of' | translate }} Vorname Nachname</span>
+					<span class="tw-text-[10px] tw-leading-[12px] tw-text-purple">{{ 'General.of' | translate }} {{ created_by }}</span>
 				</div>
 
 				<div class="tw-flex tw-justify-between tw-items-center">
-					<a (click)="openEditDialog()" class="tw-cursor-pointer tw-text-[10px] tw-leading-[12px] tw-underline">Bearbeiten</a>
-					<ng-icon hlm name="lucideTrash2" />
+					<a (click)="openEditDialog(slug, issuerSlug)" class="tw-cursor-pointer tw-text-[10px] tw-leading-[12px] tw-underline">Bearbeiten</a>
+					<ng-icon hlm name="lucideTrash2" (click)="openDeleteDialog(name, slug, issuerSlug)" class="tw-cursor-pointer" />
 				</div>
 			</div>
 		</div>
@@ -56,10 +66,16 @@ export class BgPDFTemplateCard {
 	@Input() created_at: string;
 	@Input() created_by: string;
 	@Input() pdftemplateImage: string;
+	@Input() format: number;
 
 	@Output() edit = new EventEmitter();
+	@Output() delete = new EventEmitter();
 
-	openEditDialog() {
-		this.edit.emit();
+	openEditDialog(slug: string, issuer: string) {
+		this.edit.emit({slug, issuer});
+	}
+
+	openDeleteDialog(name: string, slug: string, issuer: string) {
+		this.delete.emit({name, slug, issuer});
 	}
 }
