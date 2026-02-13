@@ -63,6 +63,56 @@ export class Network extends ManagedEntity<ApiNetwork, IssuerRef> {
 		return this.apiModel.json.image;
 	}
 
+	get websiteUrl(): string {
+		return this.apiModel.json.url;
+	}
+
+	get country(): string {
+		return this.apiModel.country;
+	}
+
+	get state(): string {
+		return this.apiModel.state;
+	}
+
+	get badgeClassCount(): number {
+		const badges = this.commonManager.badgeManager.badgesList;
+
+		if (!badges.loaded) {
+			return this.apiModel.badgeClassCount;
+		}
+
+		const filteredBadges = badges.entities?.filter((b) => b.issuerSlug === this.slug) || [];
+
+		// If no badges found but API says there should be some, use API value
+		if (filteredBadges.length === 0 && this.apiModel.badgeClassCount > 0) {
+			return this.apiModel.badgeClassCount;
+		}
+
+		return filteredBadges.length;
+	}
+
+	get learningpathCount(): number {
+		const lps = this.commonManager.learningpathManager.learningPathList;
+
+		if (!lps.loaded) {
+			return this.apiModel.learningPathCount;
+		}
+
+		const filteredLps = lps.entities?.filter((lp) => lp.issuer_id === this.slug) || [];
+
+		// If no lps found but API says there should be some, use API value
+		if (filteredLps.length === 0 && this.apiModel.learningPathCount > 0) {
+			return this.apiModel.learningPathCount;
+		}
+
+		return filteredLps.length;
+	}
+
+	get partnerBadgesCount(): number {
+		return this.apiModel.partnerBadgesCount;
+	}
+
 	get is_network(): boolean {
 		return true;
 	}

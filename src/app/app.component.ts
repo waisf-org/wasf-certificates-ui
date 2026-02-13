@@ -78,7 +78,6 @@ import { environment } from 'src/environments/environment';
 		TranslatePipe,
 		CmsMenuItemsPipe,
 	],
-	providers: [IconsProvider],
 })
 export class AppComponent implements OnInit, AfterViewInit {
 	private sessionService = inject(SessionService);
@@ -232,7 +231,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 			// @ts-expect-error umami is injected globally
 			// Start umami tracking
 			umami.track();
-		} catch (e) {}
+		} catch (e) {
+			console.error(e);
+		}
 
 		messageService.useRouter(router);
 

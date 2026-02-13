@@ -1,6 +1,6 @@
-import { Component, Input, inject, OnInit } from '@angular/core';
-import { LinkEntry } from '../../../common/components/bg-breadcrumbs/bg-breadcrumbs.component';
+import { Component, Input, OnInit, inject, OnDestroy, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { LinkEntry } from '../../../common/components/bg-breadcrumbs/bg-breadcrumbs.component';
 import { BadgeClassManager } from '../../services/badgeclass-manager.service';
 import { BaseAuthenticatedRoutableComponent } from '../../../common/pages/base-authenticated-routable.component';
 import { SessionService } from '../../../common/services/session.service';
@@ -27,6 +27,10 @@ import { OebSelectComponent } from '../../../components/select.component';
 import { FormFieldSelectOption } from '~/common/components/formfield-select';
 import { PDFTemplateApiService } from '../../../common/services/pdftemplate-api.service';
 import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
+import { OptionalDetailsComponent } from '../optional-details/optional-details.component';
+import { setupActivityOnlineSync } from '~/common/util/activity-place-sync-helper';
+import { Subscription } from 'rxjs';
+import { UrlValidator } from '~/common/validators/url.validator';
 
 @Component({
 	selector: 'edit-qr-form',
@@ -40,11 +44,12 @@ import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 		OebCheckboxComponent,
 		OebButtonComponent,
 		TranslatePipe,
+		OptionalDetailsComponent,
 		OebSelectComponent,
 		RouterLink,
 	],
 })
-export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent implements OnInit {
+export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent implements OnInit, OnDestroy {
 	protected translate = inject(TranslateService);
 	protected qrCodeApiService = inject(QrCodeApiService);
 	protected badgeClassManager = inject(BadgeClassManager);
@@ -59,6 +64,8 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 	qrCodePromise: Promise<any> | null = null;
 
 	environment = environment;
+
+	previewB64Img: string;
 
 	get issuerSlug() {
 		return this.route.snapshot.params['issuerSlug'];
@@ -80,6 +87,8 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 		return this.route.snapshot.params['qrCodeId'];
 	}
 
+	readonly badgeInstanceCourseUrl = signal<string | null>(null);
+
 	badgeClass: BadgeClass;
 	issuer: Issuer;
 
@@ -88,13 +97,14 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 
 	badgeClassLoaded: Promise<unknown>;
 	issuerLoaded: Promise<unknown>;
-	crumbs: LinkEntry[];
+
+	subscriptions: Subscription[] = [];
 
 	pdfTemplatesPromise: Promise<unknown>;
 	pdfTemplates: ApiPDFTemplate[];
 	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
 
-	qrForm = typedFormGroup(this.missingStartDate.bind(this))
+	qrForm = typedFormGroup([this.missingStartDate.bind(this)])
 		.addControl('title', '', Validators.required)
 		.addControl('createdBy', '', Validators.required)
 		.addControl('activity_start_date', '', DateValidator.validDate, (control) => {
@@ -107,15 +117,20 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 			DateValidator.validDate,
 			DateRangeValidator.endDateAfterStartDate('activity_start_date', 'activityEndBeforeStart'),
 		])
+		.addControl('activity_zip', '')
+		.addControl('activity_city', '')
+		.addControl('activity_online', false)
+		.addArray(
+			'evidence_items',
+			typedFormGroup().addControl('narrative', '').addControl('evidence_url', '', UrlValidator.validUrl),
+		)
 		.addControl('valid_from', '', DateValidator.validDate)
 		.addControl('expires_at', '', [DateValidator.validDate, this.validDateRange.bind(this)])
 		.addControl('badgeclass_id', '', Validators.required)
 		.addControl('issuer_id', '', Validators.required)
+		.addControl('courseUrl', null, UrlValidator.validUrl)
 		.addControl('notifications', false)
 		.addControl('pdftemplate', null);
-
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
 
 	constructor() {
 		const route = inject(ActivatedRoute);
@@ -129,47 +144,51 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 				.badgeByIssuerSlugAndSlug(this.issuerSlug, this.badgeSlug)
 				.then((badgeClass) => {
 					this.badgeClass = badgeClass;
+					const category = badgeClass.extension['extensions:CategoryExtension'].Category;
+
+					this.badgeClassManager
+						.createBadgeImage(this.issuerSlug, badgeClass.slug, category, badgeClass.imageFrame)
+						.then((img) => {
+							this.previewB64Img = img.image_url;
+						});
 					return this.issuerManager.issuerBySlug(this.partnerIssuerSlug);
 				})
 				.then((partnerIssuer) => {
 					this.issuer = partnerIssuer;
 				});
 		} else {
-			this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
-				this.issuer = issuer;
-			});
+			this.issuerLoaded = this.issuerManager
+				.issuerBySlug(this.issuerSlug)
+				.then((issuer) => {
+					this.issuer = issuer;
+				})
+				.then(() => {
+					this.badgeClassLoaded = this.badgeClassManager
+						.badgeByIssuerSlugAndSlug(this.issuerSlug, this.badgeSlug)
+						.then((badgeClass) => {
+							this.badgeClass = badgeClass;
 
-			this.badgeClassLoaded = this.badgeClassManager
-				.badgeByIssuerSlugAndSlug(this.issuerSlug, this.badgeSlug)
-				.then((badgeClass) => {
-					this.badgeClass = badgeClass;
+							this.badgeInstanceCourseUrl.set(this.badgeClass.courseUrl ?? null);
+							this.qrForm.controls.courseUrl.setValue(this.badgeInstanceCourseUrl());
 
-					this.crumbs = [
-						{ title: 'Issuers', routerLink: ['/issuer'] },
-						{
-							// title: issuer.name,
-							title: 'issuer',
-							routerLink: ['/issuer/issuers', this.issuerSlug],
-						},
-						{
-							title: 'badges',
-							routerLink: ['/issuer/issuers/' + this.issuerSlug + '/badges/'],
-						},
-						{
-							title: badgeClass.name,
-							routerLink: ['/issuer/issuers', this.issuerSlug, 'badges', badgeClass.slug],
-						},
-						{ title: 'Award Badge' },
-					];
+							const category = badgeClass.extension['extensions:CategoryExtension'].Category;
+
+							this.badgeClassManager
+								.createBadgeImage(this.issuerSlug, badgeClass.slug, category, badgeClass.imageFrame)
+								.then((img) => {
+									this.previewB64Img = img.image_url;
+								});
+						});
 				});
 		}
 
 		if (this.qrSlug) {
-			this.qrCodeApiService.getQrCode(this.qrSlug).then((qrCode) => {
+			this.qrCodeApiService.getQrCode(this.issuerSlug, this.badgeSlug, this.qrSlug).then((qrCode) => {
 				let pdftemplate = null;
 				if (qrCode.pdftemplate != null) {
 					pdftemplate = qrCode.pdftemplate.replace('PDFTemplate', '');
 				}
+
 				this.qrForm.setValue({
 					title: qrCode.title,
 					createdBy: qrCode.createdBy,
@@ -179,6 +198,17 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 					activity_end_date: qrCode.activity_end_date
 						? EditQrFormComponent.datePipe.transform(new Date(qrCode.activity_end_date), 'yyyy-MM-dd')
 						: '',
+					activity_zip: qrCode.activity_zip,
+					activity_city: qrCode.activity_city,
+					activity_online: qrCode.activity_online,
+					evidence_items:
+						qrCode.evidence_items && qrCode.evidence_items.length > 0
+							? qrCode.evidence_items.map((e) => ({
+									narrative: e.narrative ?? '',
+									evidence_url: e.evidence_url ?? '',
+								}))
+							: [],
+
 					valid_from: qrCode.valid_from
 						? EditQrFormComponent.datePipe.transform(new Date(qrCode.valid_from), 'yyyy-MM-dd')
 						: undefined,
@@ -189,6 +219,7 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 					issuer_id: qrCode.issuer_id,
 					notifications: qrCode.notifications,
 					pdftemplate: pdftemplate,
+					courseUrl: qrCode.course_url,
 				});
 			});
 		}
@@ -207,6 +238,42 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 				variant: 'success',
 			},
 		});
+	}
+
+	async ngOnInit() {
+		this.subscriptions.push(...setupActivityOnlineSync(this.qrForm));
+		if (this.qrForm.controls.evidence_items.length === 0) {
+			this.qrForm.controls.evidence_items.addFromTemplate();
+		}
+
+		await this.issuerLoaded;
+
+		if (this.sessionService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
+			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
+			await this. pdfTemplatesPromise;
+
+
+			this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
+				label: t.name,
+				value: t.slug
+			}));
+			this.selectPDFTemplateOptions.push({
+				label: this.translate.instant('PDFTemplate.oebDesign'),
+				value: null
+			});
+		}
+	}
+
+	ngOnDestroy() {
+		this.subscriptions.forEach((s) => s.unsubscribe());
+	}
+
+	addEvidence() {
+		this.qrForm.controls.evidence_items.addFromTemplate();
+	}
+
+	removeEvidence(i: number) {
+		this.qrForm.controls.evidence_items.removeAt(i);
 	}
 
 	previousPage() {
@@ -229,7 +296,7 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 		const valid_from = this.qrForm.controls.valid_from.value;
 		const expires = this.qrForm.controls.expires_at.value;
 
-		if (valid_from && expires && new Date(expires) <= new Date(valid_from)) {
+		if (valid_from && expires && new Date(expires) < new Date(valid_from)) {
 			return { expiresBeforeValidFrom: true };
 		}
 
@@ -243,6 +310,10 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 
 		if (this.editing) {
 			const formState = this.qrForm.value;
+			const cleanedEvidence = formState.evidence_items.filter((e) => e.narrative !== '' || e.evidence_url !== '');
+
+			const expiresDate = new Date(formState.expires_at);
+			expiresDate.setHours(23, 59, 59, 999);
 			this.qrCodePromise = this.qrCodeApiService
 				.updateQrCode(this.issuerSlug, this.badgeSlug, this.qrSlug, {
 					title: formState.title,
@@ -254,12 +325,17 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 						formState.activity_end_date && formState.activity_start_date !== formState.activity_end_date
 							? new Date(formState.activity_end_date).toISOString()
 							: null,
-					expires_at: formState.expires_at ? new Date(formState.expires_at).toISOString() : null,
+					activity_zip: formState.activity_zip,
+					activity_online: formState.activity_online,
+					activity_city: formState.activity_city,
+					evidence_items: cleanedEvidence,
+					expires_at: formState.expires_at ? expiresDate.toISOString() : null,
 					valid_from: formState.valid_from ? new Date(formState.valid_from).toISOString() : null,
 					badgeclass_id: this.badgeSlug,
 					issuer_id: this.issuerSlug,
 					notifications: formState.notifications,
 					pdftemplate: formState.pdftemplate,
+					course_url: formState.courseUrl,
 				})
 				.then((qrcode) => {
 					this.openSuccessDialog();
@@ -275,7 +351,11 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 				});
 		} else {
 			const formState = this.qrForm.value;
+			const cleanedEvidence = formState.evidence_items.filter((e) => e.narrative !== '' || e.evidence_url !== '');
+
 			const issuer = this.isNetworkBadge && this.partnerIssuerSlug ? this.partnerIssuerSlug : this.issuerSlug;
+			const expiresDate = new Date(formState.expires_at);
+			expiresDate.setHours(23, 59, 59, 999);
 			this.qrCodePromise = this.qrCodeApiService
 				.createQrCode(issuer, this.badgeSlug, {
 					title: formState.title,
@@ -288,10 +368,15 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 					activity_end_date: formState.activity_end_date
 						? new Date(formState.activity_end_date).toISOString()
 						: undefined,
-					expires_at: formState.expires_at ? new Date(formState.expires_at).toISOString() : undefined,
+					activity_zip: formState.activity_zip,
+					activity_online: formState.activity_online,
+					activity_city: formState.activity_city,
+					evidence_items: cleanedEvidence,
+					expires_at: formState.expires_at ? expiresDate.toISOString() : undefined,
 					valid_from: formState.valid_from ? new Date(formState.valid_from).toISOString() : undefined,
 					notifications: formState.notifications,
 					pdftemplate: formState.pdftemplate,
+					course_url: formState.courseUrl,
 				})
 				.then((qrcode) => {
 					this.openSuccessDialog();
@@ -305,27 +390,6 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 						'generate',
 					]);
 				});
-		}
-	}
-
-	async ngOnInit() {
-		super.ngOnInit();
-
-		await this.issuerLoaded;
-
-		if (this.sessionService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
-			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
-			await this. pdfTemplatesPromise;
-
-
-			this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
-				label: t.name,
-				value: t.slug
-			}));
-			this.selectPDFTemplateOptions.push({
-				label: this.translate.instant('PDFTemplate.oebDesign'),
-				value: null
-			});
 		}
 	}
 

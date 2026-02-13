@@ -1,0 +1,283 @@
+<div class="tw-border-purple tw-bg-white tw-border-solid tw-border tw-p-6 tw-rounded-[15px] tw-mb-8">
+	<div class="!tw-shadow-none tw-p-6" role="group" aria-labelledby="heading-addoptionaldetails">
+		<h3 class="tw-uppercase tw-text-lg tw-font-semibold tw-text-oebblack tw-mb-6" id="heading-addoptionaldetails">
+			{{ 'Issuer.addOptionalDetails' | translate }}
+		</h3>
+
+		<ul class="tw-list-none tw-p-0 tw-m-0 tw-flex tw-flex-col">
+			<!--Expiration Item-->
+			@if (showExpiration() && hasControl('valid_from') && hasControl('expires_at')) {
+				<li>
+					<ng-template #collapseExpirationTrigger>
+						<ng-icon size="24px" hlm name="lucideClockFading" class="tw-mr-1 tw-text-oebblack"></ng-icon>
+						<span
+							[class.tw-font-semibold]="expirationCollapsible.expanded"
+							[class.tw-font-normal]="!expirationCollapsible.expanded"
+							class="tw-text-lg tw-text-oebblack tw-mr-auto"
+							[innerHTML]="'QrCode.expiration' | translate"
+						></span>
+					</ng-template>
+					<oeb-collapsible
+						#expirationCollapsible
+						[trigger]="collapseExpirationTrigger"
+						[defaultOpen]="false"
+						[closeIcon]="'lucideChevronDown'"
+						[iconStyle]="'tw-text-oebblack'"
+						[iconSize]="'lg'"
+					>
+						<div class="tw-flex tw-flex-col md:tw-flex-row tw-gap-4 tw-pt-4">
+							<oeb-input
+								[noTopMargin]="true"
+								[labelStyle]="'tw-text-oebblack tw-font-normal tw-text-lg'"
+								[label]="'QrCode.expirationStart' | translate"
+								[errorMessage]="{
+									invalidDate: 'QrCode.invalidDate' | translate,
+								}"
+								[control]="getRawControl('valid_from')"
+								fieldType="date"
+							></oeb-input>
+							<oeb-input
+								[noTopMargin]="true"
+								[labelStyle]="'tw-text-oebblack tw-font-normal tw-text-lg'"
+								[label]="'QrCode.expirationEnd' | translate"
+								[errorMessage]="{
+									expiresBeforeValidFrom: ('QrCode.invalidExpirationDateRange' | translate),
+									invalidDate: ('QrCode.invalidDate' | translate),
+								}"
+								[control]="getRawControl('expires_at')"
+								fieldType="date"
+							></oeb-input>
+						</div>
+					</oeb-collapsible>
+				</li>
+
+				<oeb-separator [separatorStyle]="'tw-block tw-my-4 !tw-border !tw-border-dashed tw-border-darkgrey'" />
+			}
+
+			<!-- course url Item -->
+			@if (showCourseUrl() && hasControl('courseUrl')) {
+				<li>
+					<ng-template #courseUrlTrigger>
+						<ng-icon size="24px" hlm name="lucideExternalLink" class="tw-mr-1"></ng-icon>
+						<span
+							[class.tw-font-semibold]="courseUrlCollapsible.expanded"
+							[class.tw-font-normal]="!courseUrlCollapsible.expanded"
+							class="tw-text-lg tw-text-oebblack tw-mr-auto"
+							[innerHTML]="'CreateBadge.linkToCourse' | translate"
+						></span>
+					</ng-template>
+					<oeb-collapsible
+						#courseUrlCollapsible
+						[trigger]="courseUrlTrigger"
+						[defaultOpen]="courseUrlDefaultOpen()"
+						[closeIcon]="'lucideChevronDown'"
+						[iconStyle]="'tw-text-oebblack'"
+						[iconSize]="'lg'"
+					>
+						<section class="tw-flex tw-flex-col tw-gap-4 tw-pt-4">
+							<div class="tw-flex tw-gap-4">
+								<oeb-input
+									class="oeb-input-hide-arrows tw-w-full"
+									[control]="getRawControl('courseUrl')"
+									[label]="'CreateBadge.websiteUrl' | translate"
+									[labelStyle]="'tw-text-oebblack tw-font-normal tw-text-lg'"
+									[noTopMargin]="true"
+									[placeholder]="'https://'"
+									[urlField]="true"
+									[fieldType]="'url'"
+									errorMessage="{{ 'Issuer.enterURL' | translate }}"
+								/>
+							</div>
+						</section>
+					</oeb-collapsible>
+				</li>
+				<oeb-separator [separatorStyle]="'tw-block tw-my-4 !tw-border !tw-border-dashed tw-border-darkgrey'" />
+			}
+
+			<!-- Course Date Item -->
+			@if (showCourseDate() && hasControl('activity_start_date') && hasControl('activity_end_date')) {
+				<li>
+					<ng-template #collapseCourseDateTrigger>
+						<ng-icon size="24px" hlm name="lucideCalendarDays" class="tw-mr-1"></ng-icon>
+						<span
+							[class.tw-font-semibold]="courseDateCollapsible.expanded"
+							[class.tw-font-normal]="!courseDateCollapsible.expanded"
+							class="tw-text-lg tw-font-normal tw-text-oebblack tw-mr-auto"
+							[innerHTML]="'RecBadge.courseDate' | translate"
+						></span>
+					</ng-template>
+
+					<oeb-collapsible
+						#courseDateCollapsible
+						[trigger]="collapseCourseDateTrigger"
+						[defaultOpen]="false"
+						[closeIcon]="'lucideChevronDown'"
+						[iconStyle]="'tw-text-oebblack'"
+						[iconSize]="'lg'"
+					>
+						<div class="tw-flex tw-gap-4 tw-pt-4">
+							<oeb-input
+								[control]="getRawControl('activity_start_date')"
+								[label]="'General.start' | translate"
+								[labelStyle]="'tw-text-oebblack tw-font-normal tw-text-lg'"
+								fieldType="date"
+								[noTopMargin]="true"
+								[errorMessage]="'CreateBadge.activityStartDateRequired' | translate"
+							></oeb-input>
+							<oeb-input
+								[control]="getRawControl('activity_end_date')"
+								[label]="'General.end' | translate"
+								[labelStyle]="'tw-text-oebblack tw-font-normal tw-text-lg'"
+								fieldType="date"
+								[noTopMargin]="true"
+								[errorMessage]="'CreateBadge.activityEndDateRequired' | translate"
+							></oeb-input>
+						</div>
+					</oeb-collapsible>
+				</li>
+
+				@if (showLocation() && hasControl('activity_zip')) {
+					<oeb-separator
+						[separatorStyle]="'tw-block tw-my-4 !tw-border !tw-border-dashed tw-border-darkgrey'"
+					></oeb-separator>
+				}
+			}
+
+			<!-- Location Item -->
+			@if (showLocation() && hasControl('activity_zip')) {
+				<li>
+					<ng-template #venueTrigger>
+						<ng-icon size="24px" hlm name="lucideMapPin" class="tw-mr-1"></ng-icon>
+						<span
+							[class.tw-font-semibold]="activityPlaceCollapsible.expanded"
+							[class.tw-font-normal]="!activityPlaceCollapsible.expanded"
+							class="tw-text-lg tw-text-oebblack tw-mr-auto"
+							[innerHTML]="'RecBadge.venue' | translate"
+						></span>
+					</ng-template>
+					<oeb-collapsible
+						#activityPlaceCollapsible
+						[trigger]="venueTrigger"
+						[defaultOpen]="false"
+						[closeIcon]="'lucideChevronDown'"
+						[iconStyle]="'tw-text-oebblack'"
+						[iconSize]="'lg'"
+					>
+						<section class="tw-flex tw-flex-col tw-gap-4 tw-pt-4">
+							<div class="tw-flex tw-gap-4">
+								@if (hasControl('activity_zip')) {
+									<oeb-input
+										class="oeb-input-hide-arrows"
+										[control]="getRawControl('activity_zip')"
+										[label]="'General.postalCode' | translate"
+										[labelStyle]="'tw-text-oebblack tw-font-normal tw-text-lg'"
+										[noTopMargin]="true"
+										fieldType="number"
+									></oeb-input>
+								}
+								@if (hasControl('activity_city')) {
+									<oeb-input
+										[control]="getRawControl('activity_city')"
+										[label]="'RecBadgeDetail.place' | translate"
+										[labelStyle]="'tw-text-oebblack tw-font-normal tw-text-lg'"
+										[noTopMargin]="true"
+									></oeb-input>
+								}
+							</div>
+							@if (hasControl('activity_online')) {
+								<span class="tw-text-lg tw-text-oebblack tw-italic">{{
+									'General.or' | translate
+								}}</span>
+								<oeb-checkbox [text]="'Online'" [control]="getRawControl('activity_online')">
+								</oeb-checkbox>
+							}
+						</section>
+					</oeb-collapsible>
+				</li>
+				<oeb-separator
+					[separatorStyle]="'tw-block tw-my-4 !tw-border !tw-border-dashed tw-border-darkgrey'"
+				></oeb-separator>
+			}
+
+			<!-- Evidence -->
+			@if (showEvidence() && evidenceItems) {
+				<li>
+					<ng-template #collapseEvidenceTrigger>
+						<ng-icon size="24px" hlm name="lucideBookOpen" class="tw-mr-1"></ng-icon>
+						<span
+							[class.tw-font-semibold]="evidenceCollapsible.expanded"
+							[class.tw-font-normal]="!evidenceCollapsible.expanded"
+							class="tw-text-lg tw-text-oebblack tw-mr-auto"
+							[innerHTML]="'Issuer.narrative' | translate"
+						></span>
+					</ng-template>
+					<oeb-collapsible
+						#evidenceCollapsible
+						[trigger]="collapseEvidenceTrigger"
+						[closeIcon]="'lucideChevronDown'"
+						[iconStyle]="'tw-text-oebblack'"
+						[iconSize]="'lg'"
+					>
+						<div class="tw-flex tw-flex-col tw-gap-4 tw-pt-2">
+							<div class="tw-flex tw-flex-col tw-gap-3">
+								<label class="tw-mt-1 tw-text-oebblack">
+									{{ 'Issuer.evidenceUrl' | translate }}
+								</label>
+
+								@for (item of evidenceItems.controls; track $index) {
+									<div class="tw-flex tw-gap-2 tw-items-start">
+										<oeb-input
+											class="tw-flex-1"
+											[control]="getEvidenceUrlControl($index)"
+											[placeholder]="'http://...'"
+											[noTopMargin]="true"
+											[urlField]="true"
+											errorMessage="{{ 'Issuer.enterURL' | translate }}"
+										></oeb-input>
+										@if (evidenceItems.controls.length > 1) {
+											<button
+												type="button"
+												(click)="removeEvidence($index)"
+												class="tw-p-2 tw-text-red-600 hover:tw-bg-red-50 tw-rounded-md tw-transition-colors"
+												[attr.aria-label]="'General.remove' | translate"
+											>
+												<ng-icon size="24px" name="lucideTrash2"></ng-icon>
+											</button>
+										}
+									</div>
+								}
+
+								<oeb-button
+									[style]="'secondary'"
+									(click)="addEvidence()"
+									[text]="'Issuer.addEvidenceUrl' | translate"
+									type="button"
+									[size]="'sm'"
+									icon="lucidePlus"
+									[iconLeft]="true"
+									variant="secondary"
+									[weight]="'normal'"
+								>
+								</oeb-button>
+								<div class="tw-flex tw-flex-col">
+									<label class="tw-text-oebblack tw-mb-2">
+										{{ 'Issuer.evidenceNarrative' | translate }}
+									</label>
+									<textarea
+										[value]="sharedNarrative"
+										(input)="onNarrativeChange($event)"
+										class="tw-w-full tw-p-3 tw-border tw-border-solid tw-border-gray-300 tw-rounded-md tw-min-h-[120px] tw-resize-y focus:tw-outline-none focus:tw-border-purple focus:tw-ring-1 focus:tw-ring-purple"
+										maxlength="600"
+									></textarea>
+									<span class="tw-text-sm tw-text-gray-500 tw-mt-1 tw-text-right">
+										{{ sharedNarrative.length }} / 600
+									</span>
+								</div>
+							</div>
+						</div>
+					</oeb-collapsible>
+				</li>
+			}
+		</ul>
+	</div>
+</div>

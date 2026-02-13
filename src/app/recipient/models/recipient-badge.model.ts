@@ -58,8 +58,20 @@ export class RecipientBadgeInstance extends ManagedEntity<ApiRecipientBadgeInsta
 			: undefined;
 	}
 
+	get activityCity(): string | undefined {
+		return this.apiModel.json.credentialSubject.activityCity;
+	}
+
+	get activityOnline(): string | undefined {
+		return this.apiModel.json.credentialSubject.activityOnline;
+	}
+
 	get shareUrl(): string {
 		return this.apiModel.shareUrl;
+	}
+
+	get courseUrl(): string {
+		return this.apiModel.courseUrl;
 	}
 
 	get isNew(): boolean {

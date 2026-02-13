@@ -15,13 +15,14 @@ import { LearningPathCreateComponent } from './components/learningpath-create/le
 import { IssuerLearningPathComponent } from './components/issuer-learning-path/issuer-learning-path.component';
 import { LearningPathEditComponent } from './components/learningpath-edit/learningpath-edit.component';
 import { BadgeClassSelectTypeComponent } from './components/badgeclass-select-type/badgeclass-select-type.component';
-import { BadgeClassEditCopyPermissionsComponent } from './components/badgeclass-edit-copypermissions/badgeclass-edit-copypermissions';
+import { BadgeClassEditIssuedComponent } from './components/badgeclass-edit-issued/badgeclass-edit-issued';
 import { NetworkCreateComponent } from './components/network-create/network-create.component';
 import { NetworkDashboardComponent } from './components/network-dashboard/network-dashboard.component';
 import { NetworkInviteConfirmationComponent } from './components/network-invite-confirmation/network-invite-confirmation.component';
 import { PDFTemplateCreateComponent } from './components/pdftemplate-create/pdftemplate-create.component';
 import { PDFTemplateEditComponent } from './components/pdftemplate-edit/pdftemplate-edit.component';
 import { LearningPathEditPDFTemplateComponent } from './components/learningpath-edit-pdftemplate/learningpath-edit-pdftemplate.component';
+import { NetworkEditComponent } from './components/network-edit/network-edit.component';
 
 export const routes = [
 	/* Issuer */
@@ -40,6 +41,10 @@ export const routes = [
 	{
 		path: 'networks/:networkSlug',
 		component: NetworkDashboardComponent,
+	},
+	{
+		path: 'networks/:networkSlug/edit',
+		component: NetworkEditComponent,
 	},
 	{
 		path: 'networks/invite/:inviteSlug',
@@ -102,8 +107,8 @@ export const routes = [
 		component: BadgeClassEditComponent,
 	},
 	{
-		path: 'issuers/:issuerSlug/badges/:badgeSlug/copypermissions',
-		component: BadgeClassEditCopyPermissionsComponent,
+		path: 'issuers/:issuerSlug/badges/:badgeSlug/edit-issued',
+		component: BadgeClassEditIssuedComponent,
 	},
 	{
 		path: 'issuers/:issuerSlug/badges/:badgeSlug/issue',

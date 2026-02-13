@@ -5,7 +5,6 @@ import { Component, input, output, signal, TemplateRef, viewChild, inject } from
 import { HlmTableImports } from './spartan/ui-table-helm/src';
 import { FormsModule } from '@angular/forms';
 import { lucideSearch } from '@ng-icons/lucide';
-import { OebButtonComponent } from './oeb-button.component';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { OebTableImports } from './oeb-table';
 import {
@@ -31,7 +30,6 @@ import { Network } from '~/issuer/network.model';
 		CommonModule,
 		TranslateModule,
 		RouterModule,
-		OebButtonComponent,
 		FlexRenderDirective,
 		NgIcon,
 		HlmIconModule,
@@ -118,12 +116,21 @@ import { Network } from '~/issuer/network.model';
 						width="40"
 					/>
 				</div>
-				<p>{{ context.getValue() }}</p>
+				<p
+					class="
+						tw-max-w-[26ch]
+						tw-whitespace-normal
+						tw-break-words
+						tw-leading-tight
+					"
+				>
+					{{ context.getValue() }}
+				</p>
 			</div>
 		</ng-template>
 
 		<ng-template #issuerActionsCellTemplate let-context>
-			@if (network().current_user_network_role === 'owner') {
+			<!-- @if (network().current_user_network_role === 'owner') {
 				<oeb-button
 					class="tw-float-right"
 					size="xs"
@@ -131,13 +138,11 @@ import { Network } from '~/issuer/network.model';
 					(click)="removePartner(context.row.original)"
 					text="{{ 'General.remove' | translate }}"
 				/>
-			}
+			} -->
 		</ng-template>
 	`,
 })
 export class NetworkPartnersDatatableComponent {
-	private networkApiService = inject(NetworkApiService);
-
 	partners = input.required<Issuer[]>();
 	network = input.required<Network>();
 	approvedInvites = input.required<ApiNetworkInvitation[]>();
@@ -191,11 +196,6 @@ export class NetworkPartnersDatatableComponent {
 			updater instanceof Function ? this.tableSorting.update(updater) : this.tableSorting.set(updater),
 		enableSortingRemoval: false, // ensures at least one column is sorted
 	}));
-
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
-
-	constructor() {}
 
 	removePartner(issuer: Issuer) {
 		this.removePartnerRequest.emit(issuer);

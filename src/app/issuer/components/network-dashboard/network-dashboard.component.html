@@ -4,21 +4,26 @@
 			<bg-breadcrumbs [linkentries]="crumbs"> </bg-breadcrumbs>
 		</div>
 		@if (activeTab === 'overview') {
-			<h1 hlmH1 class="tw-text-purple tw-font-black tw-mt-20 tw-pb-14">
-				{{ 'Network.welcomeDashboard' | translate }}
-			</h1>
+			<div class="tw-flex tw-mt-20">
+				<h1 hlmH1 class="tw-text-purple tw-font-black tw-pb-14">
+					{{ 'Network.welcomeDashboard' | translate }}
+				</h1>
+				@if (role === 'creator') {
+					<oeb-button [variant]="'secondary'" [text]="'General.edit' | translate" [routerLink]="['./edit']" />
+				}
+			</div>
 		}
 		<ng-template [bgAwaitPromises]="[networkLoaded]">
 			<section
 				class="tw-flex tw-gap-4 tw-items-center"
 				[ngClass]="{ 'tw-pb-8 tw-mt-20': activeTab !== 'overview' }"
 			>
-				<div class="tw-bg-white tw-aspect-square tw-flex tw-items-center tw-justify-center">
+				<div class="tw-bg-white tw-aspect-square tw-flex tw-flex-shrink-0 tw-items-center tw-justify-center">
 					<img width="70px" [src]="network().image" alt="Network Logo" />
 				</div>
 				<div class="tw-flex tw-flex-col">
-					<span class="tw-font-bold tw-text-3xl tw-text-oebblack">{{ network().name }}</span>
-					<span class="tw-text-oebblack tw-text-lg tw-font-semibold tw-mt-2">
+					<span class="tw-font-bold tw-text-3xl tw-text-oebblack tw-flex-grow">{{ network().name }}</span>
+					<span class="tw-text-oebblack tw-italic tw-flex-grow">
 						{{
 							'Network.yourRole'
 								| translate
@@ -28,16 +33,37 @@
 						}}</span
 					>
 				</div>
-				@if (activeTab === 'badges' && network().current_user_network_role !== 'staff') {
+				@if (network().current_user_network_role !== 'staff') {
 					<div class="tw-ml-auto">
-						<oeb-button
-							variant="secondary"
-							[text]="'Network.createBadge' | translate"
-							[routerLink]="[`/issuer/issuers/${network().slug}/badges/select/`]"
-						></oeb-button>
+						@switch (activeTab) {
+							@case ('badges') {
+								@if (network().badgeClassCount) {
+									<oeb-button
+										variant="secondary"
+										[text]="'Network.createBadge' | translate"
+										[routerLink]="[`/issuer/issuers/${network().slug}/badges/select`]"
+									>
+									</oeb-button>
+								}
+							}
+							@case ('learningpaths') {
+								@if (network().learningpathCount) {
+									<oeb-button
+										variant="secondary"
+										[text]="'Network.createLp' | translate"
+										[routerLink]="[`/issuer/issuers/${network().slug}/learningpaths/create/`]"
+									>
+									</oeb-button>
+								}
+							}
+						}
 					</div>
 				}
-				@if (activeTab === 'partners' && network().current_user_network_role !== 'staff') {
+				@if (
+					activeTab === 'partners' &&
+					network().current_user_network_role !== 'staff' &&
+					networkInvites().length
+				) {
 					<div class="tw-ml-auto">
 						<oeb-button
 							[text]="'Network.shortInviteInstitutions' | translate"
@@ -65,7 +91,10 @@
 					[variant]="partnerIssuers().length ? 'secondary' : 'default'"
 					(click)="openDialog()"
 					[text]="'Network.inviteInstitutions' | translate"
-					[disabled]="network().current_user_network_role !== 'owner'"
+					[disabled]="
+						network().current_user_network_role !== 'owner' &&
+						network().current_user_network_role !== 'creator'
+					"
 				>
 				</oeb-button>
 			</div>
@@ -93,5 +122,9 @@
 </ng-template>
 
 <ng-template #badgesTemplate>
-	<network-badges [network]="network()"></network-badges>
+	<network-badges [network]="network()" [crumbs]="crumbs"></network-badges>
+</ng-template>
+
+<ng-template #learningPathsTemplate>
+	<network-learningpaths [network]="network()"> </network-learningpaths>
 </ng-template>

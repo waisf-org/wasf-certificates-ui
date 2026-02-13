@@ -38,8 +38,12 @@ export interface ApiBadgeInstanceForCreation {
 	expires?: string;
 	activity_start_date?: string;
 	activity_end_date?: string;
+	activity_zip?: string;
+	activity_city?: string;
+	activity_online?: boolean;
 	name?: string;
 	pdftemplate?: string;
+	course_url?: string;
 }
 
 export type RecipientIdentifierType = 'email' | 'openBadgeId' | 'telephone' | 'url';
@@ -82,4 +86,16 @@ export interface BadgeInstanceBatchAssertion {
 	activity_start_date?: string;
 	activity_end_date?: string;
 	pdftemplate?: string;
+	activity_zip?: string;
+	activity_city?: string;
+	activity_online?: boolean;
+	course_url?: string;
+	request_entity_id?: string;
+}
+
+export interface BadgeInstanceResultSetV3 {
+	count: number;
+	next: string | null;
+	previous: string | null;
+	results: ApiBadgeInstance[];
 }

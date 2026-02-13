@@ -73,7 +73,7 @@ export class BadgeClassIssueBulkAwardComponent extends BaseAuthenticatedRoutable
 	protected badgeClassManager = inject(BadgeClassManager);
 	protected formBuilder = inject(FormBuilder);
 	protected issuerManager = inject(IssuerManager);
-	protected sessionService: SessionService;
+	protected authService: SessionService;
 	protected messageService = inject(MessageService);
 	protected router: Router;
 	protected route: ActivatedRoute;
@@ -91,16 +91,13 @@ export class BadgeClassIssueBulkAwardComponent extends BaseAuthenticatedRoutable
 
 	breadcrumbLinkEntries: LinkEntry[] = [];
 
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
-
 	constructor() {
 		const sessionService = inject(SessionService);
 		const router = inject(Router);
 		const route = inject(ActivatedRoute);
 
 		super(router, route, sessionService);
-		this.sessionService = sessionService;
+		this.authService = sessionService;
 		this.router = router;
 		this.route = route;
 

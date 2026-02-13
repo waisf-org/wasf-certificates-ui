@@ -6,8 +6,6 @@ export type BadgeClassUrl = string;
 export type BadgeClassSqlId = number;
 export type BadgeClassRef = ApiEntityRef;
 
-export type BadgeClassExpiresDuration = 'days' | 'weeks' | 'months' | 'years';
-
 export type BadgeClassLevel = 'a1' | 'a2' | 'b1' | 'b2' | 'c1' | 'c2';
 export type BadgeClassCategory = 'competency' | 'participation' | 'learningpath';
 export type BadgeClassCopyPermissions = 'issuer' | 'others' | 'none';
@@ -30,6 +28,7 @@ export interface ApiBadgeClassForCreation {
 	image: string;
 	imageFrame?: boolean;
 	description: string;
+	course_url?: string;
 	criteria_url?: string;
 	criteria_text?: string;
 
@@ -37,7 +36,7 @@ export interface ApiBadgeClassForCreation {
 
 	tags?: string[];
 	alignment?: ApiBadgeClassAlignment[];
-	expires?: ApiBadgeClassExpiration;
+	expiration?: number; // in days
 	copy_permissions?: BadgeClassCopyPermissions[];
 	criteria?: Array<{ name: string; description: string }>;
 }
@@ -48,11 +47,6 @@ export interface ApiBadgeClassAlignment {
 	target_description?: string;
 	target_framework?: string;
 	target_code?: string;
-}
-
-export interface ApiBadgeClassExpiration {
-	amount: number;
-	duration: BadgeClassExpiresDuration;
 }
 
 export interface ApiBadgeClass extends ApiBadgeClassForCreation {
@@ -71,7 +65,7 @@ export interface ApiBadgeClass extends ApiBadgeClassForCreation {
 
 	json: ApiBadgeClassJsonld;
 	source_url: string;
-
+	course_url: string;
 	issuerVerified: boolean;
 	issuerOwnerAcceptedTos: boolean;
 	isNetworkBadge: boolean;

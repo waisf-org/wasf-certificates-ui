@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, OnDestroy, signal } from '@angular/core';
 import { FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
@@ -47,6 +47,11 @@ import { PDFTemplateApiService } from '../../../common/services/pdftemplate-api.
 import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 import { PreviewCanvas } from '~/common/util/pdftemplate-util';
 import { PDFTemplate } from '~/issuer/models/pdftemplate.model';
+import { NgIcon } from '@ng-icons/core';
+import { OebSeparatorComponent } from '~/components/oeb-separator.component';
+import { OptionalDetailsComponent } from '../optional-details/optional-details.component';
+import { setupActivityOnlineSync } from '~/common/util/activity-place-sync-helper';
+import { Subscription } from 'rxjs';
 
 @Component({
 	selector: 'badgeclass-issue',
@@ -54,7 +59,7 @@ import { PDFTemplate } from '~/issuer/models/pdftemplate.model';
 	styles: [
 		`
 			:host ::ng-deep {
-				brn-collapsible[data-state='open'] button span {
+				brn-collapsible[data-state='open'] > button > span {
 					font-weight: bold !important;
 				}
 
@@ -100,9 +105,12 @@ import { PDFTemplate } from '~/issuer/models/pdftemplate.model';
 		DatePipe,
 		TranslatePipe,
 		OebCollapsibleComponent,
+		NgIcon,
+		OebSeparatorComponent,
+		OptionalDetailsComponent,
 	],
 })
-export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent implements OnInit {
+export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent implements OnInit, OnDestroy {
 	protected title = inject(Title);
 	protected messageService = inject(MessageService);
 	protected eventsService = inject(EventsService);
@@ -117,13 +125,9 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 	readonly badgeLoadingImageUrl = '../../../breakdown/static/images/badge-loading.svg';
 	readonly badgeFailedImageUrl = '../../../breakdown/static/images/badge-failed.svg';
 
-	breadcrumbLinkEntries: LinkEntry[] = [];
+	readonly badgeInstanceCourseUrl = signal<string | null>(null);
 
-	get defaultExpiration(): string {
-		if (this.badgeClass && this.badgeClass.expiresDuration && this.badgeClass.expiresAmount) {
-			return this.badgeClass.expirationDateRelative().toISOString().replace(/T.*/, '');
-		}
-	}
+	breadcrumbLinkEntries: LinkEntry[] = [];
 
 	get issuerSlug() {
 		return this.route.snapshot.params['issuerSlug'];
@@ -166,7 +170,6 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		}
 	};
 
-	expirationDateEditable = false;
 	idError: string | boolean = false;
 
 	issuer: Issuer;
@@ -191,19 +194,22 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 			DateValidator.validDate,
 			DateRangeValidator.endDateAfterStartDate('activity_start_date', 'activityEndBeforeStart'),
 		])
+		.addControl('activity_zip', '')
+		.addControl('activity_city', '')
+		.addControl('activity_online', false)
+		.addControl('courseUrl', null, UrlValidator.validUrl)
 		.addControl('notify_earner', true)
 		.addArray(
 			'evidence_items',
-			typedFormGroup()
-				.addControl('narrative', '')
-				.addControl('evidence_url', '', UrlValidator.validUrl)
-				.addControl('expiration', ''),
+			typedFormGroup().addControl('narrative', '').addControl('evidence_url', '', UrlValidator.validUrl),
 		)
 		.addControl('pdftemplate', null);
 
 	badgeClass: BadgeClass;
 
 	previewB64Img: string;
+
+	subscriptions: Subscription[] = [];
 
 	issueBadgeFinished: Promise<unknown>;
 	issuerLoaded: Promise<unknown>;
@@ -238,10 +244,13 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 				.then((badgeClass) => {
 					this.badgeClass = badgeClass;
 
+					this.badgeInstanceCourseUrl.set(this.badgeClass.courseUrl ?? null);
+					this.issueForm.controls.courseUrl.setValue(this.badgeInstanceCourseUrl());
+
 					const category = badgeClass.extension['extensions:CategoryExtension'].Category;
 
 					this.badgeClassManager
-						.createBadgeImage(issuer.slug, badgeClass.slug, category, true)
+						.createBadgeImage(issuer.slug, badgeClass.slug, category, badgeClass.imageFrame)
 						.then((img) => {
 							this.previewB64Img = img.image_url;
 						});
@@ -272,6 +281,10 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 
 	async ngOnInit() {
 		super.ngOnInit();
+		this.subscriptions.push(...setupActivityOnlineSync(this.issueForm));
+		if (this.issueForm.controls.evidence_items.length === 0) {
+			this.issueForm.controls.evidence_items.addFromTemplate();
+		}
 
 		await this.issuerLoaded;
 
@@ -329,6 +342,10 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		});
 	}
 
+	ngOnDestroy() {
+		this.subscriptions.forEach((s) => s.unsubscribe());
+	}
+
 	setHTMLCanvasDimensions(pt: ApiPDFTemplate) {
 		let canvas = document.querySelector<HTMLCanvasElement>('#previewCanvas');
 
@@ -359,6 +376,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		}
 
 		const formState = this.issueForm.value;
+
 		const cleanedEvidence = formState.evidence_items.filter((e) => e.narrative !== '' || e.evidence_url !== '');
 		const cleanedName = striptags(formState.recipientprofile_name);
 
@@ -406,13 +424,19 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 				activity_start_date: activityStartDate,
 				activity_end_date: activityEndDate,
 				pdftemplate: formState.pdftemplate,
+				activity_zip: formState.activity_zip,
+				activity_city: formState.activity_city,
+				activity_online: formState.activity_online,
+				course_url: formState.courseUrl,
 			})
 			.then(() => this.badgeClass.update())
 			.then(
 				() => {
 					this.eventsService.recipientBadgesStale.next([]);
 					this.openSuccessDialog(formState.recipient_identifier);
-					this.router.navigate(['issuer/issuers', this.issuerSlug, 'badges', this.badgeClass.slug]);
+					this.router.navigate(['issuer/issuers', this.issuerSlug, 'badges', this.badgeClass.slug], {
+						queryParams: { tab: 'recipients' },
+					});
 					this.messageService.setMessage('Badge awarded to ' + formState.recipient_identifier, 'success');
 				},
 				(error) => {

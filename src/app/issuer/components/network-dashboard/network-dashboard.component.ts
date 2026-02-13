@@ -1,14 +1,4 @@
-import {
-	AfterContentInit,
-	Component,
-	ElementRef,
-	inject,
-	OnInit,
-	output,
-	signal,
-	TemplateRef,
-	ViewChild,
-} from '@angular/core';
+import { AfterContentInit, Component, ElementRef, inject, OnInit, signal, TemplateRef, viewChild } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SessionService } from '../../../common/services/session.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -23,12 +13,11 @@ import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
 import { DialogComponent } from '../../../components/dialog.component';
 import { BrnDialogRef } from '@spartan-ng/brain/dialog';
-import { NgIcon } from '@ng-icons/core';
 import { NgModel, FormsModule } from '@angular/forms';
 import { Issuer } from '../../../issuer/models/issuer.model';
 import { PublicApiService } from '../../../public/services/public-api.service';
 import { MessageService } from '../../../common/services/message.service';
-import { NgStyle, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FormFieldSelectOption } from '../../../components/select.component';
 import { NetworkApiService } from '../../../issuer/services/network-api.service';
@@ -38,9 +27,11 @@ import { AddInstitutionComponent } from '../add-institution/add-institution.comp
 import { BgBreadcrumbsComponent } from '../../../common/components/bg-breadcrumbs/bg-breadcrumbs.component';
 import { ApiNetworkInvitation } from '../../../issuer/models/network-invite-api.model';
 import { NetworkBadgesComponent } from '../network-badges/network-badges.component';
+import { NetworkLearningPathsComponent } from '../network-learningpaths/network-learningpaths.component';
 import { NetworkManager } from '~/issuer/services/network-manager.service';
 import { RouterLink } from '@angular/router';
 import { Network } from '~/issuer/network.model';
+import { ApiBadgeClass } from '~/issuer/models/badgeclass-api.model';
 @Component({
 	selector: 'network-dashboard',
 	templateUrl: './network-dashboard.component.html',
@@ -49,14 +40,13 @@ import { Network } from '~/issuer/network.model';
 		BgAwaitPromises,
 		OebTabsComponent,
 		OebButtonComponent,
-		NgIcon,
 		FormsModule,
-		NgStyle,
 		HlmH1,
 		NetworkPartnersComponent,
 		AddInstitutionComponent,
 		BgBreadcrumbsComponent,
 		NetworkBadgesComponent,
+		NetworkLearningPathsComponent,
 		RouterLink,
 		NgClass,
 	],
@@ -90,26 +80,22 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	issuerSearchResults = [];
 
 	rightsAndRolesExpanded = false;
+	networkBadges: ApiBadgeClass[] = [];
 
 	private _networkStaffRoleOptions: FormFieldSelectOption[];
 
-	@ViewChild('overviewTemplate', { static: true }) overviewTemplate: ElementRef;
-	@ViewChild('partnerTemplate', { static: true }) partnerTemplate: ElementRef;
-	@ViewChild('badgesTemplate', { static: true }) badgesTemplate: ElementRef;
+	readonly overviewTemplate = viewChild<ElementRef>('overviewTemplate');
+	readonly partnerTemplate = viewChild<ElementRef>('partnerTemplate');
+	readonly badgesTemplate = viewChild<ElementRef>('badgesTemplate');
+	readonly learningPathsTemplate = viewChild<ElementRef>('learningPathsTemplate');
 
-	@ViewChild('headerTemplate')
-	headerTemplate: TemplateRef<void>;
+	readonly headerTemplate = viewChild<TemplateRef<void>>('headerTemplate');
 
-	@ViewChild('addInstitutionsTemplate')
-	addInstitutionsTemplate: TemplateRef<void>;
+	readonly addInstitutionsTemplate = viewChild<TemplateRef<void>>('addInstitutionsTemplate');
 
-	@ViewChild('inviteSuccessContent')
-	inviteSuccessContent: TemplateRef<void>;
+	readonly inviteSuccessContent = viewChild<TemplateRef<void>>('inviteSuccessContent');
 
-	@ViewChild('issuerSearchInputModel') issuerSearchInputModel: NgModel;
-
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
+	readonly issuerSearchInputModel = viewChild<NgModel>('issuerSearchInputModel');
 
 	constructor() {
 		const loginService = inject(SessionService);
@@ -155,17 +141,22 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 			{
 				key: 'overview',
 				title: 'General.overview',
-				component: this.overviewTemplate,
+				component: this.overviewTemplate(),
 			},
 			{
 				key: 'partners',
 				title: 'Network.partnerIssuers',
-				component: this.partnerTemplate,
+				component: this.partnerTemplate(),
 			},
 			{
 				key: 'badges',
 				title: 'Badges',
-				component: this.badgesTemplate,
+				component: this.badgesTemplate(),
+			},
+			{
+				key: 'learningpaths',
+				title: 'LearningPath.learningpathsPlural',
+				component: this.learningPathsTemplate(),
 			},
 		];
 	}
@@ -184,11 +175,12 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	private readonly _hlmDialogService = inject(HlmDialogService);
 
 	public openDialog() {
-		if (this.network().current_user_network_role != 'owner') return;
+		const role = this.network().current_user_network_role;
+		if (!['owner', 'creator'].includes(role)) return;
 		const dialogRef = this._hlmDialogService.open(DialogComponent, {
 			context: {
-				headerTemplate: this.headerTemplate,
-				content: this.addInstitutionsTemplate,
+				headerTemplate: this.headerTemplate(),
+				content: this.addInstitutionsTemplate(),
 				variant: 'default',
 				footer: false,
 			},
@@ -196,12 +188,11 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 		this.dialogRef = dialogRef;
 
 		setTimeout(() => {
-			if (this.issuerSearchInputModel) {
-				this.issuerSearchInputModel.valueChanges
-					.pipe(debounceTime(500), distinctUntilChanged())
-					.subscribe(() => {
-						this.issuerSearchChange();
-					});
+			const issuerSearchInputModel = this.issuerSearchInputModel();
+			if (issuerSearchInputModel) {
+				issuerSearchInputModel.valueChanges.pipe(debounceTime(500), distinctUntilChanged()).subscribe(() => {
+					this.issuerSearchChange();
+				});
 			}
 		});
 	}
@@ -210,6 +201,7 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 		this.networkApiService.getNetworkInvites(this.networkSlug).then((invites) => {
 			this.networkInvites.set(invites);
 		});
+		this.activeTab = 'partners';
 		if (this.dialogRef) {
 			this.dialogRef.close();
 		}
@@ -267,10 +259,6 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	}
 
 	get role() {
-		if (this.network().currentUserStaffMember) {
-			return this.network().currentUserStaffMember.roleSlug;
-		} else {
-			return this.network().current_user_network_role;
-		}
+		return this.network()?.current_user_network_role;
 	}
 }

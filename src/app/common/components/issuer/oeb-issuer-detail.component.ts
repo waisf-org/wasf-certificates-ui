@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter, ViewChild, inject, TemplateRef } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, inject, TemplateRef, viewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MessageService } from '../../../common/services/message.service';
 import { Title } from '@angular/platform-browser';
@@ -52,6 +52,7 @@ interface NetworkBadgeGroup {
 import { MatchingAlgorithm } from '~/common/util/matching-algorithm';
 import { ApiBadgeClassNetworkShare } from '~/issuer/models/badgeclass-api.model';
 import { environment } from 'src/environments/environment';
+import { LinkEntry } from '../bg-breadcrumbs/bg-breadcrumbs.component';
 
 @Component({
 	selector: 'oeb-issuer-detail',
@@ -107,6 +108,7 @@ export class OebIssuerDetailComponent implements OnInit {
 	@Input() networks: PublicApiIssuer[];
 	@Input() partner_issuers: PublicApiIssuer[];
 	@Input() public: boolean = false;
+	@Input() crumbs: LinkEntry[];
 	@Output() issuerDeleted = new EventEmitter();
 
 	learningPathsPromise: Promise<unknown>;
@@ -154,18 +156,19 @@ export class OebIssuerDetailComponent implements OnInit {
 	networkGroups: Map<string, { network: any; badges: BadgeResult[]; sharedAt: string }> = new Map();
 	networkGroupsArray: { network: any; badges: BadgeResult[]; sharedAt: string }[] = [];
 
+	sharedBadgeSlugs = new Set<string>();
+
 	tabs: Tab[] = undefined;
 	activeTab = 'badges';
 
 	badgeTemplateTabs: any = undefined;
 	activeTabBadgeTemplate = 'issuer-badges';
 
-	@ViewChild('badgesTemplate', { static: false }) badgesTemplate: TemplateRef<any>;
-	@ViewChild('learningPathTemplate', { static: false }) learningPathTemplate: TemplateRef<any>;
-	@ViewChild('issuerBadgesTemplate', { static: false }) issuerBadgesTemplate: TemplateRef<any>;
-	@ViewChild('networkBadgesTemplate', { static: false }) networkBadgesTemplate: TemplateRef<any>;
-	@ViewChild('pdfTemplatesTemplate', { static: false }) pdfTemplatesTemplate: TemplateRef<any>;
-
+	readonly badgesTemplate = viewChild<TemplateRef<any>>('badgesTemplate');
+	readonly learningPathTemplate = viewChild<TemplateRef<any>>('learningPathTemplate');
+	readonly issuerBadgesTemplate = viewChild<TemplateRef<any>>('issuerBadgesTemplate');
+	readonly networkBadgesTemplate = viewChild<TemplateRef<any>>('networkBadgesTemplate');
+	readonly pdfTemplatesTemplate = viewChild<TemplateRef<any>>('pdfTemplatesTemplate');
 
 	badgeResults: BadgeResult[] = [];
 	networkBadgeInstanceResults: NetworkBadgeGroup[] = [];
@@ -281,7 +284,12 @@ export class OebIssuerDetailComponent implements OnInit {
 				for (const networkBadgeClass of group.badge_classes) {
 					const badgeClass = new BadgeClass(this.entityManager, networkBadgeClass);
 
-					const requestCount = requestMap.get(badgeClass.slug)?.length ?? 0;
+					if (this.sharedBadgeSlugs?.has(badgeClass.slug)) {
+						continue;
+					}
+
+					const requestCount =
+						requestMap.get(badgeClass.slug)?.reduce((sum, qr) => sum + qr.request_count, 0) ?? 0;
 
 					const awardedCount = networkBadgeClass.awarded_count ?? 0;
 
@@ -400,6 +408,7 @@ export class OebIssuerDetailComponent implements OnInit {
 			this.networkGroupsArray = Array.from(this.networkGroups.values()).sort((a, b) => {
 				return new Date(b.sharedAt || 0).getTime() - new Date(a.sharedAt || 0).getTime();
 			});
+			this.sharedBadgeSlugs = new Set(this.networkGroupsArray.flatMap((g) => g.badges.map((b) => b.badge.slug)));
 		}
 	}
 
@@ -413,17 +422,23 @@ export class OebIssuerDetailComponent implements OnInit {
 
 	async ngOnInit() {
 		// initialize counts as 0 and update after data has loaded
-		if (this.sessionService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
-			await this.getLearningPathsForIssuerApi(this.issuer.slug);
-			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
+		if (this.sessionService.isLoggedIn) {
+			if (this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
+				await this.getLearningPathsForIssuerApi(this.issuer.slug);
+				this.getPDFTemplatesForIssuerApi(this.issuer.slug);
+			}
 			this.issuerManager.myIssuers$.subscribe((issuers) => {
 				this.userIsMember = issuers.some((i) => this.issuer.slug == i.slug);
 			});
 		} else {
 			await this.getPublicLearningPaths(this.issuer.slug);
 		}
-		await Promise.all([this.updateResults(), this.updateNetworkResults(), this.updateSharedNetworkResults()]);
+		await this.updateResults();
+		// must run before updateNetworkResults to populate sharedBadgeSlugs
+		await this.updateSharedNetworkResults();
+		await this.updateNetworkResults();
 
+		// await Promise.all([this.updateResults(), this.updateNetworkResults(), this.updateSharedNetworkResults()]);
 		this.badgeTemplateTabs = [
 			{
 				key: 'issuer-badges',
@@ -453,12 +468,12 @@ export class OebIssuerDetailComponent implements OnInit {
 			{
 				key: 'badges',
 				title: 'Badges',
-				component: this.badgesTemplate,
+				component: this.badgesTemplate(),
 			},
 			{
 				key: 'micro-degrees',
 				title: 'LearningPath.learningpathsPlural',
-				component: this.learningPathTemplate,
+				component: this.learningPathTemplate(),
 			},
 			{
 				key: 'pdf-templates',
@@ -579,13 +594,15 @@ export class OebIssuerDetailComponent implements OnInit {
 	}
 
 	routeToBadgeDetail(badge, issuer, focusRequests: boolean = false) {
-		const extras = focusRequests
-			? {
-					queryParams: { focusRequests: 'true' },
-				}
-			: {};
+		const newCrumbs = [...this.crumbs];
+		newCrumbs.at(-1).routerLink = [location.pathname];
+		newCrumbs.push({ title: badge.name, routerLink: ['/issuer/issuers/', issuer.slug, 'badges', badge.slug] });
+		const extras = {
+			queryParams: { focusRequests: focusRequests ? 'true' : undefined },
+			state: { crumbs: newCrumbs },
+		};
 
-		this.router.navigate(['/issuer/issuers/', issuer.slug, 'badges', badge.slug], extras);
+		this.router.navigate(newCrumbs.at(-1).routerLink, extras);
 	}
 	redirectToLearningPathDetail(learningPathSlug, issuer) {
 		this.router.navigate(['/issuer/issuers/', issuer.slug, 'learningpaths', learningPathSlug]);
