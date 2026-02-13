@@ -37,8 +37,8 @@ import { StepComponent } from '../../../components/stepper/step.component';
 import { CdkStep } from '@angular/cdk/stepper';
 import { BgFormFieldImageComponent } from '~/common/components/formfield-image';
 import { preloadImageURL, base64ByteSize } from '~/common/util/file-util';
-import * as fabric from 'fabric';
-import { create } from 'domain';
+import { PreviewCanvas } from '~/common/util/pdftemplate-util';
+import { debounce, interval } from 'rxjs';
 
 @Component({
 	selector: 'pdftemplate-edit-form',
@@ -122,19 +122,9 @@ export class PDFTemplateEditFormComponent
 	isImageLarge = false;
 	currentImage;
 
-	protected canvas?: fabric.Canvas;
-	protected canvasTextBlock?: fabric.Group;
-	pdfOrigWidth: number;
-	pdfOrigHeight: number;
-	pdfOrigBlockWidth: number;
-	pdfTextColor: string = '#323232';
-	pdfLinkColor: string = '#1400FF';
-	pdfGreyBgColor: string = '#F5F5F5';
-	canvasDiffXDecimal: number;
-	canvasDiffYDecimal: number;
-
-	readonly pdfPreviewQrImageUrl = preloadImageURL('../../../../breakdown/static/images/pdfPreviewQrImage.png');
-	readonly pdfPreviewBadgeImageSVGUrl = preloadImageURL('../../../../breakdown/static/images/pdfPreviewBadgeImage.svg');
+	protected previewCanvas?: PreviewCanvas;
+	canvasDiffXDecimal: number = 0;
+	canvasDiffYDecimal: number = 0;
 
 	constructor(
 		protected loginService: SessionService,
@@ -189,259 +179,63 @@ export class PDFTemplateEditFormComponent
 
 	ngAfterViewInit(): void {
 		this.stepper.selectionChange.subscribe((event) => {
-			if (typeof this.canvas === 'undefined' && event.selectedIndex == 1) {
+			if (typeof this.previewCanvas === 'undefined' && event.selectedIndex == 1) {
 				setTimeout(() =>{
-					this.initCanvas()
+					this.previewCanvas = new PreviewCanvas(
+						this.translate,
+						this.pdfTemplateForm.value.format == '0' ? 'portrait' : 'landscape',
+						this.pdfTemplateForm.value.scale,
+						this.pdfTemplateForm.value.alignment == '0' ? 'left' : 'center',
+						this.pdfTemplateForm.value.posX,
+						this.pdfTemplateForm.value.posY,
+						this.pdfTemplateForm.controls.image.value,
+					);
+
+					this.previewCanvas.canvasTextBlock.on('moving', (e) => {
+						const newPosX = Math.round(e.transform.target.left);
+						const newPosY = Math.round(e.transform.target.top);
+
+						this.pdfTemplateForm.rawControl.controls.posX.setValue(newPosX, {
+							emitEvent: false
+						});
+						this.pdfTemplateForm.rawControl.controls.posY.setValue(newPosY, {
+							emitEvent: false
+						});
+					});
 				}, 1);
 			}
 		});
 
-		this.pdfTemplateForm.rawControl.valueChanges.subscribe((v) => {
-			this.recalcCanvas();
+		this.pdfTemplateForm.rawControl.controls['format'].valueChanges.subscribe((v) => {
+			this.imageField.control.reset();
+		});
+
+		['alignment', 'posX', 'posY'].forEach(control => {
+			this.pdfTemplateForm.rawControl.controls[control].valueChanges.subscribe((v) => {
+				setTimeout(() =>{
+					this.updatePreview(this.previewCanvas.page);
+				}, 1);
+			});
+		});
+
+		this.pdfTemplateForm.rawControl.controls['scale'].valueChanges.pipe(debounce(() => interval(25))).subscribe(() => {
+			setTimeout(() =>{
+				this.updatePreview(this.previewCanvas.page);
+			}, 1);
 		});
 	}
 
-	initCanvas() {
-		if (this.pdfTemplateForm.value.format == '0') {
-			this.pdfOrigWidth = fabric.util.parseUnit('210mm');
-			this.pdfOrigHeight = fabric.util.parseUnit('297mm');
-			this.pdfOrigBlockWidth = fabric.util.parseUnit('103mm');
-		} else {
-			this.pdfOrigWidth = fabric.util.parseUnit('297mm');
-			this.pdfOrigHeight = fabric.util.parseUnit('210mm');
-			this.pdfOrigBlockWidth = fabric.util.parseUnit('193mm');
-		}
-
-		this.canvasDiffXDecimal = 0;
-		this.canvasDiffYDecimal = 0;
-
-		this.canvas = new fabric.Canvas('previewCanvas');
-
-		const bgImg = document.querySelector<HTMLImageElement>('#backgroundImage');
-		let img = new fabric.FabricImage(bgImg, {
-			scaleX: this.canvas.width / bgImg.width,
-			scaleY: this.canvas.height / bgImg.height,
-		});
-		this.canvas.backgroundImage = img;
-
-		this.recalcCanvas();
+	updatePreview(page: number = 1) {
+		this.previewCanvas.updateValues(
+			this.pdfTemplateForm.value.format == '0' ? 'portrait' : 'landscape',
+			Number(this.pdfTemplateForm.value.scale),
+			this.pdfTemplateForm.value.alignment == '0' ? 'left' : 'center',
+			Number(this.pdfTemplateForm.value.posX),
+			Number(this.pdfTemplateForm.value.posY),
+			this.pdfTemplateForm.value.image,
+			page,
+		);
 	}
-
-	recalcCanvas() {
-		this.canvas.remove(this.canvasTextBlock);
-
-		const widthCoeff = this.canvas.width / this.pdfOrigWidth;
-		const heightCoeff = this.canvas.height / this.pdfOrigHeight;
-		// const heightCoeff = this.pdfOrigHeight / this.canvas.height;
-		const scaleCoeff = this.pdfTemplateForm.value.scale / 100;
-
-		const blockWidth = this.pdfOrigBlockWidth * widthCoeff * scaleCoeff;
-		const blockLeft = this.pdfTemplateForm.value.posX * widthCoeff;
-		const blockTop = this.pdfTemplateForm.value.posY * heightCoeff;
-		const blockAlignment = this.pdfTemplateForm.value.alignment == '0' ? 'left' : 'center';
-
-		let internalBlockY = blockTop;
-
-		const name = new fabric.Textbox('Vorname Nachname', {
-			fontSize: 16 * heightCoeff * scaleCoeff,
-			fontFamily: 'Rubik',
-			fontWeight: 700,
-			lineHeight: 1.2,
-			textAlign: blockAlignment,
-			fill: this.pdfTextColor,
-			top: internalBlockY,
-			left: blockLeft,
-			width: blockWidth
-		});
-		internalBlockY += name.height;
-		internalBlockY += 8 * heightCoeff * scaleCoeff;
-
-		const date = new fabric.Textbox('hat vom DD.MM.-DD.MM.YYYY in Ort', {
-			fontSize: 14 * heightCoeff * scaleCoeff,
-			fontFamily: 'Rubik',
-			lineHeight: 1.3,
-			textAlign: blockAlignment,
-			fill: this.pdfTextColor,
-			top: internalBlockY,
-			left: blockLeft,
-			width: blockWidth
-		});
-		date.setSelectionStyles({ fontWeight: 500 }, 8, 25);
-		date.setSelectionStyles({ fontWeight: 500 }, 29, 32);
-		internalBlockY += date.height;
-
-		const hours = new fabric.Textbox('innerhalb von XX Stunden', {
-			fontSize: 14 * heightCoeff * scaleCoeff,
-			fontFamily: 'Rubik',
-			lineHeight: 1.3,
-			textAlign: blockAlignment,
-			fill: this.pdfTextColor,
-			top: internalBlockY,
-			left: blockLeft,
-			width: blockWidth
-		});
-		hours.setSelectionStyles({ fontWeight: 500 }, 14, 24);
-		internalBlockY += hours.height;
-
-		const aquired = new fabric.Textbox('folgenden Badge erworben:', {
-			fontSize: 14 * heightCoeff * scaleCoeff,
-			fontFamily: 'Rubik',
-			lineHeight: 1.3,
-			textAlign: blockAlignment,
-			fill: this.pdfTextColor,
-			top: internalBlockY,
-			left: blockLeft,
-			width: blockWidth
-		});
-		internalBlockY += aquired.height;
-		internalBlockY += 32 * heightCoeff * scaleCoeff;
-
-		const badgeImg = document.querySelector<HTMLImageElement>('#badgeImageSVG');
-		badgeImg.width = 160;
-		badgeImg.height = 160;
-		const badge = new fabric.FabricImage(badgeImg, {
-			scaleX: heightCoeff * scaleCoeff,
-			scaleY: heightCoeff * scaleCoeff,
-			top: internalBlockY,
-		});
-		const imgCenterPos = blockLeft + (blockWidth - badge.width * heightCoeff * scaleCoeff)/2;
-		badge.left = blockAlignment == 'center' ? imgCenterPos : blockLeft;
-
-		internalBlockY += badge.height * heightCoeff * scaleCoeff;
-		internalBlockY += 24 * heightCoeff * scaleCoeff;
-
-		const title = new fabric.Textbox('Badge Titel maximal 60 Zeichen stehen hier zB A New Road for', {
-			fontSize: 16 * heightCoeff * scaleCoeff,
-			fontFamily: 'Rubik',
-			fontWeight: 700,
-			lineHeight: 1.2,
-			textAlign: blockAlignment,
-			fill: this.pdfTextColor,
-			top: internalBlockY,
-			left: blockLeft,
-			width: blockWidth
-		});
-		internalBlockY += title.height;
-		internalBlockY += 8 * heightCoeff * scaleCoeff;
-
-		const desc = new fabric.Textbox('Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis,  ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate  eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae,  justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt.  Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend  tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac,  enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus', {
-			fontSize: 12 * heightCoeff * scaleCoeff,
-			fontFamily: 'Rubik',
-			lineHeight: 1.3,
-			textAlign: blockAlignment,
-			fill: this.pdfTextColor,
-			top: internalBlockY,
-			left: blockLeft,
-			width: blockWidth,
-		});
-		internalBlockY += desc.height;
-		internalBlockY += 24 * heightCoeff * scaleCoeff;
-
-		const rect = new fabric.Rect({
-			rx: 5,
-			ry: 5,
-			fill: this.pdfGreyBgColor,
-			top: internalBlockY,
-			left: blockLeft,
-			width: blockWidth,
-			height: 58 * heightCoeff * scaleCoeff,
-		});
-
-		const qrImg = document.querySelector<HTMLImageElement>('#qrImage');
-		qrImg.width = 50;
-		qrImg.height = 50;
-		const qr = new fabric.FabricImage(qrImg, {
-			scaleX: heightCoeff * scaleCoeff,
-			scaleY: heightCoeff * scaleCoeff,
-			top: internalBlockY + 4 * heightCoeff * scaleCoeff,
-			left: blockLeft + 4 * widthCoeff * scaleCoeff,
-		});
-
-		const created = new fabric.Textbox('ERSTELLT ÜBER OPENBADGES.EDUCATION.', {
-			fontSize: 10 * heightCoeff * scaleCoeff,
-			fontFamily: 'Rubik',
-			fontWeight: 700,
-			lineHeight: 1.3,
-			fill: this.pdfTextColor,
-			top: internalBlockY + 9.5 * heightCoeff * scaleCoeff,
-			left: blockLeft + 59 * widthCoeff * scaleCoeff,
-			width: blockWidth - 59 * widthCoeff * scaleCoeff,
-		});
-		created.setSelectionStyles({
-			fill: this.pdfLinkColor,
-			underline: true
-		}, 14, 34);
-
-		const digital = new fabric.Textbox('Der digitale Badge kann über den QR-Code abgerufen werden.', {
-			fontSize: 10 * heightCoeff * scaleCoeff,
-			fontFamily: 'Rubik',
-			lineHeight: 1.3,
-			fill: this.pdfTextColor,
-			top: internalBlockY + 9.5 * heightCoeff * scaleCoeff + created.height,
-			left: blockLeft + 59 * widthCoeff * scaleCoeff,
-			width: blockWidth - 59 * widthCoeff * scaleCoeff,
-		});
-
-
-		this.canvasTextBlock = new fabric.Group([
-			name, date, hours, aquired, badge, title, desc, rect, qr, created, digital
-		], {
-			width: blockWidth,
-			borderColor: '#FF4849',
-			borderDashArray: [3],
-			hasBorders: true,
-			hasControls: false
-		});
-
-		this.canvas.add(this.canvasTextBlock);
-
-		this.canvas.setActiveObject(this.canvasTextBlock);
-		this.canvas.on('selection:cleared', () => {
-			this.canvas.setActiveObject(this.canvasTextBlock);
-		});
-
-		this.canvasTextBlock.on('moving', (e) => {
-			const diffX = (e.e as MouseEvent).movementX / widthCoeff + this.canvasDiffXDecimal;
-			const diffY = (e.e as MouseEvent).movementY / heightCoeff + this.canvasDiffYDecimal;
-
-			this.canvasDiffXDecimal = diffX - Math.round(diffX);
-			this.canvasDiffYDecimal = diffY - Math.round(diffY);
-
-			const newPosX = Number(this.pdfTemplateForm.value.posX) + Math.round(diffX);
-			const newPosY = Number(this.pdfTemplateForm.value.posY) + Math.round(diffY);
-
-			// if (this.coordsInsideCanvas(newPosX, newPosY)) {
-				this.pdfTemplateForm.rawControl.controls.posX.setValue(newPosX, {
-					emitEvent: false
-				});
-				this.pdfTemplateForm.rawControl.controls.posY.setValue(newPosY, {
-					emitEvent: false
-				});
-			// }
-
-			// this.canvasValidation();
-		});
-	}
-
-	coordsInsideCanvas(x, y): boolean {
-		if (x < 0 || y < 0) {
-			return false;
-		}
-
-		return true;
-	}
-
-	// isTextBlockCompletelyOnCanvas(): boolean {
-	// 	if (this.canvasTextBlock.aCoords.tl.x < 0 ||
-	// 		this.canvasTextBlock.aCoords.tl.y < 0 ||
-	// 		this.canvas.getWidth() - this.canvasTextBlock.aCoords.br.x < 0 ||
-	// 		this.canvas.getHeight() - this.canvasTextBlock.aCoords.br.y < 0
-	// 	) {
-	// 		return false;
-	// 	}
-
-	// 	return true;
-	// }
 
 	initFormFromExisting(pt: PDFTemplate) {
 		if (!pt) return;
@@ -496,52 +290,13 @@ export class PDFTemplateEditFormComponent
 		}
 	}
 
-	canvasValidation(): ValidationErrors | null {
-		if (!this.pdfTemplateForm) return null;
-		if (!this.canvas) return null;
-		if (!this.canvasTextBlock) return null;
-
-		if (this.canvasTextBlock.aCoords.tl.x < 0 ||
-			this.canvasTextBlock.aCoords.tl.y < 0 ||
-			this.canvas.getWidth() - this.canvasTextBlock.aCoords.br.x < 0 ||
-			this.canvas.getHeight() - this.canvasTextBlock.aCoords.br.y < 0
-		) {
-			return { textBlockOutside: true };
-		}
-	}
-
-	test() {
-		return (control: AbstractControl) => {
-
-			if (!this.pdfTemplateForm) return null;
-			if (!this.canvas) return null;
-			if (!this.canvasTextBlock) return null;
-
-			const x = parseFloat(control.value);
-			if (x < 0 || this.canvas.getWidth() - this.canvasTextBlock.aCoords.br.x < 0) {
-				return { textBlockOutside: true };
-			}
-
-			// if (this.canvasTextBlock.aCoords.tl.x < 0 ||
-			// 	this.canvasTextBlock.aCoords.tl.y < 0 ||
-			// 	this.canvas.getWidth() - this.canvasTextBlock.aCoords.br.x < 0 ||
-			// 	this.canvas.getHeight() - this.canvasTextBlock.aCoords.br.y < 0
-			// ) {
-			// 	return { textBlockOutside: true };
-			// }
-			// return { textBlockOutside: true };
-
-		}
-	}
-
 	pdfTemplateForm = typedFormGroup([
 		this.imageValidation.bind(this),
-		// this.canvasValidation.bind(this),
 	])
 		.addControl('name', '', [Validators.required, Validators.maxLength(60)])
 		.addControl('format', "0", Validators.required)
 		.addControl('alignment', "0", Validators.required)
-		.addControl('posX', 80, [this.positiveIntegerOrNull(), this.test()])
+		.addControl('posX', 80, [this.positiveIntegerOrNull()])
 		.addControl('posY', 98, this.positiveIntegerOrNull)
 		.addControl('scale', 90, [this.positiveIntegerOrNull(), Validators.min(83), Validators.max(100)])
 		.addControl('image', '');
@@ -619,5 +374,25 @@ export class PDFTemplateEditFormComponent
 		}
 		this.currentImage = image.slice();
 		this.imageField.useDataUrl(image, 'PDFTEMPLATE');
+	}
+
+	isPreviewPage(pn: number): boolean {
+		if (this.previewCanvas !== undefined && this.previewCanvas.page == pn) {
+			return true;
+		}
+
+		return false;
+	}
+
+	showCoverPage() {
+		this.updatePreview(1);
+	}
+
+	showCompetencePage() {
+		this.updatePreview(2);
+	}
+
+	showOptionalPage() {
+		this.updatePreview(3);
 	}
 }

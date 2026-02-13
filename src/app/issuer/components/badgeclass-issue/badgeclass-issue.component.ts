@@ -45,6 +45,8 @@ import { DateRangeValidator } from '~/common/validators/date-range.validator';
 import { FormFieldSelectOption } from '~/common/components/formfield-select';
 import { PDFTemplateApiService } from '../../../common/services/pdftemplate-api.service';
 import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
+import { PreviewCanvas } from '~/common/util/pdftemplate-util';
+import { PDFTemplate } from '~/issuer/models/pdftemplate.model';
 
 @Component({
 	selector: 'badgeclass-issue',
@@ -54,6 +56,25 @@ import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 			:host ::ng-deep {
 				brn-collapsible[data-state='open'] button span {
 					font-weight: bold !important;
+				}
+
+				.canvas-container {
+					width: 100% !important;
+					height: 100% !important;
+					align-content: center;
+					justify-items: center;
+
+					.portrait {
+						aspect-ratio: 210 / 297;
+						width: 188px !important;
+						height: 266px !important;
+					}
+
+					.landscape {
+						aspect-ratio: 297 / 210;
+						width: 250px !important;
+						height: 178px !important;
+					}
 				}
 			}
 		`,
@@ -197,6 +218,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 	pdfTemplatesPromise: Promise<unknown>;
 	pdfTemplates: ApiPDFTemplate[];
 	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
+	pdfTemplatePreviewCanvas: PreviewCanvas;
 
 	constructor() {
 		const sessionService = inject(SessionService);
@@ -255,7 +277,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 
 		if (this.sessionService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
 			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
-			await this. pdfTemplatesPromise;
+			await this.pdfTemplatesPromise;
 
 			this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
 				label: t.name,
@@ -266,6 +288,65 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 				value: null
 			});
 		}
+
+		this.issueForm.rawControl.controls['pdftemplate'].valueChanges.subscribe((v) => {
+			if (v != null) {
+				for (let pt of this.pdfTemplates) {
+					if (pt.slug == v) {
+						if (this.pdfTemplatePreviewCanvas === undefined) {
+							this.setHTMLCanvasDimensions(pt);
+
+							this.pdfTemplatePreviewCanvas = new PreviewCanvas(
+								this.translate,
+								pt.format == 0 ? 'portrait' : 'landscape',
+								pt.scale,
+								pt.alignment == 0 ? 'left' : 'center',
+								pt.posX,
+								pt.posY,
+								pt.image,
+								1,
+								'previewCanvas',
+								this.badgeClass.image,
+								false,
+							);
+						} else {
+							this.setHTMLCanvasDimensions(pt);
+
+							this.pdfTemplatePreviewCanvas.updateValues(
+								pt.format == 0 ? 'portrait' : 'landscape',
+								pt.scale,
+								pt.alignment == 0 ? 'left' : 'center',
+								pt.posX,
+								pt.posY,
+								pt.image,
+							);
+						}
+
+						break;
+					}
+				};
+			}
+		});
+	}
+
+	setHTMLCanvasDimensions(pt: ApiPDFTemplate) {
+		let canvas = document.querySelector<HTMLCanvasElement>('#previewCanvas');
+
+		if (pt.format == 0) {
+			canvas.width = 794;
+			canvas.height = 1123;
+			canvas.classList.remove('landscape');
+			canvas.classList.add('portrait');
+		} else {
+			canvas.width = 1123;
+			canvas.height = 794;
+			canvas.classList.remove('portrait');
+			canvas.classList.add('landscape');
+		}
+	}
+
+	pdfTemplateSelected() {
+		return this.issueForm.controls.pdftemplate.value != null;
 	}
 
 	addEvidence() {

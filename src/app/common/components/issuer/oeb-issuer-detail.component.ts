@@ -533,39 +533,49 @@ export class OebIssuerDetailComponent implements OnInit {
 		});
 	}
 
-	openEditDialog(pdfTemplateSlug: string, issuerSlug: string) {
-		const dialogRef = this._hlmDialogService.open(InfoDialogComponent, {
-			context: {
-				variant: 'info',
-				caption: this.translate.instant('PDFTemplate.openEditDialogTitle'),
-				text: this.translate.instant('PDFTemplate.openEditDialogText'),
-				cancelText: this.translate.instant('General.cancel'),
-				forwardText: this.translate.instant('PDFTemplate.openEditDialogForward'),
-			},
-		});
-		dialogRef.closed$.subscribe((result) => {
-			if (result === 'continue')
-				this.router.navigate(['/issuer/issuers/', issuerSlug, 'pdftemplates', pdfTemplateSlug, 'edit']);
-		});
+	async openEditDialog(pdfTemplateSlug: string, issuerSlug: string) {
+		const pt = await this.pdfTemplateApiService.getPDFTemplate(issuerSlug, pdfTemplateSlug);
+
+		if (pt.used) {
+			const dialogRef = this._hlmDialogService.open(InfoDialogComponent, {
+				context: {
+					variant: 'info',
+					caption: this.translate.instant('PDFTemplate.openEditDialogTitle'),
+					text: this.translate.instant('PDFTemplate.openEditDialogText'),
+					cancelText: this.translate.instant('General.cancel'),
+					forwardText: this.translate.instant('PDFTemplate.openEditDialogForward'),
+				},
+			});
+			dialogRef.closed$.subscribe((result) => {
+				if (result === 'continue')
+					this.router.navigate(['/issuer/issuers/', issuerSlug, 'pdftemplates', pdfTemplateSlug, 'edit']);
+			});
+		} else {
+			this.router.navigate(['/issuer/issuers/', issuerSlug, 'pdftemplates', pdfTemplateSlug, 'edit']);
+		}
 	}
 
-	openDeleteDialog(pdfTemplateName: string, pdfTemplateSlug: string, issuerSlug: string) {
-		const dialogRef = this._hlmDialogService.open(DangerDialogComponentTemplate, {
-			context: {
-				delete: () => this.deletePDFTemplateApi(pdfTemplateSlug, issuerSlug),
-				variant: 'danger',
-				title: this.translate.instant('PDFTemplate.openDeleteDialogTitle', {
-					title: pdfTemplateName
-				}),
-			},
-		});
+	async openDeleteDialog(pdfTemplateName: string, pdfTemplateSlug: string, issuerSlug: string) {
+		const pt = await this.pdfTemplateApiService.getPDFTemplate(issuerSlug, pdfTemplateSlug);
 
-		// const dialogRef = this._hlmDialogService.open(DialogComponent, {
-		// 	context: {
-		// 		variant: 'failure',
-		// 		message: this.translate.instant('PDFTemplate.deleteNotPossibleDialogTitle'),
-		// 	},
-		// });
+		if (pt.used) {
+			const dialogRef = this._hlmDialogService.open(DialogComponent, {
+				context: {
+					variant: 'failure',
+					message: this.translate.instant('PDFTemplate.deleteNotPossibleDialogTitle'),
+				},
+			});
+		} else {
+			const dialogRef = this._hlmDialogService.open(DangerDialogComponentTemplate, {
+				context: {
+					delete: () => this.deletePDFTemplateApi(pdfTemplateSlug, issuerSlug),
+					variant: 'danger',
+					title: this.translate.instant('PDFTemplate.openDeleteDialogTitle', {
+						title: pdfTemplateName
+					}),
+				},
+			});
+		}
 	}
 
 	routeToBadgeDetail(badge, issuer, focusRequests: boolean = false) {

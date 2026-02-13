@@ -33,9 +33,11 @@ import { provideIcons } from '@ng-icons/core';
 					</p>
 				}
 				@if (text) {
-					<p hlmP class="tw-italic">
-						{{ text }}
-					</p>
+					<p
+						hlmP
+						class="tw-italic"
+						[innerHTML]="text"
+					></p>
 				}
 			</div>
 			@if (singleButtonText) {

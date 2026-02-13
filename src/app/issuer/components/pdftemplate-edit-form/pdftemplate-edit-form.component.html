@@ -12,6 +12,8 @@
 					(imageFieldDirty && imageValidation())
 				"
 			>
+				<h3 hlmH3 class="tw-text-oebblack tw-mt-4">{{ 'PDFTemplate.backgroundHeading' | translate }}</h3>
+
 				<section class="tw-mt-6 md:tw-mt-8 tw-mb-10 tw-flex tw-flex-col tw-gap-1 section">
 					<div class="subsection tw-flex tw-flex-col tw-gap-6">
 						<p hlmH3 class="tw-text-oebblack tw-font-semibold">{{ 'PDFTemplate.format' | translate }}</p>
@@ -45,7 +47,7 @@
 									</p>
 
 									@if (pdfTemplateForm.controls.format.value == '1') {
-										<div class="tw-w-full tw-max-w-[460px] tw-aspect-[297/210] tw-mt-4 tw-bg-white tw-border tw-border-solid tw-border-purple tw-rounded-[8px]">
+										<div class="tw-w-full tw-max-w-[460px] tw-aspect-[297/210] tw-mt-4 tw-bg-white tw-border tw-border-solid tw-border-purple tw-rounded-[8px] tw-relative">
 											<bg-formfield-image #imageField
 												[text_body]="'RecBadge.selectFromMyFiles' | translate"
 												dropZoneInfo1="Drag & Drop"
@@ -59,9 +61,21 @@
 												[control]="pdfTemplateForm.rawControlMap.image"
 											>
 											</bg-formfield-image>
+
+											<div [hidden]="pdfTemplateForm.hasError('imageRequired')">
+												<div class="tw-flex tw-items-center tw-justify-center tw-absolute tw-top-0 tw-bottom-0 tw-right-0 tw-left-0 tw-pointer-events-none">
+													<ng-icon
+														hlm
+														size="xl"
+														name="lucideCloudUpload"
+														class="tw-w-6 tw-h-6 tw-text-purple"
+														[hidden]="pdfTemplateForm.hasError('imageRequired')"
+													/>
+												</div>
+											</div>
 										</div>
 									} @else {
-										<div class="tw-w-full tw-max-w-[392px] tw-aspect-[210/297] tw-mt-4 tw-bg-white tw-border tw-border-solid tw-border-purple tw-rounded-[8px]">
+										<div class="tw-w-full tw-max-w-[392px] tw-aspect-[210/297] tw-mt-4 tw-bg-white tw-border tw-border-solid tw-border-purple tw-rounded-[8px] tw-relative">
 											<bg-formfield-image #imageField
 												[text_body]="'RecBadge.selectFromMyFiles' | translate"
 												dropZoneInfo1="Drag & Drop"
@@ -75,6 +89,17 @@
 												[control]="pdfTemplateForm.rawControlMap.image"
 											>
 											</bg-formfield-image>
+											<div [hidden]="pdfTemplateForm.hasError('imageRequired')">
+												<div class="tw-flex tw-items-center tw-justify-center tw-absolute tw-top-0 tw-bottom-0 tw-right-0 tw-left-0 tw-pointer-events-none">
+													<ng-icon
+														hlm
+														size="xl"
+														name="lucideCloudUpload"
+														class="tw-w-6 tw-h-6 tw-text-purple"
+														[hidden]="pdfTemplateForm.hasError('imageRequired')"
+													/>
+												</div>
+											</div>
 										</div>
 									}
 								</div>
@@ -117,7 +142,11 @@
 							[hidden]="!pdfTemplateForm.hasError('imageRatioFalse')"
 							class="tw-text-center tw-w-full tw-text-red tw-mt-2"
 						>
-							{{ 'PDFTemplate.imageRatioError' | translate }}
+							@if (pdfTemplateForm.controls.format.value == '1') {
+								{{ 'PDFTemplate.imageRatioLandscapeError' | translate }}
+							} @else {
+								{{ 'PDFTemplate.imageRatioPortraitError' | translate }}
+							}
 						</p>
 						<p
 							hlmP
@@ -207,19 +236,38 @@
 						<div class="subsection tw-flex-grow tw-flex-shrink-0">
 							<p hlmH3 class="tw-text-oebblack tw-font-semibold">{{ 'PDFTemplate.pdfPreview' | translate }}</p>
 
-							<img src="{{pdfTemplateForm.controls.image.value}}" id="backgroundImage" style="display: none">
-							<img src="{{pdfPreviewBadgeImageSVGUrl}}" id="badgeImageSVG" style="display: none" />
-							<img src="{{pdfPreviewQrImageUrl}}" id="qrImage" style="display: none" />
-
 							@if (pdfTemplateForm.controls.format.value == '1') {
-								<div class="tw-w-full tw-max-w-[460px] tw-aspect-[297/210] tw-mt-4 tw-border tw-border-solid tw-border-purple tw-rounded-[8px]">
-									<canvas id="previewCanvas" width="460" height="325"></canvas>
+								<div class="tw-w-full tw-max-w-[642px] tw-aspect-[297/210] tw-mt-4 tw-border tw-border-solid tw-border-purple tw-rounded-[8px]">
+									<canvas id="previewCanvas" width="1123" height="794"></canvas>
 								</div>
 							} @else {
 								<div class="tw-w-full tw-max-w-[642px] tw-aspect-[210/297] tw-mt-4 tw-border tw-border-solid tw-border-purple tw-rounded-[8px]">
-									<canvas id="previewCanvas" width="642" height="908"></canvas>
+									<canvas id="previewCanvas" width="794" height="1123"></canvas>
 								</div>
 							}
+
+							<div class="preview-page-control tw-text-oebblack tw-flex tw-justify-center l-flex-aligncenter">
+								<a
+									(click)="showCoverPage()"
+									[class]="isPreviewPage(1) ? 'current-page' : ''"
+								>
+									{{ 'PDFTemplate.showCoverPage' | translate}}
+								</a>
+								<span class="tw-text-[21px] tw-leading-[130%]">|</span>
+								<a
+									(click)="showCompetencePage()"
+									[class]="isPreviewPage(2) ? 'current-page' : ''"
+								>
+									{{ 'PDFTemplate.showCompetencePage' | translate}}
+								</a>
+								<span class="tw-text-[21px] tw-leading-[130%]">|</span>
+								<a
+									(click)="showOptionalPage()"
+									[class]="isPreviewPage(3) ? 'current-page' : ''"
+								>
+									{{ 'PDFTemplate.showOptionalPage' | translate}}
+								</a>
+							</div>
 						</div>
 					</div>
 				</section>
@@ -258,7 +306,17 @@
 				[umamiEvent]="!pdfTemplate ? 'cancel-create-pdf-template' : undefined"
 			></oeb-button>
 
-			@if (!firstStep()) {
+			@if (!lastStep()) {
+				<oeb-button
+					type="button"
+					[text]="'General.forward' | translate"
+					(click)="nextStep()"
+					[umamiEvent]="!pdfTemplate ? `create-pdf-template-${this.stepper?.selectedIndex + 1}` : undefined"
+					[disabled]="pdfTemplateForm.hasError('imageRequired')"
+				/>
+			}
+
+			@if (lastStep()) {
 				<oeb-button
 					variant="secondary"
 					type="button"
@@ -269,18 +327,7 @@
 					[disabled-when-requesting]="true"
 				>
 				</oeb-button>
-			}
 
-			@if (!lastStep()) {
-				<oeb-button
-					type="button"
-					[text]="'General.forward' | translate"
-					(click)="nextStep()"
-					[umamiEvent]="!pdfTemplate ? `create-pdf-template-${this.stepper?.selectedIndex + 1}` : undefined"
-				/>
-			}
-
-			@if (lastStep()) {
 				<oeb-button
 					id="create-pdftemplate-btn"
 					type="submit"

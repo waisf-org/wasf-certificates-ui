@@ -23,4 +23,5 @@ export interface ApiPDFTemplate extends ApiPDFTemplateForCreation {
 	slug: PDFTemplateSlug;
 	created_at?: Date | null;
 	created_by: string;
+	used: boolean;
 }

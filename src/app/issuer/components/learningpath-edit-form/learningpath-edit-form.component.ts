@@ -59,6 +59,8 @@ import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmH2, HlmP } from '@spartan-ng/helm/typography';
 import { UpperCasePipe } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
+import { PDFTemplateApiService } from '../../../common/services/pdftemplate-api.service';
+import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 
 type BadgeResult = BadgeClass & { selected?: boolean };
 
@@ -110,6 +112,7 @@ export class LearningPathEditFormComponent
 	protected badgeInstanceManager = inject(BadgeInstanceManager);
 	protected learningPathManager = inject(LearningPathManager);
 	protected configService = inject(AppConfigService);
+	private pdfTemplateApiService = inject(PDFTemplateApiService);
 
 	@ViewChild(StepperComponent) stepper: StepperComponent;
 
@@ -225,6 +228,10 @@ export class LearningPathEditFormComponent
 
 	selectMinBadgesOptions: FormFieldSelectOption[] = [];
 
+	pdfTemplatesPromise: Promise<unknown>;
+	pdfTemplates: ApiPDFTemplate[];
+	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
+
 	/** Inserted by Angular inject() migration for backwards compatibility */
 	constructor(...args: unknown[]);
 
@@ -337,6 +344,7 @@ export class LearningPathEditFormComponent
 					legalCode: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
 				},
 			],
+			pdftemplate: lp.pdftemplate
 		});
 		this.selectedBadges = lp.badges.map((b) => b.badge);
 
@@ -441,9 +449,10 @@ export class LearningPathEditFormComponent
 					UrlValidator.validUrl,
 				),
 			Validators.required,
-		);
+		)
+		.addControl('pdftemplate', null);
 
-	ngAfterViewInit() {
+	async ngAfterViewInit() {
 		this.focusActivation = this.route.snapshot.queryParamMap.get('focusActivation') === 'true';
 
 		if (this.focusActivation && this.initialisedLearningpath && this.stepper) {
@@ -464,6 +473,22 @@ export class LearningPathEditFormComponent
 		this.learningPathForm.controls.badges.rawControl.valueChanges.subscribe((value) => {
 			this.selectMinBadgesOptions = this.generateSelectMinBadgesOptions(value);
 		});
+
+		await this.issuerLoaded;
+
+		if (this.sessionService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
+			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
+			await this.pdfTemplatesPromise;
+
+			this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
+				label: t.name,
+				value: t.slug
+			}));
+			this.selectPDFTemplateOptions.push({
+				label: this.translate.instant('PDFTemplate.oebDesign'),
+				value: null
+			})
+		}
 	}
 
 	private generateSelectMinBadgesOptions(badges: any[]): FormFieldSelectOption[] {
@@ -788,6 +813,7 @@ export class LearningPathEditFormComponent
 			this.initialisedLearningpath.badges = this.draggableList.map((item, index) => {
 				return { badge: item, order: item.order };
 			});
+			this.initialisedLearningpath.pdftemplate = formState.pdftemplate;
 
 			this.savePromise = this.initialisedLearningpath.save();
 
@@ -868,6 +894,7 @@ export class LearningPathEditFormComponent
 						required_badges_count: formState.required_badges_count ?? this.selectedBadges.length,
 						participationBadge_id: participationBadge.slug,
 						activated: formState.activated,
+						pdftemplate: formState.pdftemplate,
 					});
 
 					this.save.emit(this.savePromise);
@@ -900,5 +927,16 @@ export class LearningPathEditFormComponent
 		return this.selectedBadges.length >= 2
 			? null
 			: { minSelectedBadges: { required: 2, actual: this.selectedBadges.length } };
+	}
+
+	getPDFTemplatesForIssuerApi(issuerSlug) {
+		this.pdfTemplatesPromise = this.pdfTemplateApiService
+			.getPDFTemplatesForIssuer(issuerSlug)
+			.then(
+				(pdfTemplates) =>
+					(this.pdfTemplates = pdfTemplates.sort(
+						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+					)),
+			);
 	}
 }

@@ -21,6 +21,7 @@ import { NetworkDashboardComponent } from './components/network-dashboard/networ
 import { NetworkInviteConfirmationComponent } from './components/network-invite-confirmation/network-invite-confirmation.component';
 import { PDFTemplateCreateComponent } from './components/pdftemplate-create/pdftemplate-create.component';
 import { PDFTemplateEditComponent } from './components/pdftemplate-edit/pdftemplate-edit.component';
+import { LearningPathEditPDFTemplateComponent } from './components/learningpath-edit-pdftemplate/learningpath-edit-pdftemplate.component';
 
 export const routes = [
 	/* Issuer */
@@ -119,6 +120,10 @@ export const routes = [
 	{
 		path: 'issuers/:issuerSlug/pdftemplates/:pdfTemplateSlug/edit',
 		component: PDFTemplateEditComponent,
+	},
+	{
+		path: 'issuers/:issuerSlug/learningpaths/:learningPathSlug/pdftemplate',
+		component: LearningPathEditPDFTemplateComponent,
 	},
 	{
 		path: '**',

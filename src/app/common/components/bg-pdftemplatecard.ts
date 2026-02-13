@@ -16,19 +16,19 @@ import { HlmP } from '@spartan-ng/helm/typography';
 			<div class="tw-bg-[var(--color-lightgray)] tw-w-full tw-relative tw-h-[153.08px] tw-items-center tw-flex tw-justify-center tw-p-2 tw-rounded-[3px]">
 				@if (format === 0) {
 					<img
-						class="tw-w-[96.82px] tw-h-[137.08px]"
+						class="tw-aspect-[210/297] tw-h-full tw-w-auto"
 						[loaded-src]="pdftemplateImage"
 						[loading-src]="pdfTemplateFailedImageUrl"
 						[error-src]="pdfTemplateFailedImageUrl"
-						width="97"
+
 					/>
 				} @else if (format === 1) {
 					<img
-						class="tw-w-[192px] tw-h-[137.08px]"
+						class="tw-aspect-[297/210] tw-w-full"
 						[loaded-src]="pdftemplateImage"
 						[loading-src]="pdfTemplateFailedImageUrl"
 						[error-src]="pdfTemplateFailedImageUrl"
-						width="97"
+
 					/>
 				}
 			</div>

@@ -25,14 +25,6 @@ export class PDFTemplateApiService extends BaseHttpApiService {
 		return this.get<ApiPDFTemplate[]>(`/v1/issuer/issuers/${issuerSlug}/pdftemplate`).then((r) => r.body);
 	}
 
-	// getPDFTemplatesForUser() {
-	// 	return this.get<ApiPDFTemplate[]>(`/v1/issuer/all-pdftemplates`).then((r) => r.body);
-	// }
-
-	// getAllPDFTemplates() {
-	// 	return this.get<ApiPDFTemplate[]>(`public/all-pdftemplates`, {}, false).then((r) => r.body);
-	// }
-
 	createPDFTemplate(issuerSlug: string, pdfTemplate: ApiPDFTemplateForCreation) {
 		return this.post<ApiPDFTemplate>(`/v1/issuer/issuers/${issuerSlug}/pdftemplate`, pdfTemplate).then(
 			(r) => r.body,

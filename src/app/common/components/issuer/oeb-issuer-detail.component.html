@@ -303,21 +303,23 @@
 	<ng-template #pdfTemplatesTemplate>
 		<div class="oeb-section-sm">
 			<ng-template [bgAwaitPromises]="pdfTemplatesPromise">
-				<p class="oeb-break-words" hlmP [innerHTML]="('PDFTemplate.descriptionText' | translate)"></p>
+				<div class="md:tw-pr-[280px]">
+					<p class="oeb-break-words" hlmP [innerHTML]="('PDFTemplate.descriptionText' | translate)"></p>
 
-				<a [routerLink]="['./pdftemplates/example']" class="tw-block tw-mt-4 tw-underline !tw-text-link" hlmP>{{ 'PDFTemplate.downloadExample' | translate }}</a>
+					<p hlmP [innerHtml]="'PDFTemplate.exampleZipLink' | translate"></p>
 
-				<div *ngIf="!pdfTemplates?.length" class="tw-mt-8">
-					<oeb-button
-						class="tw-whitespace-nowrap"
-						*ngIf="!public"
-						[routerLink]="['./pdftemplates/create']"
-						[disabled]="isFullIssuer(issuer) && !issuer.canCreateBadge"
-						[text]="('PDFTemplate.createPDFTemplate' | translate)"
-						[class]="isFullIssuer(issuer) && issuer.canCreateBadge ? '' : 'disabled'"
-						[umamiEvent]="'create-pdf-template'"
-					>
-					</oeb-button>
+					<div *ngIf="!pdfTemplates?.length" class="tw-mt-8">
+						<oeb-button
+							class="tw-whitespace-nowrap"
+							*ngIf="!public"
+							[routerLink]="['./pdftemplates/create']"
+							[disabled]="isFullIssuer(issuer) && !issuer.canCreateBadge"
+							[text]="('PDFTemplate.createPDFTemplate' | translate)"
+							[class]="isFullIssuer(issuer) && issuer.canCreateBadge ? '' : 'disabled'"
+							[umamiEvent]="'create-pdf-template'"
+						>
+						</oeb-button>
+					</div>
 				</div>
 
 				<div *ngIf="pdfTemplates && pdfTemplates.length > 0" class="tw-mt-16">

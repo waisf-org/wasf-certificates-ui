@@ -72,7 +72,7 @@ export class PDFTemplateCreateComponent extends BaseAuthenticatedRoutableCompone
 	pdfTemplateCreated(promise: Promise<PDFTemplate | ApiPDFTemplate>) {
 		promise.then(
 			(pt) => {
-				this.router.navigate(['issuer/issuers', this.issuerSlug]).then(() => {
+				this.router.navigate(['issuer/issuers', this.issuerSlug], { fragment: 'pdf-templates'}).then(() => {
 					this.openSuccessDialog();
 				});
 			},
@@ -85,6 +85,6 @@ export class PDFTemplateCreateComponent extends BaseAuthenticatedRoutableCompone
 	}
 
 	creationCanceled() {
-		this.router.navigate(['issuer/issuers', this.issuerSlug]);
+		this.router.navigate(['issuer/issuers', this.issuerSlug], { fragment: 'pdf-templates'});
 	}
 }

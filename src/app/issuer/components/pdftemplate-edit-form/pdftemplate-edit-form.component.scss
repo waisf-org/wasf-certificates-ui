@@ -67,3 +67,23 @@ ng-icon[name="lucideHand"] {
 		height: 100% !important;
 	}
 }
+
+.preview-page-control {
+	gap: 9px;
+	font-size: 16px;
+	line-height: 1.2em;
+	margin-top: 27px;
+
+	a {
+		cursor: pointer;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	.current-page {
+		font-weight: 700;
+		text-decoration: underline;
+	}
+}
