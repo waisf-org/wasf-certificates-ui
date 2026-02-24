@@ -152,11 +152,11 @@ export class BadgeclassIssueBulkAwardConformation
 		this.optionalDetailsForm.controls.courseUrl.setValue(this.badgeClass().courseUrl ?? null);
 		this.badgeInstanceCourseUrl.set(this.optionalDetailsForm.controls.courseUrl.value);
 
-		await this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
+		await this.issuerManager.issuerBySlug(this.issuerSlug()).then((issuer) => {
 			this.issuer = issuer;
 		});
 
-		if (this.sessionService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
+		if (this.authService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
 			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
 			await this. pdfTemplatesPromise;
 

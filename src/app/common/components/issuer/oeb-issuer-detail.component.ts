@@ -478,7 +478,7 @@ export class OebIssuerDetailComponent implements OnInit {
 			{
 				key: 'pdf-templates',
 				title: 'PDFTemplate.pdfTemplates',
-				component: this.pdfTemplatesTemplate,
+				component: this.pdfTemplatesTemplate(),
 			},
 		];
 

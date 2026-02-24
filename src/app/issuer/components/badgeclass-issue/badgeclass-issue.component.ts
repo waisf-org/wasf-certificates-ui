@@ -121,6 +121,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 	protected configService = inject(AppConfigService);
 	protected translate = inject(TranslateService);
 	private pdfTemplateApiService = inject(PDFTemplateApiService);
+	protected authService: SessionService;
 
 	readonly badgeLoadingImageUrl = '../../../breakdown/static/images/badge-loading.svg';
 	readonly badgeFailedImageUrl = '../../../breakdown/static/images/badge-failed.svg';
@@ -232,6 +233,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		const route = inject(ActivatedRoute);
 
 		super(router, route, sessionService);
+		this.authService = sessionService;
 		const title = this.title;
 
 		title.setTitle(`Award Badge - ${this.configService.theme['serviceName'] || 'Badgr'}`);
@@ -288,7 +290,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 
 		await this.issuerLoaded;
 
-		if (this.sessionService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
+		if (this.authService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
 			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
 			await this.pdfTemplatesPromise;
 

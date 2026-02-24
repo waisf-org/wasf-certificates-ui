@@ -45,6 +45,7 @@ export class LearningPathEditPDFTemplateComponent extends BaseAuthenticatedRouta
 	private configService = inject(AppConfigService);
 	private translate = inject(TranslateService);
 	private pdfTemplateApiService = inject(PDFTemplateApiService);
+	protected authService: SessionService;
 
 	issuerSlug: string;
 	learningPathSlug: string;
@@ -73,6 +74,8 @@ export class LearningPathEditPDFTemplateComponent extends BaseAuthenticatedRouta
 		const route = inject(ActivatedRoute);
 
 		super(router, route, sessionService);
+
+		this.authService = sessionService;
 
 		this.translate.get('PDFTemplate.lpChooseTemplateHeadline').subscribe((str) => {
 			this.title.setTitle(`${str} - ${this.configService.theme['serviceName'] || 'Badgr'}`);
@@ -120,7 +123,7 @@ export class LearningPathEditPDFTemplateComponent extends BaseAuthenticatedRouta
 
 		await this.issuerLoaded;
 
-		if (this.sessionService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
+		if (this.authService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
 			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
 			await this.pdfTemplatesPromise;
 

@@ -68,8 +68,9 @@ import { NetworkApiService } from '~/issuer/services/network-api.service';
 import { CommonEntityManager } from '~/entity-manager/services/common-entity-manager.service';
 import { NgIcon } from '@ng-icons/core';
 import { HlmIcon } from '@spartan-ng/helm/icon';
-import { AUTH_PROVIDER, AuthenticationService } from '~/common/services/authentication-service';
+import { AUTH_PROVIDER } from '~/common/services/authentication-service';
 import { Network } from '~/issuer/network.model';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 type BadgeResult = BadgeClass & { selected?: boolean };
 
@@ -112,7 +113,7 @@ export class LearningPathEditFormComponent
 	extends BaseAuthenticatedRoutableComponent
 	implements OnInit, OnChanges, AfterViewInit
 {
-	protected loginService: AuthenticationService;
+	private loginService = inject(AUTH_PROVIDER);
 	protected messageService = inject(MessageService);
 	protected learningPathApiService = inject(LearningPathApiService);
 	protected issuerManager = inject(IssuerManager);
@@ -279,9 +280,10 @@ export class LearningPathEditFormComponent
 	pdfTemplates: ApiPDFTemplate[];
 	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
 
+	isLoggedIn = toSignal(this.loginService.isLoggedIn$);
+
 	constructor() {
 		super();
-		this.loginService = inject(AUTH_PROVIDER);
 		this.baseUrl = this.configService.apiConfig.baseUrl;
 		if (!this.issuer)
 			this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
@@ -519,9 +521,9 @@ export class LearningPathEditFormComponent
 			this.selectMinBadgesOptions = this.generateSelectMinBadgesOptions(value);
 		});
 
-		await this.issuerLoaded;
+		await this.badgesLoaded;
 
-		if (this.sessionService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
+		if (this.isLoggedIn() && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
 			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
 			await this.pdfTemplatesPromise;
 

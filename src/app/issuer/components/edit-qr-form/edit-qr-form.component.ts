@@ -56,6 +56,7 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 	protected issuerManager = inject(IssuerManager);
 	protected _location = inject(Location);
 	private pdfTemplateApiService = inject(PDFTemplateApiService);
+	protected authService: SessionService;
 
 	static datePipe = new DatePipe('de');
 
@@ -138,6 +139,8 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 		const sessionService = inject(SessionService);
 
 		super(router, route, sessionService);
+
+		this.authService = sessionService;
 
 		if (this.isNetworkBadge) {
 			this.badgeClassLoaded = this.badgeClassManager
@@ -248,7 +251,7 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 
 		await this.issuerLoaded;
 
-		if (this.sessionService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
+		if (this.authService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
 			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
 			await this. pdfTemplatesPromise;
 
