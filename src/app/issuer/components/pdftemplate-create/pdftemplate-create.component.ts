@@ -72,19 +72,19 @@ export class PDFTemplateCreateComponent extends BaseAuthenticatedRoutableCompone
 	pdfTemplateCreated(promise: Promise<PDFTemplate | ApiPDFTemplate>) {
 		promise.then(
 			(pt) => {
-				this.router.navigate(['issuer/issuers', this.issuerSlug], { fragment: 'pdf-templates'}).then(() => {
+				this.router.navigate(['issuer/issuers', this.issuerSlug], { fragment: 'pdf-templates' }).then(() => {
 					this.openSuccessDialog();
 				});
 			},
 			(error) =>
 				this.messageService.reportAndThrowError(
 					`Unable to create PDF Template: ${BadgrApiFailure.from(error).firstMessage}`,
-					error
+					error,
 				),
 		);
 	}
 
 	creationCanceled() {
-		this.router.navigate(['issuer/issuers', this.issuerSlug], { fragment: 'pdf-templates'});
+		this.router.navigate(['issuer/issuers', this.issuerSlug], { fragment: 'pdf-templates' });
 	}
 }

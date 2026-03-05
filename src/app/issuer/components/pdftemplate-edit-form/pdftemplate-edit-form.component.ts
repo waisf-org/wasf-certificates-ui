@@ -14,7 +14,11 @@ import { Validators, FormsModule, ReactiveFormsModule, AbstractControl, Validati
 import { BaseAuthenticatedRoutableComponent } from '../../../common/pages/base-authenticated-routable.component';
 import { SessionService } from '../../../common/services/session.service';
 import { typedFormGroup } from '../../../common/util/typed-forms';
-import { PDFTemplateAlignment, PDFTemplateFormat, ApiPDFTemplateForCreation } from '../../../common/model/pdftemplate-api.model';
+import {
+	PDFTemplateAlignment,
+	PDFTemplateFormat,
+	ApiPDFTemplateForCreation,
+} from '../../../common/model/pdftemplate-api.model';
 import { PDFTemplate, pdfTemplateAlignments, pdfTemplateFormats } from '../../models/pdftemplate.model';
 import { TranslateService, TranslatePipe, TranslateModule } from '@ngx-translate/core';
 import { PDFTemplateManager } from '../../services/pdftemplate-manager.service';
@@ -140,9 +144,13 @@ export class PDFTemplateEditFormComponent
 		});
 
 		if (this.translate.currentLang == 'de') {
-			this.pdfPreviewOEBDesignImageUrl = preloadImageURL('../../../../breakdown/static/images/pdfPreviewOEBDesignDE.svg');
+			this.pdfPreviewOEBDesignImageUrl = preloadImageURL(
+				'../../../../breakdown/static/images/pdfPreviewOEBDesignDE.svg',
+			);
 		} else {
-			this.pdfPreviewOEBDesignImageUrl = preloadImageURL('../../../../breakdown/static/images/pdfPreviewOEBDesignEN.svg');
+			this.pdfPreviewOEBDesignImageUrl = preloadImageURL(
+				'../../../../breakdown/static/images/pdfPreviewOEBDesignEN.svg',
+			);
 		}
 	}
 
@@ -161,7 +169,7 @@ export class PDFTemplateEditFormComponent
 				this.pdfTemplateForm.rawControl.patchValue({
 					name: sessionValues['pdftemplate_name'] || '',
 					format: sessionValues['pdftemplate_format'] || false,
-					alignment: sessionValues['pdftemplate_alignment'] || 0 as PDFTemplateAlignment,
+					alignment: sessionValues['pdftemplate_alignment'] || (0 as PDFTemplateAlignment),
 					posX: sessionValues['pdftemplate_posX'] || 80,
 					posY: sessionValues['pdftemplate_posY'] || 98,
 					scale: sessionValues['pdftemplate_scale'] || 90,
@@ -184,9 +192,13 @@ export class PDFTemplateEditFormComponent
 
 		this.translate.onLangChange.subscribe((event) => {
 			if (event.lang == 'de') {
-				this.pdfPreviewOEBDesignImageUrl = preloadImageURL('../../../../breakdown/static/images/pdfPreviewOEBDesignDE.svg');
+				this.pdfPreviewOEBDesignImageUrl = preloadImageURL(
+					'../../../../breakdown/static/images/pdfPreviewOEBDesignDE.svg',
+				);
 			} else {
-				this.pdfPreviewOEBDesignImageUrl = preloadImageURL('../../../../breakdown/static/images/pdfPreviewOEBDesignEN.svg');
+				this.pdfPreviewOEBDesignImageUrl = preloadImageURL(
+					'../../../../breakdown/static/images/pdfPreviewOEBDesignEN.svg',
+				);
 			}
 		});
 	}
@@ -194,7 +206,7 @@ export class PDFTemplateEditFormComponent
 	ngAfterViewInit(): void {
 		this.stepper.selectionChange.subscribe((event) => {
 			if (typeof this.previewCanvas === 'undefined' && event.selectedIndex == 1) {
-				setTimeout(() =>{
+				setTimeout(() => {
 					this.previewCanvas = new PreviewCanvas(
 						this.translate,
 						this.pdfTemplateForm.value.format == '0' ? 'portrait' : 'landscape',
@@ -210,10 +222,10 @@ export class PDFTemplateEditFormComponent
 						const newPosY = Math.round(e.transform.target.top);
 
 						this.pdfTemplateForm.rawControl.controls.posX.setValue(newPosX, {
-							emitEvent: false
+							emitEvent: false,
 						});
 						this.pdfTemplateForm.rawControl.controls.posY.setValue(newPosY, {
-							emitEvent: false
+							emitEvent: false,
 						});
 					});
 				}, 1);
@@ -224,19 +236,21 @@ export class PDFTemplateEditFormComponent
 			this.imageField.control.reset();
 		});
 
-		['alignment', 'posX', 'posY'].forEach(control => {
+		['alignment', 'posX', 'posY'].forEach((control) => {
 			this.pdfTemplateForm.rawControl.controls[control].valueChanges.subscribe((v) => {
-				setTimeout(() =>{
+				setTimeout(() => {
 					this.updatePreview(this.previewCanvas.page);
 				}, 1);
 			});
 		});
 
-		this.pdfTemplateForm.rawControl.controls['scale'].valueChanges.pipe(debounce(() => interval(25))).subscribe(() => {
-			setTimeout(() =>{
-				this.updatePreview(this.previewCanvas.page);
-			}, 1);
-		});
+		this.pdfTemplateForm.rawControl.controls['scale'].valueChanges
+			.pipe(debounce(() => interval(25)))
+			.subscribe(() => {
+				setTimeout(() => {
+					this.updatePreview(this.previewCanvas.page);
+				}, 1);
+			});
 	}
 
 	updatePreview(page: number = 1) {
@@ -275,7 +289,7 @@ export class PDFTemplateEditFormComponent
 			if (!Number.isInteger(val) || val < 0) {
 				return { negativeDuration: this.translate.instant('CreateBadge.durationPositive') };
 			}
-		}
+		};
 	}
 
 	imageValidation(): ValidationErrors | null {
@@ -304,12 +318,10 @@ export class PDFTemplateEditFormComponent
 		}
 	}
 
-	pdfTemplateForm = typedFormGroup([
-		this.imageValidation.bind(this),
-	])
+	pdfTemplateForm = typedFormGroup([this.imageValidation.bind(this)])
 		.addControl('name', '', [Validators.required, Validators.maxLength(60)])
-		.addControl('format', "0", Validators.required)
-		.addControl('alignment', "0", Validators.required)
+		.addControl('format', '0', Validators.required)
+		.addControl('alignment', '0', Validators.required)
 		.addControl('posX', 80, [this.positiveIntegerOrNull()])
 		.addControl('posY', 98, this.positiveIntegerOrNull)
 		.addControl('scale', 90, [this.positiveIntegerOrNull(), Validators.min(83), Validators.max(100)])
@@ -353,7 +365,7 @@ export class PDFTemplateEditFormComponent
 					image: formState.image,
 				} as ApiPDFTemplateForCreation;
 
-				this.savePromise = this.pdfTemplateManager.createPDFTemplate(this.issuerSlug, pdfTemplateData)
+				this.savePromise = this.pdfTemplateManager.createPDFTemplate(this.issuerSlug, pdfTemplateData);
 			}
 
 			this.save.emit(this.savePromise);

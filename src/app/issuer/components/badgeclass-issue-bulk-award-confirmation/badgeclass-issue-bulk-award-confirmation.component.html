@@ -125,7 +125,7 @@
 				[noTopMargin]="true"
 			></oeb-select>
 
-			@if(issuer.currentUserStaffMember.canEditBadge) {
+			@if (issuer.currentUserStaffMember.canEditBadge) {
 				<oeb-button
 					[id]="'create-new-pdftemplate-btn'"
 					[class.disabled]="!issuer.canCreateBadge"

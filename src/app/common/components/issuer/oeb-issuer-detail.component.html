@@ -55,7 +55,7 @@
 						*ngIf="!public && pdfTemplates && pdfTemplates.length > 0"
 						[routerLink]="['./pdftemplates/create']"
 						[disabled]="isFullIssuer(issuer) && !issuer.canCreateBadge"
-						[text]="('PDFTemplate.createPDFTemplate' | translate)"
+						[text]="'PDFTemplate.createPDFTemplate' | translate"
 						[class]="isFullIssuer(issuer) && issuer.canCreateBadge ? '' : 'disabled'"
 						[umamiEvent]="'create-pdf-template'"
 					>
@@ -200,7 +200,7 @@
 				*ngIf="!public && pdfTemplates && pdfTemplates.length > 0"
 				[routerLink]="['./pdftemplates/create']"
 				[disabled]="isFullIssuer(issuer) && !issuer.canCreateBadge"
-				[text]="('PDFTemplate.createPDFTemplate' | translate)"
+				[text]="'PDFTemplate.createPDFTemplate' | translate"
 				[class]="
 					'tw-flex-grow tw-relative'.concat(isFullIssuer(issuer) && issuer.canCreateBadge ? '' : ' disabled')
 				"
@@ -321,7 +321,7 @@
 		<div class="oeb-section-sm">
 			<ng-template [bgAwaitPromises]="pdfTemplatesPromise">
 				<div class="md:tw-pr-[280px]">
-					<p class="oeb-break-words" hlmP [innerHTML]="('PDFTemplate.descriptionText' | translate)"></p>
+					<p class="oeb-break-words" hlmP [innerHTML]="'PDFTemplate.descriptionText' | translate"></p>
 
 					<p hlmP [innerHtml]="'PDFTemplate.exampleZipLink' | translate"></p>
 
@@ -331,7 +331,7 @@
 							*ngIf="!public"
 							[routerLink]="['./pdftemplates/create']"
 							[disabled]="isFullIssuer(issuer) && !issuer.canCreateBadge"
-							[text]="('PDFTemplate.createPDFTemplate' | translate)"
+							[text]="'PDFTemplate.createPDFTemplate' | translate"
 							[class]="isFullIssuer(issuer) && issuer.canCreateBadge ? '' : 'disabled'"
 							[umamiEvent]="'create-pdf-template'"
 						>
@@ -340,7 +340,9 @@
 				</div>
 
 				<div *ngIf="pdfTemplates && pdfTemplates.length > 0" class="tw-mt-16">
-					<h2 class="tw-font-bold md:tw-text-[22px] md:tw-leading-[26.4px] tw-text-oebblack tw-text-[16px] tw-leading-[19.2px] oeb-break-words">
+					<h2
+						class="tw-font-bold md:tw-text-[22px] md:tw-leading-[26.4px] tw-text-oebblack tw-text-[16px] tw-leading-[19.2px] oeb-break-words"
+					>
 						{{ 'PDFTemplate.createdTemplates' | translate }}
 					</h2>
 

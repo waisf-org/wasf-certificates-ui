@@ -8,8 +8,7 @@
 				[errorMessage]="'General.validationCompleteForm' | translate"
 				[completed]="validateFields(['format']) && !imageValidation()"
 				[hasError]="
-					(!validateFields(['format']) && dirtyFields(['format'])) ||
-					(imageFieldDirty && imageValidation())
+					(!validateFields(['format']) && dirtyFields(['format'])) || (imageFieldDirty && imageValidation())
 				"
 			>
 				<h3 hlmH3 class="tw-text-oebblack tw-mt-4">{{ 'PDFTemplate.backgroundHeading' | translate }}</h3>
@@ -32,14 +31,16 @@
 					</div>
 
 					<div class="subsection">
-						<p hlmH3 class="tw-text-oebblack tw-font-semibold">{{ 'PDFTemplate.backgroundLabel' | translate }}</p>
+						<p hlmH3 class="tw-text-oebblack tw-font-semibold">
+							{{ 'PDFTemplate.backgroundLabel' | translate }}
+						</p>
 
 						<div class="tw-mt-4 tw-relative" id="imageSection" #imageSection>
-							<div
-								class="tw-flex tw-flex-col tw-gap-6 lg:tw-flex-row tw-mr-auto tw-h-fit"
-							>
+							<div class="tw-flex tw-flex-col tw-gap-6 lg:tw-flex-row tw-mr-auto tw-h-fit">
 								<div>
-									<p class="tw-text-oebblack tw-text-[18px] tw-leading-[23.4px] tw-font-semibold tw-w-full">
+									<p
+										class="tw-text-oebblack tw-text-[18px] tw-leading-[23.4px] tw-font-semibold tw-w-full"
+									>
 										{{ 'PDFTemplate.backgroundUploadDesc1' | translate }}
 									</p>
 									<p class="tw-text-oebblack tw-text-[18px] tw-leading-[23.4px] tw-w-full">
@@ -47,8 +48,11 @@
 									</p>
 
 									@if (pdfTemplateForm.controls.format.value == '1') {
-										<div class="tw-w-full tw-max-w-[460px] tw-aspect-[297/210] tw-mt-4 tw-bg-white tw-border tw-border-solid tw-border-purple tw-rounded-[8px] tw-relative">
-											<bg-formfield-image #imageField
+										<div
+											class="tw-w-full tw-max-w-[460px] tw-aspect-[297/210] tw-mt-4 tw-bg-white tw-border tw-border-solid tw-border-purple tw-rounded-[8px] tw-relative"
+										>
+											<bg-formfield-image
+												#imageField
 												[text_body]="'RecBadge.selectFromMyFiles' | translate"
 												dropZoneInfo1="Drag & Drop"
 												[dropZoneInfo3]="'PDFTemplate.uploadFormatDesc' | translate"
@@ -63,7 +67,9 @@
 											</bg-formfield-image>
 
 											<div [hidden]="pdfTemplateForm.hasError('imageRequired')">
-												<div class="tw-flex tw-items-center tw-justify-center tw-absolute tw-top-0 tw-bottom-0 tw-right-0 tw-left-0 tw-pointer-events-none">
+												<div
+													class="tw-flex tw-items-center tw-justify-center tw-absolute tw-top-0 tw-bottom-0 tw-right-0 tw-left-0 tw-pointer-events-none"
+												>
 													<ng-icon
 														hlm
 														size="xl"
@@ -75,8 +81,11 @@
 											</div>
 										</div>
 									} @else {
-										<div class="tw-w-full tw-max-w-[392px] tw-aspect-[210/297] tw-mt-4 tw-bg-white tw-border tw-border-solid tw-border-purple tw-rounded-[8px] tw-relative">
-											<bg-formfield-image #imageField
+										<div
+											class="tw-w-full tw-max-w-[392px] tw-aspect-[210/297] tw-mt-4 tw-bg-white tw-border tw-border-solid tw-border-purple tw-rounded-[8px] tw-relative"
+										>
+											<bg-formfield-image
+												#imageField
 												[text_body]="'RecBadge.selectFromMyFiles' | translate"
 												dropZoneInfo1="Drag & Drop"
 												[dropZoneInfo3]="'PDFTemplate.uploadFormatDesc' | translate"
@@ -90,7 +99,9 @@
 											>
 											</bg-formfield-image>
 											<div [hidden]="pdfTemplateForm.hasError('imageRequired')">
-												<div class="tw-flex tw-items-center tw-justify-center tw-absolute tw-top-0 tw-bottom-0 tw-right-0 tw-left-0 tw-pointer-events-none">
+												<div
+													class="tw-flex tw-items-center tw-justify-center tw-absolute tw-top-0 tw-bottom-0 tw-right-0 tw-left-0 tw-pointer-events-none"
+												>
 													<ng-icon
 														hlm
 														size="xl"
@@ -127,12 +138,7 @@
 								{{ 'PDFTemplate.imageRatioPortraitError' | translate }}
 							}
 						</p>
-						<p
-							hlmP
-							size="sm"
-							[hidden]="!isImageLarge"
-							class="tw-text-center tw-w-full tw-text-red tw-mt-2"
-						>
+						<p hlmP size="sm" [hidden]="!isImageLarge" class="tw-text-center tw-w-full tw-text-red tw-mt-2">
 							{{ 'CreateBadge.imageTooLarge' | translate }}
 						</p>
 					</div>
@@ -144,7 +150,9 @@
 					<div class="tw-flex tw-gap-1 tw-flex-col-reverse md:tw-flex-row">
 						<div class="tw-flex tw-flex-col tw-gap-1 tw-flex-grow tw-justify-between md:tw-max-w-[338px]">
 							<div class="subsection tw-flex tw-flex-col tw-gap-4">
-								<span hlmH3 class="tw-text-oebblack tw-font-semibold">{{ 'PDFTemplate.alignmentOfBagdeInfos' | translate }}</span>
+								<span hlmH3 class="tw-text-oebblack tw-font-semibold">{{
+									'PDFTemplate.alignmentOfBagdeInfos' | translate
+								}}</span>
 								@for (alignment of alignmentOptions; track alignment; let last = $last) {
 									<bg-formfield-icon-radio
 										[control]="pdfTemplateForm.rawControlMap.alignment"
@@ -158,11 +166,16 @@
 								}
 							</div>
 							<div class="subsection">
-								<span hlmH3 class="tw-text-oebblack tw-font-semibold">{{ 'PDFTemplate.positionOfBagdeInfos' | translate }}</span>
+								<span hlmH3 class="tw-text-oebblack tw-font-semibold">{{
+									'PDFTemplate.positionOfBagdeInfos' | translate
+								}}</span>
 
 								<div class="tw-flex tw-gap-4 tw-mt-6">
 									<div>
-										<span class="oeb-break-words tw-text-oebblack tw-text-[18px]/[1.3em]" [innerHTML]="('PDFTemplate.positionOfBagdeInfosDesc1' | translate)"></span>
+										<span
+											class="oeb-break-words tw-text-oebblack tw-text-[18px]/[1.3em]"
+											[innerHTML]="'PDFTemplate.positionOfBagdeInfosDesc1' | translate"
+										></span>
 									</div>
 
 									<div>
@@ -171,7 +184,9 @@
 								</div>
 
 								<div class="tw-mt-6">
-									<span class="oeb-break-words tw-text-oebblack tw-text-[18px]/[1.3em]">{{ 'PDFTemplate.positionOfBagdeInfosDesc2' | translate }}</span>
+									<span class="oeb-break-words tw-text-oebblack tw-text-[18px]/[1.3em]">{{
+										'PDFTemplate.positionOfBagdeInfosDesc2' | translate
+									}}</span>
 								</div>
 
 								<div class="tw-flex tw-flex-col tw-gap-8 tw-mt-6">
@@ -179,9 +194,9 @@
 										class="tw-block tw-w-[119px]"
 										[fieldType]="'number'"
 										[control]="pdfTemplateForm.rawControlMap.posX"
-										[errorMessage]="('PDFTemplate.textBlockOutsideError' | translate)"
+										[errorMessage]="'PDFTemplate.textBlockOutsideError' | translate"
 										[noTopMargin]="true"
-										[label]="('PDFTemplate.posX' | translate)"
+										[label]="'PDFTemplate.posX' | translate"
 									>
 									</oeb-input>
 
@@ -191,13 +206,15 @@
 										[control]="pdfTemplateForm.rawControlMap.posY"
 										errorMessage="{{ 'PDFTemplate.textBlockOutsideError' | translate }}"
 										[noTopMargin]="true"
-										[label]="('PDFTemplate.posY' | translate)"
+										[label]="'PDFTemplate.posY' | translate"
 									>
 									</oeb-input>
 								</div>
 							</div>
 							<div class="subsection tw-flex tw-flex-col tw-gap-4 !tw-pb-5">
-								<span hlmH3 class="tw-text-oebblack tw-font-semibold">{{ 'PDFTemplate.sizeOfBagdeInfos' | translate }}</span>
+								<span hlmH3 class="tw-text-oebblack tw-font-semibold">{{
+									'PDFTemplate.sizeOfBagdeInfos' | translate
+								}}</span>
 
 								<oeb-input
 									class="tw-block tw-w-[210px]"
@@ -205,7 +222,7 @@
 									[control]="pdfTemplateForm.rawControlMap.scale"
 									errorMessage="{{ 'PDFTemplate.scaleMinMaxError' | translate }}"
 									[noTopMargin]="true"
-									[label]="('PDFTemplate.scale' | translate)"
+									[label]="'PDFTemplate.scale' | translate"
 									[max]="100"
 									[min]="83"
 								>
@@ -213,41 +230,42 @@
 							</div>
 
 							<div class="subsection tw-flex-grow">
-								<span hlmH3 class="tw-text-oebblack tw-font-semibold">{{ 'PDFTemplate.showPageTitle' | translate }}</span>
+								<span hlmH3 class="tw-text-oebblack tw-font-semibold">{{
+									'PDFTemplate.showPageTitle' | translate
+								}}</span>
 
-								<div class="preview-page-control tw-text-oebblack tw-flex tw-flex-col tw-gap-[9px] tw-mt-[11px]">
-									<a
-										(click)="showCoverPage()"
-										[class]="isPreviewPage(1) ? 'current-page' : ''"
-									>
-										{{ 'PDFTemplate.showCoverPage' | translate}}
+								<div
+									class="preview-page-control tw-text-oebblack tw-flex tw-flex-col tw-gap-[9px] tw-mt-[11px]"
+								>
+									<a (click)="showCoverPage()" [class]="isPreviewPage(1) ? 'current-page' : ''">
+										{{ 'PDFTemplate.showCoverPage' | translate }}
 									</a>
 
-									<a
-										(click)="showCompetencePage()"
-										[class]="isPreviewPage(2) ? 'current-page' : ''"
-									>
-										{{ 'PDFTemplate.showCompetencePage' | translate}}
+									<a (click)="showCompetencePage()" [class]="isPreviewPage(2) ? 'current-page' : ''">
+										{{ 'PDFTemplate.showCompetencePage' | translate }}
 									</a>
 
-									<a
-										(click)="showOptionalPage()"
-										[class]="isPreviewPage(3) ? 'current-page' : ''"
-									>
-										{{ 'PDFTemplate.showOptionalPage' | translate}}
+									<a (click)="showOptionalPage()" [class]="isPreviewPage(3) ? 'current-page' : ''">
+										{{ 'PDFTemplate.showOptionalPage' | translate }}
 									</a>
 								</div>
 							</div>
 						</div>
 						<div class="subsection tw-flex-grow tw-flex-shrink-0">
-							<p hlmH3 class="tw-text-oebblack tw-font-semibold">{{ 'PDFTemplate.pdfPreview' | translate }}</p>
+							<p hlmH3 class="tw-text-oebblack tw-font-semibold">
+								{{ 'PDFTemplate.pdfPreview' | translate }}
+							</p>
 
 							@if (pdfTemplateForm.controls.format.value == '1') {
-								<div class="tw-w-full tw-max-w-[642px] tw-aspect-[297/210] tw-mt-4 tw-border tw-border-solid tw-border-purple tw-rounded-[8px]">
+								<div
+									class="tw-w-full tw-max-w-[642px] tw-aspect-[297/210] tw-mt-4 tw-border tw-border-solid tw-border-purple tw-rounded-[8px]"
+								>
 									<canvas id="previewCanvas" width="1123" height="794"></canvas>
 								</div>
 							} @else {
-								<div class="tw-w-full tw-max-w-[642px] tw-aspect-[210/297] tw-mt-4 tw-border tw-border-solid tw-border-purple tw-rounded-[8px]">
+								<div
+									class="tw-w-full tw-max-w-[642px] tw-aspect-[210/297] tw-mt-4 tw-border tw-border-solid tw-border-purple tw-rounded-[8px]"
+								>
 									<canvas id="previewCanvas" width="794" height="1123"></canvas>
 								</div>
 							}
@@ -274,7 +292,9 @@
 				</section>
 
 				<section class="tw-mb-10">
-					<p class="tw-text-[18px]/[1.3em] tw-text-purple tw-italic">{{ 'PDFTemplate.variableContentNote' | translate }}</p>
+					<p class="tw-text-[18px]/[1.3em] tw-text-purple tw-italic">
+						{{ 'PDFTemplate.variableContentNote' | translate }}
+					</p>
 				</section>
 			</cdk-step>
 		</oeb-stepper>
@@ -299,7 +319,9 @@
 					[text]="'General.forward' | translate"
 					(click)="nextStep()"
 					[umamiEvent]="!pdfTemplate ? `create-pdf-template-${this.stepper?.selectedIndex + 1}` : undefined"
-					[disabled]="pdfTemplateForm.hasError('imageRequired') || pdfTemplateForm.hasError('imageRatioFalse')"
+					[disabled]="
+						pdfTemplateForm.hasError('imageRequired') || pdfTemplateForm.hasError('imageRatioFalse')
+					"
 				/>
 			}
 

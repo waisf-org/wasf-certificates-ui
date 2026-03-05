@@ -84,32 +84,35 @@ export class LearningPathEditPDFTemplateComponent extends BaseAuthenticatedRouta
 		this.issuerSlug = this.route.snapshot.params['issuerSlug'];
 		this.learningPathSlug = this.route.snapshot.params['learningPathSlug'];
 
-		this.learningPathLoaded = this.learningPathManager.getLearningPathForIssuer(this.issuerSlug, this.learningPathSlug).then(
-			(learningPath) => {
-				this.learningPath = learningPath;
-				this.learningPathForm.setValue({
-					pdftemplate: this.learningPath.pdftemplate,
-				})
-			},
-			(error) =>
-				this.messageService.reportLoadingError(
-					`Cannot find learningPath ${this.issuerSlug} / ${this.learningPathSlug}`,
-					error,
-				),
-		);
+		this.learningPathLoaded = this.learningPathManager
+			.getLearningPathForIssuer(this.issuerSlug, this.learningPathSlug)
+			.then(
+				(learningPath) => {
+					this.learningPath = learningPath;
+					this.learningPathForm.setValue({
+						pdftemplate: this.learningPath.pdftemplate,
+					});
+				},
+				(error) =>
+					this.messageService.reportLoadingError(
+						`Cannot find learningPath ${this.issuerSlug} / ${this.learningPathSlug}`,
+						error,
+					),
+			);
 
-		this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then(
-			(issuer) => {
-				this.issuer = issuer;
-			}
-		);
+		this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
+			this.issuer = issuer;
+		});
 
 		Promise.all([this.issuerLoaded, this.learningPathLoaded])
 			.then(() => {
 				this.breadcrumbLinkEntries = [
 					{ title: 'Issuers', routerLink: ['/issuer'] },
 					{ title: this.issuer.name, routerLink: ['/issuer/issuers', this.issuerSlug] },
-					{ title: this.learningPath.name, routerLink: ['/issuer/issuers', this.issuerSlug, 'learningpaths', this.learningPathSlug] },
+					{
+						title: this.learningPath.name,
+						routerLink: ['/issuer/issuers', this.issuerSlug, 'learningpaths', this.learningPathSlug],
+					},
 					{ title: this.translate.instant('PDFTemplate.lpChooseTemplateHeadline') },
 				];
 			})
@@ -129,11 +132,11 @@ export class LearningPathEditPDFTemplateComponent extends BaseAuthenticatedRouta
 
 			this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
 				label: t.name,
-				value: t.slug
+				value: t.slug,
 			}));
 			this.selectPDFTemplateOptions.push({
 				label: this.translate.instant('PDFTemplate.oebDesign'),
-				value: null
+				value: null,
 			});
 		}
 	}

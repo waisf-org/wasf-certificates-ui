@@ -483,7 +483,7 @@ export class OebIssuerDetailComponent implements OnInit {
 		];
 
 		const fragment = this.router.parseUrl(this.router.url).fragment;
-		if (fragment && this.tabs.find(tab => tab.key === fragment)) {
+		if (fragment && this.tabs.find((tab) => tab.key === fragment)) {
 			this.activeTab = fragment;
 		}
 	}
@@ -586,7 +586,7 @@ export class OebIssuerDetailComponent implements OnInit {
 					delete: () => this.deletePDFTemplateApi(pdfTemplateSlug, issuerSlug),
 					variant: 'danger',
 					title: this.translate.instant('PDFTemplate.openDeleteDialogTitle', {
-						title: pdfTemplateName
+						title: pdfTemplateName,
 					}),
 				},
 			});

@@ -253,16 +253,15 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 
 		if (this.authService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
 			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
-			await this. pdfTemplatesPromise;
-
+			await this.pdfTemplatesPromise;
 
 			this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
 				label: t.name,
-				value: t.slug
+				value: t.slug,
 			}));
 			this.selectPDFTemplateOptions.push({
 				label: this.translate.instant('PDFTemplate.oebDesign'),
-				value: null
+				value: null,
 			});
 		}
 	}

@@ -397,7 +397,7 @@ export class LearningPathEditFormComponent
 					legalCode: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
 				},
 			],
-			pdftemplate: lp.pdftemplate
+			pdftemplate: lp.pdftemplate,
 		});
 		this.selectedBadges = lp.badges.map((b) => b.badge);
 
@@ -533,12 +533,12 @@ export class LearningPathEditFormComponent
 
 			this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
 				label: t.name,
-				value: t.slug
+				value: t.slug,
 			}));
 			this.selectPDFTemplateOptions.push({
 				label: this.translate.instant('PDFTemplate.oebDesign'),
-				value: null
-			})
+				value: null,
+			});
 		}
 	}
 

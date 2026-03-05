@@ -16,9 +16,7 @@
 						</h1>
 					</div>
 					<div class="tw-flex tw-flex-wrap tw-gap-6 oeb-standard-padding-bottom">
-						<div
-							class="tw-w-[300px] tw-text-center tw-h-[300px]"
-						>
+						<div class="tw-w-[300px] tw-text-center tw-h-[300px]">
 							<div
 								class="tw-px-6 tw-py-4 tw-border-purple tw-border-solid tw-border tw-rounded-[15px] tw-h-full tw-mb-1 tw-flex"
 							>
@@ -31,9 +29,7 @@
 							</div>
 							<p size="sm" hlmP>{{ 'Issuer.badgePreview' | translate }}</p>
 						</div>
-						<div class="tw-w-[300px] tw-text-center tw-h-[300px]"
-							[hidden]="pdfTemplateSelected()"
-						>
+						<div class="tw-w-[300px] tw-text-center tw-h-[300px]" [hidden]="pdfTemplateSelected()">
 							<div
 								class="tw-px-6 tw-py-4 tw-border-purple tw-border-solid tw-border tw-rounded-[15px] tw-relative tw-h-full tw-mb-1 tw-overflow-hidden tw-flex"
 							>
@@ -53,9 +49,7 @@
 							<p size="sm" hlmP [innerHTML]="'Issuer.certPreview' | translate"></p>
 						</div>
 
-						<div class="tw-w-[300px] tw-text-center tw-h-[300px]"
-							[hidden]="!pdfTemplateSelected()"
-						>
+						<div class="tw-w-[300px] tw-text-center tw-h-[300px]" [hidden]="!pdfTemplateSelected()">
 							<div
 								class="tw-px-6 tw-py-4 tw-border-purple tw-border-solid tw-border tw-rounded-[15px] tw-relative tw-h-full tw-mb-1 tw-overflow-hidden tw-flex tw-justify-center l-flex-aligncenter"
 							>
@@ -75,7 +69,7 @@
 						label="{{ 'PDFTemplate.backgroundLabel' | translate }}"
 					></oeb-select>
 
-					@if(issuer.currentUserStaffMember.canEditBadge) {
+					@if (issuer.currentUserStaffMember.canEditBadge) {
 						<oeb-button
 							[id]="'create-new-pdftemplate-btn'"
 							[class.disabled]="!issuer.canCreateBadge"

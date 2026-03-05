@@ -296,11 +296,11 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 
 			this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
 				label: t.name,
-				value: t.slug
+				value: t.slug,
 			}));
 			this.selectPDFTemplateOptions.push({
 				label: this.translate.instant('PDFTemplate.oebDesign'),
-				value: null
+				value: null,
 			});
 		}
 
@@ -339,7 +339,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 
 						break;
 					}
-				};
+				}
 			}
 		});
 	}

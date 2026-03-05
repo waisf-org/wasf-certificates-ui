@@ -1,7 +1,4 @@
-import {
-	Component,
-	Input,
-} from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormFieldRadio } from './formfield-radio';
 import { NgIcon } from '@ng-icons/core';

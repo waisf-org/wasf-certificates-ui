@@ -2,7 +2,7 @@ import {
 	ApiPDFTemplate,
 	PDFTemplateRef,
 	PDFTemplateAlignment,
-	PDFTemplateFormat
+	PDFTemplateFormat,
 } from '../../common/model/pdftemplate-api.model';
 import { ManagedEntity } from '../../common/model/managed-entity';
 import { ApiEntityRef } from '../../common/model/entity-ref';
