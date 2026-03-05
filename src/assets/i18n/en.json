@@ -1227,7 +1227,7 @@
 		"backgroundUploadDesc1": "Upload your own PDF background",
 		"backgroundUploadDesc2": "(A4, File Types: PNG, SVG, JPG)",
 		"previewCurrent": "Current: OEB Design",
-		"previewLandscape" : "Upload your own landscape design.",
+		"previewLandscape": "Upload your own landscape design.",
 		"previewLandscapeCTA": "Upload background image in the box on the left<br>and then click \"ok\".",
 		"uploadFormatDesc": "The template must be A4 size in order for the badge to be displayed on it.",
 		"imageRequiredError": "Please choose a background image.",

@@ -1226,7 +1226,7 @@
 		"backgroundUploadDesc1": "Upload eigener PDF-Hintergrund",
 		"backgroundUploadDesc2": "(A4, Datei-Typen: PNG, SVG, JPG)",
 		"previewCurrent": "Aktuell: OEB-Design",
-		"previewLandscape" : "Lade ein eigenes Querformat-Design hoch.",
+		"previewLandscape": "Lade ein eigenes Querformat-Design hoch.",
 		"previewLandscapeCTA": "Im Feld links Hintergrund-Bild hochladen<br>und dann auf \"weiter\" klicken.",
 		"uploadFormatDesc": "Die Vorlage muss das Format A4 haben, damit der Badge darauf dargestellt werden kann.",
 		"imageRequiredError": "Bitte wähle ein Hintergrundbild aus.",
