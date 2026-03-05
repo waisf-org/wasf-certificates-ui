@@ -59,7 +59,7 @@
 						[class]="isFullIssuer(issuer) && issuer.canCreateBadge ? '' : 'disabled'"
 						[umamiEvent]="'create-pdf-template'"
 					>
-				</oeb-button>
+					</oeb-button>
 				}
 				<div *ngIf="public" class="tw-flex tw-flex-col tw-gap-2">
 					<oeb-button
@@ -176,22 +176,38 @@
 		{{ 'Issuer.nichtVerified' | translate }}
 	</p>
 	<div class="tw-flex tw-flex-wrap tw-gap-4">
-		<oeb-button
-			*ngIf="!public"
-			width="full_width"
-			[class]="
-				'tw-flex-grow tw-relative'.concat(isFullIssuer(issuer) && issuer.canCreateBadge ? '' : ' disabled')
-			"
-			[routerLink]="activeTab === 'badges' ? ['./badges/select'] : ['./learningpaths/create']"
-			[disabled]="isFullIssuer(issuer) && !issuer.canCreateBadge"
-			[text]="
-				activeTab === 'badges'
-					? ('Issuer.createBadge' | translate)
-					: ('Issuer.myInstitutionsCreateLearningPath' | translate)
-			"
-			[umamiEvent]="'create-badge'"
-		>
-		</oeb-button>
+		@if (activeTab === 'badges' || activeTab === 'micro-degrees') {
+			<oeb-button
+				*ngIf="!public"
+				width="full_width"
+				[class]="
+					'tw-flex-grow tw-relative'.concat(isFullIssuer(issuer) && issuer.canCreateBadge ? '' : ' disabled')
+				"
+				[routerLink]="activeTab === 'badges' ? ['./badges/select'] : ['./learningpaths/create']"
+				[disabled]="isFullIssuer(issuer) && !issuer.canCreateBadge"
+				[text]="
+					activeTab === 'badges'
+						? ('Issuer.createBadge' | translate)
+						: ('Issuer.myInstitutionsCreateLearningPath' | translate)
+				"
+				[umamiEvent]="'create-badge'"
+			>
+			</oeb-button>
+		}
+		@if (activeTab === 'pdf-templates') {
+			<oeb-button
+				width="full_width"
+				*ngIf="!public && pdfTemplates && pdfTemplates.length > 0"
+				[routerLink]="['./pdftemplates/create']"
+				[disabled]="isFullIssuer(issuer) && !issuer.canCreateBadge"
+				[text]="('PDFTemplate.createPDFTemplate' | translate)"
+				[class]="
+					'tw-flex-grow tw-relative'.concat(isFullIssuer(issuer) && issuer.canCreateBadge ? '' : ' disabled')
+				"
+				[umamiEvent]="'create-pdf-template'"
+			>
+			</oeb-button>
+		}
 		<oeb-button
 			*ngIf="public"
 			(click)="routeToUrl(issuer.url)"

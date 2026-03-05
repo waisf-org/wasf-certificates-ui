@@ -434,19 +434,21 @@
 					</div>
 				</div>
 
-				<div class="tw-mt-6 md:tw-mt-8 oeb-section section">
-					<h2 hlmH2 class="tw-font-bold">{{ 'PDFTemplate.lpChooseTemplateHeadline' | translate }}</h2>
-					<p hlmP class="tw-italic tw-mt-2">{{ 'PDFTemplate.lpChooseTemplateDesc' | translate }}</p>
+				@if (issuer && !issuer.is_network) {
+					<div class="tw-mt-6 md:tw-mt-8 oeb-section section">
+						<h2 hlmH2 class="tw-font-bold">{{ 'PDFTemplate.lpChooseTemplateHeadline' | translate }}</h2>
+						<p hlmP class="tw-italic tw-mt-2">{{ 'PDFTemplate.lpChooseTemplateDesc' | translate }}</p>
 
-					<div class="tw-mt-4">
-						<oeb-select
-							class="tw-block tw-flex-grow"
-							[options]="selectPDFTemplateOptions"
-							[control]="learningPathForm.rawControlMap.pdftemplate"
-							[noTopMargin]="true"
-						></oeb-select>
+						<div class="tw-mt-4">
+							<oeb-select
+								class="tw-block tw-flex-grow"
+								[options]="selectPDFTemplateOptions"
+								[control]="learningPathForm.rawControlMap.pdftemplate"
+								[noTopMargin]="true"
+							></oeb-select>
+						</div>
 					</div>
-				</div>
+				}
 
 				<div class="tw-mt-6 md:tw-mt-8 oeb-section section">
 					<h2 hlmH2 class="tw-font-bold">{{ 'LearningPath.learningPathWithMicroDegree' | translate }}</h2>

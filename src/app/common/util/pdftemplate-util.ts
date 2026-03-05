@@ -8,6 +8,7 @@ export class PreviewCanvas {
 
 	canvas?: fabric.Canvas;
 	canvasTextBlock?: fabric.Group;
+	canvasPageNumBlock?: fabric.Textbox;
 	canvasTextBlockBorderColor: string = '#FF4849';
 	pdfOrigWidth: number;
 	pdfOrigHeight: number;
@@ -25,7 +26,7 @@ export class PreviewCanvas {
 	page: number = 1;
 	canvasId: string = 'previewCanvas';
 	badgeImageURL: string = '/breakdown/static/images/pdfPreviewBadgeImage.svg';
-	qrImageURL: string = '/breakdown/static/images/pdfPreviewQrImage.png';
+	qrImageURL: string = '/breakdown/static/images/pdfPreviewQrImage.svg';
 	clockImageURL: string = '/breakdown/static/images/pdfPreviewClockImage.png';
 	extLinkImageURL: string = '/breakdown/static/images/external-link.svg';
 	editable: boolean;
@@ -85,6 +86,7 @@ export class PreviewCanvas {
 
 	async recalcCanvas() {
 		this.canvasTextBlock.removeAll();
+		this.canvas.remove(this.canvasPageNumBlock);
 
 		const img = await fabric.FabricImage.fromURL(this.background);
 		img.scaleX = this.canvas.width / img.width;
@@ -96,6 +98,8 @@ export class PreviewCanvas {
 
 		this.canvasTextBlock.width = blockWidth;
 
+		this.addPageNum(this.page, scaleCoeff);
+
 		if (this.page == 1) {
 			await this.drawCoverPage(scaleCoeff, blockWidth, this.posX, this.posY, this.alignment);
 		} else if (this.page == 2) {
@@ -104,9 +108,24 @@ export class PreviewCanvas {
 			await this.drawOptDetailsPage(scaleCoeff, blockWidth, this.posX, this.posY, this.alignment);
 		}
 
-		console.log(this.canvasTextBlock.height);
-
 		this.canvas.renderAll();
+	}
+
+	addPageNum(page: number, scaleCoeff: number) {
+		this.canvasPageNumBlock = new fabric.Textbox(String(page) + '/3', {
+			fontSize: 10 * px_to_pt * scaleCoeff,
+			fontFamily: 'Rubik',
+			lineHeight: 1.5,
+			fill: this.pdfTextColor,
+			hasControls: false,
+			selectable: false,
+			hoverCursor: 'initial',
+		});
+
+		this.canvasPageNumBlock.left = this.canvas.width - 40 * px_to_pt - this.canvasPageNumBlock.width;
+		this.canvasPageNumBlock.top = this.canvas.height - 36 * px_to_pt - this.canvasPageNumBlock.height;
+
+		this.canvas.add(this.canvasPageNumBlock);
 	}
 
 	async drawCoverPage(
@@ -116,7 +135,7 @@ export class PreviewCanvas {
 		internalBlockY: number,
 		blockAlignment: string
 	)	{
-		const name = new fabric.Textbox(this.translate.instant('PDFTemplate.previewCanvasNameText'), {
+		const name1 = new fabric.Textbox(this.translate.instant('PDFTemplate.previewCanvasNameText1'), {
 			fontSize: 16 * px_to_pt * scaleCoeff,
 			fontFamily: 'Rubik',
 			fontWeight: 700,
@@ -127,18 +146,30 @@ export class PreviewCanvas {
 			left: blockLeft,
 			width: blockWidth
 		});
-		internalBlockY += name.height;
+		internalBlockY += name1.height;
+
+		const name2 = new fabric.Textbox(this.translate.instant('PDFTemplate.previewCanvasNameText2'), {
+			fontSize: 16 * px_to_pt * scaleCoeff,
+			fontFamily: 'Rubik',
+			fontWeight: 700,
+			lineHeight: 1.2,
+			textAlign: blockAlignment,
+			fill: this.pdfTextColor,
+			top: internalBlockY,
+			left: blockLeft,
+			width: blockWidth
+		});
+		internalBlockY += name2.height;
 		internalBlockY += 8 * px_to_pt * scaleCoeff;
+
+		this.canvasTextBlock.add(name1, name2);
 
 		const dateTimeText1 = this.translate.instant('PDFTemplate.previewCanvasDateText1');
 		const dateTimeText2 = this.translate.instant('PDFTemplate.previewCanvasDateText2');
 		const dateTimeText3 = this.translate.instant('PDFTemplate.previewCanvasDateText3');
 		const dateTimeText4 = this.translate.instant('PDFTemplate.previewCanvasDateText4');
-		const dateTimeText5 = this.translate.instant('PDFTemplate.previewCanvasHoursText1');
-		const dateTimeText6 = this.translate.instant('PDFTemplate.previewCanvasHoursText2');
-		const dateTimeText7 = this.translate.instant('PDFTemplate.previewCanvasAquiredText');
-		const completeDateTimeText = dateTimeText1 + dateTimeText2 + dateTimeText3 + dateTimeText4 + dateTimeText5 + dateTimeText6 + dateTimeText7;
-		const dateTime =  new fabric.Textbox(completeDateTimeText, {
+		const completeDateTimeText = dateTimeText1 + dateTimeText2 + dateTimeText3 + dateTimeText4;
+		const date =  new fabric.Textbox(completeDateTimeText, {
 			fontSize: 14 * px_to_pt * scaleCoeff,
 			fontFamily: 'Rubik',
 			lineHeight: 1.3,
@@ -148,23 +179,52 @@ export class PreviewCanvas {
 			left: blockLeft,
 			width: blockWidth
 		});
-		dateTime.setSelectionStyles(
+		date.setSelectionStyles(
 			{ fontWeight: 500 },
 			dateTimeText1.length,
 			dateTimeText1.length + dateTimeText2.length
 		);
-		dateTime.setSelectionStyles(
+		date.setSelectionStyles(
 			{ fontWeight: 500 },
 			dateTimeText1.length + dateTimeText2.length + dateTimeText3.length,
 			dateTimeText1.length + dateTimeText2.length + dateTimeText3.length + dateTimeText4.length
 		);
-		dateTime.setSelectionStyles(
+		internalBlockY += date.height;
+
+		const timeText1 = this.translate.instant('PDFTemplate.previewCanvasHoursText1');
+		const timeText2 = this.translate.instant('PDFTemplate.previewCanvasHoursText2');
+		const time =  new fabric.Textbox(timeText1 + timeText2, {
+			fontSize: 14 * px_to_pt * scaleCoeff,
+			fontFamily: 'Rubik',
+			lineHeight: 1.3,
+			textAlign: blockAlignment,
+			fill: this.pdfTextColor,
+			top: internalBlockY,
+			left: blockLeft,
+			width: blockWidth
+		});
+		time.setSelectionStyles(
 			{ fontWeight: 500 },
-			dateTimeText1.length + dateTimeText2.length + dateTimeText3.length + dateTimeText4.length + dateTimeText5.length,
-			dateTimeText1.length + dateTimeText2.length + dateTimeText3.length + dateTimeText4.length + dateTimeText5.length + dateTimeText6.length
+			timeText1.length,
+			timeText1.length + timeText2.length
 		);
-		internalBlockY += dateTime.height;
+		internalBlockY += time.height;
+
+		const aquiredText = this.translate.instant('PDFTemplate.previewCanvasAquiredText');
+		const aquired =  new fabric.Textbox(aquiredText, {
+			fontSize: 14 * px_to_pt * scaleCoeff,
+			fontFamily: 'Rubik',
+			lineHeight: 1.3,
+			textAlign: blockAlignment,
+			fill: this.pdfTextColor,
+			top: internalBlockY,
+			left: blockLeft,
+			width: blockWidth
+		});
+		internalBlockY += aquired.height;
 		internalBlockY += 24 * px_to_pt * scaleCoeff;
+
+		this.canvasTextBlock.add(date, time, aquired);
 
 		const badge = await fabric.FabricImage.fromURL(this.badgeImageURL);
 		const badgeScale = 160 * px_to_pt * scaleCoeff / badge.width;
@@ -175,7 +235,9 @@ export class PreviewCanvas {
 		internalBlockY += badge.height * badgeScale;
 		internalBlockY += 20 * px_to_pt * scaleCoeff;
 
-		const title = new fabric.Textbox(this.translate.instant('PDFTemplate.previewCanvasBadgeTitleText'), {
+		this.canvasTextBlock.add(badge);
+
+		const title1 = new fabric.Textbox(this.translate.instant('PDFTemplate.previewCanvasBadgeTitleText1'), {
 			fontSize: 16 * px_to_pt * scaleCoeff,
 			fontFamily: 'Rubik',
 			fontWeight: 700,
@@ -186,8 +248,23 @@ export class PreviewCanvas {
 			left: blockLeft,
 			width: blockWidth
 		});
-		internalBlockY += title.height;
+		internalBlockY += title1.height;
+
+		const title2 = new fabric.Textbox(this.translate.instant('PDFTemplate.previewCanvasBadgeTitleText2'), {
+			fontSize: 16 * px_to_pt * scaleCoeff,
+			fontFamily: 'Rubik',
+			fontWeight: 700,
+			lineHeight: 1.2,
+			textAlign: blockAlignment,
+			fill: this.pdfTextColor,
+			top: internalBlockY,
+			left: blockLeft,
+			width: blockWidth
+		});
+		internalBlockY += title2.height;
 		internalBlockY += 8 * px_to_pt * scaleCoeff;
+
+		this.canvasTextBlock.add(title1, title2);
 
 		const desc = new fabric.Textbox(this.translate.instant('PDFTemplate.previewCanvasBadgeDescText'), {
 			fontSize: 12 * px_to_pt * scaleCoeff,
@@ -201,6 +278,8 @@ export class PreviewCanvas {
 		});
 		internalBlockY += desc.height;
 		internalBlockY += 24 * px_to_pt * scaleCoeff;
+
+		this.canvasTextBlock.add(desc);
 
 		const rect = new fabric.Rect({
 			rx: 5,
@@ -245,7 +324,7 @@ export class PreviewCanvas {
 			width: blockWidth - 59 * px_to_pt * scaleCoeff,
 		});
 
-		this.canvasTextBlock.add(name, dateTime, badge, title, desc, rect, qr, created, digital);
+		this.canvasTextBlock.add(rect, qr, created, digital);
 	}
 
 	async drawCompetenciesPage(
@@ -294,7 +373,11 @@ export class PreviewCanvas {
 
 		this.canvasTextBlock.add(headline, subline);
 
-		for (let i = 0; i < 9; i++) {
+		let numCompetencies = 14;
+		if (this.format != 'portrait') {
+			numCompetencies = 11;
+		}
+		for (let i = 0; i < numCompetencies; i++) {
 			if (i != 0) {
 				internalBlockY += 8 * px_to_pt * scaleCoeff;
 			}
@@ -352,10 +435,10 @@ export class PreviewCanvas {
 			top: internalBlockY,
 			left: blockLeft,
 			width: blockWidth,
-			height: 200.264 * px_to_pt * scaleCoeff,
+			height: 4.864 * px_to_pt * scaleCoeff,
 		});
 		if (this.format != 'portrait') {
-			spacer.height = 69.862 * px_to_pt * scaleCoeff;
+			spacer.height = 31.096 * px_to_pt * scaleCoeff;
 		}
 		this.canvasTextBlock.add(spacer);
 	}
@@ -587,10 +670,10 @@ export class PreviewCanvas {
 			top: internalBlockY,
 			left: blockLeft,
 			width: blockWidth,
-			height: 197.252 * px_to_pt * scaleCoeff,
+			height: 219.852 * px_to_pt * scaleCoeff,
 		});
 		if (this.format != 'portrait') {
-			spacer.height = 80.071 * px_to_pt * scaleCoeff;
+			spacer.height = 127.305 * px_to_pt * scaleCoeff;
 		}
 		this.canvasTextBlock.add(spacer);
 	}

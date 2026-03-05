@@ -117,7 +117,7 @@ export class PDFTemplateEditFormComponent
 	}
 
 	allowedFileFormats = ['image/png', 'image/svg+xml', 'image/jpeg'];
-	readonly pdfPreviewOEBDesignImageUrl = preloadImageURL('../../../../breakdown/static/images/pdfPreviewOEBDesign.svg');
+	pdfPreviewOEBDesignImageUrl: string;
 	maxImageSize = 1024 * 1024 * 2;
 	isImageLarge = false;
 	currentImage;
@@ -138,6 +138,12 @@ export class PDFTemplateEditFormComponent
 		this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
 			this.issuer = issuer;
 		});
+
+		if (this.translate.currentLang == 'de') {
+			this.pdfPreviewOEBDesignImageUrl = preloadImageURL('../../../../breakdown/static/images/pdfPreviewOEBDesignDE.svg');
+		} else {
+			this.pdfPreviewOEBDesignImageUrl = preloadImageURL('../../../../breakdown/static/images/pdfPreviewOEBDesignEN.svg');
+		}
 	}
 
 	ngOnChanges(changes: SimpleChanges) {
@@ -175,6 +181,14 @@ export class PDFTemplateEditFormComponent
 			// clear session storage when editing existing pdf templates
 			sessionStorage.removeItem('oeb-create-pdftemplatevalues');
 		}
+
+		this.translate.onLangChange.subscribe((event) => {
+			if (event.lang == 'de') {
+				this.pdfPreviewOEBDesignImageUrl = preloadImageURL('../../../../breakdown/static/images/pdfPreviewOEBDesignDE.svg');
+			} else {
+				this.pdfPreviewOEBDesignImageUrl = preloadImageURL('../../../../breakdown/static/images/pdfPreviewOEBDesignEN.svg');
+			}
+		});
 	}
 
 	ngAfterViewInit(): void {

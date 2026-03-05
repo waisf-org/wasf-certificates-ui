@@ -14,7 +14,7 @@
 			>
 				<h3 hlmH3 class="tw-text-oebblack tw-mt-4">{{ 'PDFTemplate.backgroundHeading' | translate }}</h3>
 
-				<section class="tw-mt-6 md:tw-mt-8 tw-mb-10 tw-flex tw-flex-col tw-gap-1 section">
+				<section class="tw-max-w-[535px] tw-mt-6 md:tw-mt-8 tw-mb-10 tw-flex tw-flex-col tw-gap-1 section">
 					<div class="subsection tw-flex tw-flex-col tw-gap-6">
 						<p hlmH3 class="tw-text-oebblack tw-font-semibold">{{ 'PDFTemplate.format' | translate }}</p>
 						<div class="tw-flex tw-flex-wrap tw-gap-6 md:tw-gap-10">
@@ -100,27 +100,6 @@
 													/>
 												</div>
 											</div>
-										</div>
-									}
-								</div>
-								<div class="tw-flex-grow">
-									<p class="tw-text-oebblack tw-text-[18px] tw-leading-[23.4px] tw-font-semibold tw-w-full">
-										{{ 'PDFTemplate.preview' | translate }}
-									</p>
-
-									@if (pdfTemplateForm.controls.format.value == '1') {
-										<p class="tw-text-purple tw-italic tw-text-[18px] tw-leading-[23.4px] tw-w-full">
-											{{ 'PDFTemplate.previewLandscape' | translate }}
-										</p>
-										<div class="tw-content-center tw-w-full tw-max-w-[460px] tw-aspect-[297/210] tw-mt-4 tw-bg-white tw-border tw-border-solid tw-border-purple tw-rounded-[8px]">
-											<p size="sm" hlmP class="tw-text-center tw-text-red tw-font-semibold" [innerHTML]="('PDFTemplate.previewLandscapeCTA' | translate)"></p>
-										</div>
-									} @else {
-										<p class="tw-text-oebblack tw-text-[18px] tw-leading-[23.4px] tw-w-full">
-											{{ 'PDFTemplate.previewCurrent' | translate }}
-										</p>
-										<div class="tw-w-full tw-max-w-[392px] tw-aspect-[210/297] tw-mt-4 tw-bg-white tw-border tw-border-solid tw-border-purple tw-rounded-[8px]">
-											<img src="{{pdfPreviewOEBDesignImageUrl}}" width="392" />
 										</div>
 									}
 								</div>
@@ -217,7 +196,7 @@
 									</oeb-input>
 								</div>
 							</div>
-							<div class="subsection tw-flex tw-flex-col tw-gap-4 !tw-pb-5 tw-flex-grow">
+							<div class="subsection tw-flex tw-flex-col tw-gap-4 !tw-pb-5">
 								<span hlmH3 class="tw-text-oebblack tw-font-semibold">{{ 'PDFTemplate.sizeOfBagdeInfos' | translate }}</span>
 
 								<oeb-input
@@ -232,6 +211,33 @@
 								>
 								</oeb-input>
 							</div>
+
+							<div class="subsection tw-flex-grow">
+								<span hlmH3 class="tw-text-oebblack tw-font-semibold">{{ 'PDFTemplate.showPageTitle' | translate }}</span>
+
+								<div class="preview-page-control tw-text-oebblack tw-flex tw-flex-col tw-gap-[9px] tw-mt-[11px]">
+									<a
+										(click)="showCoverPage()"
+										[class]="isPreviewPage(1) ? 'current-page' : ''"
+									>
+										{{ 'PDFTemplate.showCoverPage' | translate}}
+									</a>
+
+									<a
+										(click)="showCompetencePage()"
+										[class]="isPreviewPage(2) ? 'current-page' : ''"
+									>
+										{{ 'PDFTemplate.showCompetencePage' | translate}}
+									</a>
+
+									<a
+										(click)="showOptionalPage()"
+										[class]="isPreviewPage(3) ? 'current-page' : ''"
+									>
+										{{ 'PDFTemplate.showOptionalPage' | translate}}
+									</a>
+								</div>
+							</div>
 						</div>
 						<div class="subsection tw-flex-grow tw-flex-shrink-0">
 							<p hlmH3 class="tw-text-oebblack tw-font-semibold">{{ 'PDFTemplate.pdfPreview' | translate }}</p>
@@ -245,29 +251,6 @@
 									<canvas id="previewCanvas" width="794" height="1123"></canvas>
 								</div>
 							}
-
-							<div class="preview-page-control tw-text-oebblack tw-flex tw-justify-center l-flex-aligncenter">
-								<a
-									(click)="showCoverPage()"
-									[class]="isPreviewPage(1) ? 'current-page' : ''"
-								>
-									{{ 'PDFTemplate.showCoverPage' | translate}}
-								</a>
-								<span class="tw-text-[21px] tw-leading-[130%]">|</span>
-								<a
-									(click)="showCompetencePage()"
-									[class]="isPreviewPage(2) ? 'current-page' : ''"
-								>
-									{{ 'PDFTemplate.showCompetencePage' | translate}}
-								</a>
-								<span class="tw-text-[21px] tw-leading-[130%]">|</span>
-								<a
-									(click)="showOptionalPage()"
-									[class]="isPreviewPage(3) ? 'current-page' : ''"
-								>
-									{{ 'PDFTemplate.showOptionalPage' | translate}}
-								</a>
-							</div>
 						</div>
 					</div>
 				</section>
@@ -289,12 +272,16 @@
 						[sublabelRight]="'(max. 50 ' + ('General.characters' | translate) + ')'"
 					></oeb-input>
 				</section>
+
+				<section class="tw-mb-10">
+					<p class="tw-text-[18px]/[1.3em] tw-text-purple tw-italic">{{ 'PDFTemplate.variableContentNote' | translate }}</p>
+				</section>
 			</cdk-step>
 		</oeb-stepper>
 	</ng-container>
 
 	<form [formGroup]="pdfTemplateForm.rawControl" #formElem (ngSubmit)="onSubmit()" novalidate>
-		<div class="tw-flex tw-justify-between md:tw-justify-end tw-flex-wrap sm:tw-flex-nowrap tw-gap-4 md:tw-gap-6 tw-mt-8">
+		<div class="tw-flex tw-flex-wrap sm:tw-flex-nowrap tw-gap-4 md:tw-gap-6 tw-mt-8">
 			<oeb-button
 				type="button"
 				variant="secondary"
@@ -312,7 +299,7 @@
 					[text]="'General.forward' | translate"
 					(click)="nextStep()"
 					[umamiEvent]="!pdfTemplate ? `create-pdf-template-${this.stepper?.selectedIndex + 1}` : undefined"
-					[disabled]="pdfTemplateForm.hasError('imageRequired')"
+					[disabled]="pdfTemplateForm.hasError('imageRequired') || pdfTemplateForm.hasError('imageRatioFalse')"
 				/>
 			}
 

@@ -143,7 +143,7 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 		this.authService = sessionService;
 
 		if (this.isNetworkBadge) {
-			this.badgeClassLoaded = this.badgeClassManager
+			this.issuerLoaded = this.badgeClassLoaded = this.badgeClassManager
 				.badgeByIssuerSlugAndSlug(this.issuerSlug, this.badgeSlug)
 				.then((badgeClass) => {
 					this.badgeClass = badgeClass;

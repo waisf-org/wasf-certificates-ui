@@ -71,6 +71,8 @@ import { HlmIcon } from '@spartan-ng/helm/icon';
 import { AUTH_PROVIDER } from '~/common/services/authentication-service';
 import { Network } from '~/issuer/network.model';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { SessionService } from '~/common/services/session.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 type BadgeResult = BadgeClass & { selected?: boolean };
 
@@ -113,7 +115,6 @@ export class LearningPathEditFormComponent
 	extends BaseAuthenticatedRoutableComponent
 	implements OnInit, OnChanges, AfterViewInit
 {
-	private loginService = inject(AUTH_PROVIDER);
 	protected messageService = inject(MessageService);
 	protected learningPathApiService = inject(LearningPathApiService);
 	protected issuerManager = inject(IssuerManager);
@@ -127,6 +128,7 @@ export class LearningPathEditFormComponent
 	protected learningPathManager = inject(LearningPathManager);
 	protected configService = inject(AppConfigService);
 	private pdfTemplateApiService = inject(PDFTemplateApiService);
+	protected authService: SessionService;
 
 	@ViewChild(StepperComponent) stepper: StepperComponent;
 
@@ -280,10 +282,14 @@ export class LearningPathEditFormComponent
 	pdfTemplates: ApiPDFTemplate[];
 	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
 
-	isLoggedIn = toSignal(this.loginService.isLoggedIn$);
-
 	constructor() {
-		super();
+		const sessionService = inject(SessionService);
+		const router = inject(Router);
+		const route = inject(ActivatedRoute);
+
+		super(router, route, sessionService);
+		this.authService = sessionService;
+
 		this.baseUrl = this.configService.apiConfig.baseUrl;
 		if (!this.issuer)
 			this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
@@ -521,10 +527,8 @@ export class LearningPathEditFormComponent
 			this.selectMinBadgesOptions = this.generateSelectMinBadgesOptions(value);
 		});
 
-		await this.badgesLoaded;
-
-		if (this.isLoggedIn() && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
-			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
+		if (this.authService.isLoggedIn) {
+			this.getPDFTemplatesForIssuerApi(this.issuerSlug);
 			await this.pdfTemplatesPromise;
 
 			this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
