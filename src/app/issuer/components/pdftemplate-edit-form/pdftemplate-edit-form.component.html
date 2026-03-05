@@ -47,7 +47,7 @@
 										{{ 'PDFTemplate.backgroundUploadDesc2' | translate }}
 									</p>
 
-									@if (pdfTemplateForm.controls.format.value == '1') {
+									@if (pdfTemplateForm.controls.format.value === '1') {
 										<div
 											class="tw-w-full tw-max-w-[460px] tw-aspect-[297/210] tw-mt-4 tw-bg-white tw-border tw-border-solid tw-border-purple tw-rounded-[8px] tw-relative"
 										>
@@ -132,7 +132,7 @@
 							[hidden]="!pdfTemplateForm.hasError('imageRatioFalse')"
 							class="tw-text-center tw-w-full tw-text-red tw-mt-2"
 						>
-							@if (pdfTemplateForm.controls.format.value == '1') {
+							@if (pdfTemplateForm.controls.format.value === '1') {
 								{{ 'PDFTemplate.imageRatioLandscapeError' | translate }}
 							} @else {
 								{{ 'PDFTemplate.imageRatioPortraitError' | translate }}
@@ -256,7 +256,7 @@
 								{{ 'PDFTemplate.pdfPreview' | translate }}
 							</p>
 
-							@if (pdfTemplateForm.controls.format.value == '1') {
+							@if (pdfTemplateForm.controls.format.value === '1') {
 								<div
 									class="tw-w-full tw-max-w-[642px] tw-aspect-[297/210] tw-mt-4 tw-border tw-border-solid tw-border-purple tw-rounded-[8px]"
 								>
