@@ -18,6 +18,7 @@ import { HlmH2, HlmP, HlmH3 } from '@spartan-ng/helm/typography';
 import { ApiLearningPathParticipant } from '~/common/model/learningpath-api.model';
 import { Issuer } from '~/issuer/models/issuer.model';
 import { Network } from '~/issuer/network.model';
+import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
 
 @Component({
 	selector: 'oeb-learning-path',
@@ -51,6 +52,7 @@ export class OebLearningPathDetailComponent extends BaseRoutableComponent implem
 	private pdfService = inject(PdfService);
 	router: Router;
 	private translate = inject(TranslateService);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
 
 	@Input() learningPath;
 	@Input() issuer: Issuer | Network;
@@ -89,6 +91,8 @@ export class OebLearningPathDetailComponent extends BaseRoutableComponent implem
 			this.learningPath.slug,
 			'edit',
 		];
+
+		this.pdfTemplateManager.getPDFTemplatesForIssuer(this.issuer.slug);
 	}
 
 	public deleteLearningPath(learningPathSlug, issuer) {

@@ -8,6 +8,8 @@ import { ApiPDFTemplate, ApiPDFTemplateForCreation } from '../../common/model/pd
 
 @Injectable({ providedIn: 'root' })
 export class PDFTemplateApiService extends BaseHttpApiService {
+	pdfEditorAvailable: boolean = true;
+
 	constructor(
 		protected loginService: SessionService,
 		protected http: HttpClient,
@@ -22,7 +24,15 @@ export class PDFTemplateApiService extends BaseHttpApiService {
 	}
 
 	getPDFTemplatesForIssuer(issuerSlug: string) {
-		return this.get<ApiPDFTemplate[]>(`/v1/issuer/issuers/${issuerSlug}/pdftemplate`).then((r) => r.body);
+		return this.get<ApiPDFTemplate[]>(`/v1/issuer/issuers/${issuerSlug}/pdftemplate`)
+			.catch((e) => {
+				// handle pdfEditor Plugin not installed
+				if (e.response.status === 404) {
+					this.pdfEditorAvailable = false;
+					return { body: [] };
+				}
+			})
+			.then((r) => r.body);
 	}
 
 	createPDFTemplate(issuerSlug: string, pdfTemplate: ApiPDFTemplateForCreation) {

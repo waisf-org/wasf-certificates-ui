@@ -60,36 +60,38 @@
 					</div>
 				</div>
 
-				<div class="tw-mt-10 tw-mb-10 tw-flex tw-flex-wrap tw-gap-6 tw-items-end">
-					<oeb-select
-						class="tw-block tw-flex-grow"
-						[options]="selectPDFTemplateOptions"
-						[control]="issueForm.rawControlMap.pdftemplate"
-						[noTopMargin]="true"
-						label="{{ 'PDFTemplate.backgroundLabel' | translate }}"
-					></oeb-select>
+				@if (pdfTemplateManager.pdfEditorAvailable()) {
+					<div class="tw-mt-10 tw-mb-10 tw-flex tw-flex-wrap tw-gap-6 tw-items-end">
+						<oeb-select
+							class="tw-block tw-flex-grow"
+							[options]="selectPDFTemplateOptions"
+							[control]="issueForm.rawControlMap.pdftemplate"
+							[noTopMargin]="true"
+							label="{{ 'PDFTemplate.backgroundLabel' | translate }}"
+						></oeb-select>
 
-					@if (issuer.currentUserStaffMember.canEditBadge) {
-						<oeb-button
-							[id]="'create-new-pdftemplate-btn'"
-							[class.disabled]="!issuer.canCreateBadge"
-							class="tw-whitespace-nowrap tw-flex-grow"
-							[routerLink]="['/issuer/issuers', issuer.slug]"
-							fragment="pdf-templates"
-							[disabled]="!issuer.currentUserStaffMember"
-							[text]="'PDFTemplate.createCustomPDFTemplate' | translate"
-							width="full_width"
-							size="sm"
-							variant="secondary"
-							weight="normal"
-							icon="lucidePlus"
-							iconSize="sm"
-							[iconLeft]="true"
-							[umamiEvent]="'create-pdftemplate'"
-						>
-						</oeb-button>
-					}
-				</div>
+						@if (issuer.currentUserStaffMember.canEditBadge) {
+							<oeb-button
+								[id]="'create-new-pdftemplate-btn'"
+								[class.disabled]="!issuer.canCreateBadge"
+								class="tw-whitespace-nowrap tw-flex-grow"
+								[routerLink]="['/issuer/issuers', issuer.slug]"
+								fragment="pdf-templates"
+								[disabled]="!issuer.currentUserStaffMember"
+								[text]="'PDFTemplate.createCustomPDFTemplate' | translate"
+								width="full_width"
+								size="sm"
+								variant="secondary"
+								weight="normal"
+								icon="lucidePlus"
+								iconSize="sm"
+								[iconLeft]="true"
+								[umamiEvent]="'create-pdftemplate'"
+							>
+							</oeb-button>
+						}
+					</div>
+				}
 
 				<div class="tw-border-purple tw-border-solid tw-border tw-p-6 tw-rounded-[15px] tw-my-6">
 					<span hlmP [innerHTML]="'Issuer.batchAwardText1' | translate"></span>&nbsp;

@@ -25,7 +25,7 @@ import { environment } from '../../../../environments/environment';
 import { DateRangeValidator } from '~/common/validators/date-range.validator';
 import { OebSelectComponent } from '../../../components/select.component';
 import { FormFieldSelectOption } from '~/common/components/formfield-select';
-import { PDFTemplateApiService } from '../../../common/services/pdftemplate-api.service';
+import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
 import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 import { OptionalDetailsComponent } from '../optional-details/optional-details.component';
 import { setupActivityOnlineSync } from '~/common/util/activity-place-sync-helper';
@@ -55,7 +55,7 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 	protected badgeClassManager = inject(BadgeClassManager);
 	protected issuerManager = inject(IssuerManager);
 	protected _location = inject(Location);
-	private pdfTemplateApiService = inject(PDFTemplateApiService);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
 	protected authService: SessionService;
 
 	static datePipe = new DatePipe('de');
@@ -396,7 +396,7 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 	}
 
 	getPDFTemplatesForIssuerApi(issuerSlug) {
-		this.pdfTemplatesPromise = this.pdfTemplateApiService
+		this.pdfTemplatesPromise = this.pdfTemplateManager
 			.getPDFTemplatesForIssuer(issuerSlug)
 			.then(
 				(pdfTemplates) =>

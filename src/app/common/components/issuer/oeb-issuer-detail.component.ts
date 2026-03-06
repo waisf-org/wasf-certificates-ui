@@ -14,6 +14,7 @@ import { ApiLearningPath } from '../../../common/model/learningpath-api.model';
 import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 import { LearningPathApiService } from '../../../common/services/learningpath-api.service';
 import { PDFTemplateApiService } from '../../../common/services/pdftemplate-api.service';
+import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
 import { DangerDialogComponentTemplate } from '../../dialogs/oeb-dialogs/danger-dialog-template.component';
 import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
 import { InfoDialogComponent } from '../../dialogs/oeb-dialogs/info-dialog.component';
@@ -99,6 +100,7 @@ export class OebIssuerDetailComponent implements OnInit {
 	private issuerApiService = inject(IssuerApiService);
 	private publicApiService = inject(PublicApiService);
 	private pdfTemplateApiService = inject(PDFTemplateApiService);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
 
 	@Input() issuer: Issuer | PublicApiIssuer;
 	@Input() issuerPlaceholderSrc: string;
@@ -475,12 +477,15 @@ export class OebIssuerDetailComponent implements OnInit {
 				title: 'LearningPath.learningpathsPlural',
 				component: this.learningPathTemplate(),
 			},
-			{
+		];
+
+		if (this.pdfTemplateManager.pdfEditorAvailable()) {
+			this.tabs.push({
 				key: 'pdf-templates',
 				title: 'PDFTemplate.pdfTemplates',
 				component: this.pdfTemplatesTemplate(),
-			},
-		];
+			});
+		}
 
 		const fragment = this.router.parseUrl(this.router.url).fragment;
 		if (fragment && this.tabs.find((tab) => tab.key === fragment)) {
@@ -643,7 +648,7 @@ export class OebIssuerDetailComponent implements OnInit {
 	}
 
 	getPDFTemplatesForIssuerApi(issuerSlug) {
-		this.pdfTemplatesPromise = this.pdfTemplateApiService
+		this.pdfTemplatesPromise = this.pdfTemplateManager
 			.getPDFTemplatesForIssuer(issuerSlug)
 			.then(
 				(pdfTemplates) =>

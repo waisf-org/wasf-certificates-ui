@@ -62,7 +62,7 @@ import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmH2, HlmP } from '@spartan-ng/helm/typography';
 import { UpperCasePipe } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
-import { PDFTemplateApiService } from '../../../common/services/pdftemplate-api.service';
+import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
 import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 import { NetworkApiService } from '~/issuer/services/network-api.service';
 import { CommonEntityManager } from '~/entity-manager/services/common-entity-manager.service';
@@ -127,7 +127,7 @@ export class LearningPathEditFormComponent
 	protected badgeInstanceManager = inject(BadgeInstanceManager);
 	protected learningPathManager = inject(LearningPathManager);
 	protected configService = inject(AppConfigService);
-	private pdfTemplateApiService = inject(PDFTemplateApiService);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
 	protected authService: SessionService;
 
 	@ViewChild(StepperComponent) stepper: StepperComponent;
@@ -1046,7 +1046,7 @@ export class LearningPathEditFormComponent
 	}
 
 	getPDFTemplatesForIssuerApi(issuerSlug) {
-		this.pdfTemplatesPromise = this.pdfTemplateApiService
+		this.pdfTemplatesPromise = this.pdfTemplateManager
 			.getPDFTemplatesForIssuer(issuerSlug)
 			.then(
 				(pdfTemplates) =>

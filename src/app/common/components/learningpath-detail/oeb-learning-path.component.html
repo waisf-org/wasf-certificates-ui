@@ -89,7 +89,7 @@
 								</div>
 							}
 
-							@if (learningPath.activated) {
+							@if (pdfTemplateManager.pdfEditorAvailable() && learningPath.activated) {
 								<oeb-button
 									[text]="'PDFTemplate.editPDF' | translate"
 									width="full_width"

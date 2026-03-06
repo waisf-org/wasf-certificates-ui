@@ -43,7 +43,7 @@ import { HlmH1, HlmP } from '@spartan-ng/helm/typography';
 import { OebCollapsibleComponent } from '~/components/oeb-collapsible.component';
 import { DateRangeValidator } from '~/common/validators/date-range.validator';
 import { FormFieldSelectOption } from '~/common/components/formfield-select';
-import { PDFTemplateApiService } from '../../../common/services/pdftemplate-api.service';
+import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
 import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 import { PreviewCanvas } from '~/common/util/pdftemplate-util';
 import { PDFTemplate } from '~/issuer/models/pdftemplate.model';
@@ -120,7 +120,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 	protected dialogService = inject(CommonDialogsService);
 	protected configService = inject(AppConfigService);
 	protected translate = inject(TranslateService);
-	private pdfTemplateApiService = inject(PDFTemplateApiService);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
 	protected authService: SessionService;
 
 	readonly badgeLoadingImageUrl = '../../../breakdown/static/images/badge-loading.svg';
@@ -489,7 +489,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 	}
 
 	getPDFTemplatesForIssuerApi(issuerSlug) {
-		this.pdfTemplatesPromise = this.pdfTemplateApiService
+		this.pdfTemplatesPromise = this.pdfTemplateManager
 			.getPDFTemplatesForIssuer(issuerSlug)
 			.then(
 				(pdfTemplates) =>

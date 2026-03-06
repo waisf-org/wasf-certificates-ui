@@ -19,7 +19,7 @@ import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { OebSelectComponent } from '../../../components/select.component';
 import { HlmH1, HlmH2 } from '@spartan-ng/helm/typography';
 import { FormFieldSelectOption } from '~/common/components/formfield-select';
-import { PDFTemplateApiService } from '../../../common/services/pdftemplate-api.service';
+import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
 import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 
 @Component({
@@ -44,7 +44,7 @@ export class LearningPathEditPDFTemplateComponent extends BaseAuthenticatedRouta
 	protected learningPathManager = inject(LearningPathManager);
 	private configService = inject(AppConfigService);
 	private translate = inject(TranslateService);
-	private pdfTemplateApiService = inject(PDFTemplateApiService);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
 	protected authService: SessionService;
 
 	issuerSlug: string;
@@ -163,7 +163,7 @@ export class LearningPathEditPDFTemplateComponent extends BaseAuthenticatedRouta
 	}
 
 	getPDFTemplatesForIssuerApi(issuerSlug) {
-		this.pdfTemplatesPromise = this.pdfTemplateApiService
+		this.pdfTemplatesPromise = this.pdfTemplateManager
 			.getPDFTemplatesForIssuer(issuerSlug)
 			.then(
 				(pdfTemplates) =>

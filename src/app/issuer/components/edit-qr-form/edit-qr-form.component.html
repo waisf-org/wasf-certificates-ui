@@ -70,8 +70,8 @@
 				</div>
 
 				<!-- PDF Template Section -->
-				@if (issuer.currentUserStaffMember.canEditBadge) {
-					<div class="tw-mt-6 md:tw-mt-8 tw-flex tw-bg-white tw-rounded-[5px] tw-p-4 tw-flex-col tw-gap-2">
+				@if (pdfTemplateManager.pdfEditorAvailable() && issuer.currentUserStaffMember.canEditBadge) {
+					<div class="tw-mb-10 tw-flex tw-bg-white tw-border-purple tw-border-solid tw-border tw-rounded-[15px] tw-p-6 tw-flex-col tw-gap-2">
 						<span
 							class="tw-text-oebblack tw-text-lg tw-uppercase tw-font-semibold md:tw-leading-[28px] md:tw-text-[20px] tw-leading-[19px] tw-text-[14px]"
 						>

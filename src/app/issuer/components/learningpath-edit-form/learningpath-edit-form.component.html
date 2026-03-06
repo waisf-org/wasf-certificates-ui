@@ -434,7 +434,7 @@
 					</div>
 				</div>
 
-				@if (issuer && !issuer.is_network) {
+				@if (pdfTemplateManager.pdfEditorAvailable() && issuer && !issuer.is_network) {
 					<div class="tw-mt-6 md:tw-mt-8 oeb-section section">
 						<h2 hlmH2 class="tw-font-bold">{{ 'PDFTemplate.lpChooseTemplateHeadline' | translate }}</h2>
 						<p hlmP class="tw-italic tw-mt-2">{{ 'PDFTemplate.lpChooseTemplateDesc' | translate }}</p>

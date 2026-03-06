@@ -1,8 +1,7 @@
-import { forwardRef, Inject, Injectable } from '@angular/core';
+import { forwardRef, Inject, Injectable, signal } from '@angular/core';
 import { BaseHttpApiService } from '../../common/services/base-http-api.service';
 import { SessionService } from '../../common/services/session.service';
 import { AppConfigService } from '../../common/app-config.service';
-import { StandaloneEntitySet } from '../../common/model/managed-entity-set';
 import { CommonEntityManager } from '../../entity-manager/services/common-entity-manager.service';
 import { MessageService } from '../../common/services/message.service';
 import { HttpClient } from '@angular/common/http';
@@ -12,17 +11,7 @@ import { PDFTemplateApiService } from '../../common/services/pdftemplate-api.ser
 
 @Injectable({ providedIn: 'root' })
 export class PDFTemplateManager extends BaseHttpApiService {
-	// pdfTemplatesList = new StandaloneEntitySet<PDFTemplate, ApiPDFTemplate>(
-	// 	(apiModel) => new PDFTemplate(this.commonEntityManager),
-	// 	(apiModel) => apiModel.slug,
-	// 	() => this.pdfTemplateApi.getPDFTemplatesForIssuer(),
-	// );
-
-	// allPDFTemplatesList = new StandaloneEntitySet<PDFTemplate, ApiPDFTemplate>(
-	// 	(apiModel) => new PDFTemplate(this.commonEntityManager),
-	// 	(apiModel) => apiModel.slug,
-	// 	() => this.pdfTemplateApi.getAllPDFTemplates(),
-	// );
+	pdfEditorAvailable = signal(false);
 
 	constructor(
 		protected loginService: SessionService,
@@ -38,8 +27,6 @@ export class PDFTemplateManager extends BaseHttpApiService {
 
 	createPDFTemplate(issuerSlug: string, newPDFTemplate: ApiPDFTemplateForCreation): Promise<PDFTemplate> {
 		return this.pdfTemplateApi.createPDFTemplate(issuerSlug, newPDFTemplate).then((retNewPDFTemplate) => {
-			// this.allPDFTemplatesList.addOrUpdate(retNewPDFTemplate);
-			// return this.pdfTemplatesList.addOrUpdate(retNewPDFTemplate);
 			return new PDFTemplate(this.commonEntityManager, retNewPDFTemplate);
 		});
 	}
@@ -47,5 +34,13 @@ export class PDFTemplateManager extends BaseHttpApiService {
 	async getPDFTemplateForIssuer(issuerSlug: string, ptSlug: string): Promise<PDFTemplate> {
 		const apiPDFTemplate = await this.pdfTemplateApi.getPDFTemplate(issuerSlug, ptSlug);
 		return new PDFTemplate(this.commonEntityManager, apiPDFTemplate);
+	}
+
+	async getPDFTemplatesForIssuer(issuerSlug: string): Promise<ApiPDFTemplate[]> {
+		const pdftemplates = await this.pdfTemplateApi.getPDFTemplatesForIssuer(issuerSlug);
+
+		this.pdfEditorAvailable.set(this.pdfTemplateApi.pdfEditorAvailable);
+
+		return pdftemplates;
 	}
 }

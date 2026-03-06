@@ -42,7 +42,7 @@ import { IssuerManager } from '../../services/issuer-manager.service';
 import { Issuer } from '../../models/issuer.model';
 import { OebSelectComponent } from '../../../components/select.component';
 import { FormFieldSelectOption } from '~/common/components/formfield-select';
-import { PDFTemplateApiService } from '../../../common/services/pdftemplate-api.service';
+import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
 import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 import { OptionalDetailsComponent } from '../optional-details/optional-details.component';
 import { setupActivityOnlineSync } from '~/common/util/activity-place-sync-helper';
@@ -79,7 +79,7 @@ export class BadgeclassIssueBulkAwardConformation
 	protected taskService = inject(TaskPollingManagerService);
 	protected translate = inject(TranslateService);
 	protected issuerManager = inject(IssuerManager);
-	private pdfTemplateApiService = inject(PDFTemplateApiService);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
 
 	readonly transformedImportData = input<TransformedImportData>(undefined);
 	readonly badgeSlug = input<string>(undefined);
@@ -357,7 +357,7 @@ export class BadgeclassIssueBulkAwardConformation
 	}
 
 	getPDFTemplatesForIssuerApi(issuerSlug) {
-		this.pdfTemplatesPromise = this.pdfTemplateApiService
+		this.pdfTemplatesPromise = this.pdfTemplateManager
 			.getPDFTemplatesForIssuer(issuerSlug)
 			.then(
 				(pdfTemplates) =>
