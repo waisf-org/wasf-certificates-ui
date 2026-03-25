@@ -185,7 +185,11 @@ export class BadgeclassIssueBulkAwardConformation
 		this.issuerManager.myIssuers$.subscribe(async (issuers) => {
 			this.issuer.set(issuers.find((i) => i.slug === this.issuerSlug()));
 
-			if (this.authService.isLoggedIn && this.issuer() instanceof Issuer && this.issuer().currentUserStaffMember) {
+			if (
+				this.authService.isLoggedIn &&
+				this.issuer() instanceof Issuer &&
+				this.issuer().currentUserStaffMember
+			) {
 				this.getPDFTemplatesForIssuerApi(this.issuer().slug);
 				await this.pdfTemplatesPromise;
 
