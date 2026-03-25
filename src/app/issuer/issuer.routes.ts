@@ -23,6 +23,7 @@ import { PDFTemplateCreateComponent } from './components/pdftemplate-create/pdft
 import { PDFTemplateEditComponent } from './components/pdftemplate-edit/pdftemplate-edit.component';
 import { LearningPathEditPDFTemplateComponent } from './components/learningpath-edit-pdftemplate/learningpath-edit-pdftemplate.component';
 import { NetworkEditComponent } from './components/network-edit/network-edit.component';
+import { IssuerQuotasComponent } from './components/issuer-quotas/issuer-quotas.component';
 
 export const routes = [
 	/* Issuer */
@@ -129,6 +130,14 @@ export const routes = [
 	{
 		path: 'issuers/:issuerSlug/learningpaths/:learningPathSlug/pdftemplate',
 		component: LearningPathEditPDFTemplateComponent,
+	},
+	{
+		path: 'issuers/:issuerSlug/quotas',
+		component: IssuerQuotasComponent,
+	},
+	{
+		path: 'networks/:issuerSlug/quotas',
+		component: IssuerQuotasComponent,
 	},
 	{
 		path: '**',

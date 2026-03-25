@@ -52,6 +52,8 @@ import { OebSeparatorComponent } from '~/components/oeb-separator.component';
 import { OptionalDetailsComponent } from '../optional-details/optional-details.component';
 import { setupActivityOnlineSync } from '~/common/util/activity-place-sync-helper';
 import { Subscription } from 'rxjs';
+import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { Network } from '~/issuer/network.model';
 
 @Component({
 	selector: 'badgeclass-issue',
@@ -372,9 +374,15 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		this.issueForm.controls.evidence_items.addFromTemplate();
 	}
 
-	onSubmit() {
+	async onSubmit() {
 		if (!this.issueForm.markTreeDirtyAndValidate()) {
 			return;
+		}
+
+		if (this.issuer.quotas) {
+			if (!(await this.checkQuotasDialog('BADGE_AWARD'))) {
+				return;
+			}
 		}
 
 		const formState = this.issueForm.value;
@@ -440,6 +448,9 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 						queryParams: { tab: 'recipients' },
 					});
 					this.messageService.setMessage('Badge awarded to ' + formState.recipient_identifier, 'success');
+					if (this.issuer.quotas) {
+						this.issuer.update();
+					}
 				},
 				(error) => {
 					this.messageService.setMessage(
@@ -497,5 +508,26 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
 					)),
 			);
+	}
+
+	async checkQuotasDialog(quota: string) {
+		let issuer: Issuer | Network = this.issuer as Issuer;
+		if (this.badgeClass.isNetworkBadge) {
+			issuer = await this.issuerManager.issuerOrNetworkBySlug(this.badgeClass.issuerSlug);
+		} else if (this.badgeClass.sharedOnNetwork) {
+			issuer = await this.issuerManager.issuerOrNetworkBySlug(this.badgeClass.sharedOnNetwork.slug);
+		}
+
+		await issuer.update();
+		if (issuer.quotas?.quotas[quota]?.quota === 0) {
+			this._hlmDialogService.open(QuotaExceededDialog, {
+				context: {
+					issuer: issuer,
+					variant: 'quotas',
+				},
+			});
+			return false;
+		}
+		return true;
 	}
 }

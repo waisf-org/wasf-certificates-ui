@@ -73,6 +73,7 @@ import { Network } from '~/issuer/network.model';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { SessionService } from '~/common/services/session.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
 
 type BadgeResult = BadgeClass & { selected?: boolean };
 
@@ -866,6 +867,14 @@ export class LearningPathEditFormComponent
 			'*Folgende Kriterien sind auf Basis deiner Eingaben als Metadaten im Badge hinterlegt*: \n\n';
 		const participationText = `Du hast erfolgreich an **${this.learningPathForm.controls.name.value}** teilgenommen.  \n\n `;
 
+		if (this.issuer.quotas) {
+			// recheck quotas and show dialog if something changed while starting the creation process
+			await this.issuer.update();
+			if (!this.checkQuotasDialog('LEARNINGPATH_CREATE')) {
+				return false;
+			}
+		}
+
 		if (this.initialisedLearningpath && this.lpBadge) {
 			let imageFrame = true;
 			if (this.learningPathForm.controls.badge_customImage.value && this.learningPathForm.valid) {
@@ -1013,6 +1022,13 @@ export class LearningPathEditFormComponent
 						pdftemplate: formState.pdftemplate,
 					});
 
+					if (this.issuer.quotas) {
+						this.savePromise.then(() => {
+							// update issuer if quotas active to update used quotas information
+							this.issuer.update();
+						});
+					}
+
 					this.save.emit(this.savePromise);
 					// clear sessionStorage
 					sessionStorage.removeItem('oeb-create-badgeclassvalues');
@@ -1054,6 +1070,19 @@ export class LearningPathEditFormComponent
 						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
 					)),
 			);
+	}
+
+	checkQuotasDialog(quota: string) {
+		if (this.issuer.quotas?.quotas[quota]?.quota === 0) {
+			this._hlmDialogService.open(QuotaExceededDialog, {
+				context: {
+					issuer: this.issuer,
+					variant: 'quotas',
+				},
+			});
+			return false;
+		}
+		return true;
 	}
 }
 
