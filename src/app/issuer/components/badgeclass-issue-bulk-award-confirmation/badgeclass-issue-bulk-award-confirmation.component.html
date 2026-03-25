@@ -142,14 +142,14 @@
 					[noTopMargin]="true"
 				></oeb-select>
 
-				@if (issuer.currentUserStaffMember.canEditBadge) {
+				@if (issuer().currentUserStaffMember.canEditBadge) {
 					<oeb-button
 						[id]="'create-new-pdftemplate-btn'"
-						[class.disabled]="!issuer.canCreateBadge"
+						[class.disabled]="!issuer().canCreateBadge"
 						class="tw-whitespace-nowrap tw-flex-grow tw-max-w-[300px]"
-						[routerLink]="['/issuer/issuers', issuer.slug]"
+						[routerLink]="['/issuer/issuers', issuer().slug]"
 						fragment="pdf-templates"
-						[disabled]="!issuer.currentUserStaffMember"
+						[disabled]="!issuer().currentUserStaffMember"
 						[text]="'PDFTemplate.createCustomPDFTemplate' | translate"
 						width="full_width"
 						size="sm"
