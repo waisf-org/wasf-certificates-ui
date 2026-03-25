@@ -49,10 +49,10 @@
 					>
 					</oeb-button>
 				}
-				@if (pdfTemplateManager.pdfEditorAvailable() && activeTab === 'pdf-templates') {
+				@if (isFullIssuer(issuer) && pdfTemplateManager.pdfEditorAvailable() && (!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota) && activeTab === 'pdf-templates') {
 					<oeb-button
 						class="tw-whitespace-nowrap"
-						*ngIf="!public && pdfTemplates && pdfTemplates.length > 0"
+						*ngIf="!public"
 						[routerLink]="['./pdftemplates/create']"
 						[disabled]="isFullIssuer(issuer) && !issuer.canCreateBadge"
 						[text]="'PDFTemplate.createPDFTemplate' | translate"
@@ -198,10 +198,10 @@
 			>
 			</oeb-button>
 		}
-		@if (pdfTemplateManager.pdfEditorAvailable() && activeTab === 'pdf-templates') {
+		@if (isFullIssuer(issuer) && pdfTemplateManager.pdfEditorAvailable() && (!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota) && activeTab === 'pdf-templates') {
 			<oeb-button
 				width="full_width"
-				*ngIf="!public && pdfTemplates && pdfTemplates.length > 0"
+				*ngIf="!public"
 				[routerLink]="['./pdftemplates/create']"
 				[disabled]="isFullIssuer(issuer) && !issuer.canCreateBadge"
 				[text]="'PDFTemplate.createPDFTemplate' | translate"
@@ -320,7 +320,7 @@
 			</ng-template>
 		</div>
 	</ng-template>
-	@if (pdfTemplateManager.pdfEditorAvailable()) {
+	@if (isFullIssuer(issuer) && pdfTemplateManager.pdfEditorAvailable() && (!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota)) {
 		<ng-template #pdfTemplatesTemplate>
 			<div class="oeb-section-sm">
 				<ng-template [bgAwaitPromises]="pdfTemplatesPromise">

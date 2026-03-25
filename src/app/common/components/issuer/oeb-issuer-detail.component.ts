@@ -512,7 +512,7 @@ export class OebIssuerDetailComponent implements OnInit {
 			},
 		];
 
-		if (this.pdfTemplateManager.pdfEditorAvailable()) {
+		if (this.isFullIssuer(this.issuer) && this.pdfTemplateManager.pdfEditorAvailable() && (!this.issuer.quotas || this.issuer.quotas?.quotas['PDFEDITOR'].quota)) {
 			this.tabs.push({
 				key: 'pdf-templates',
 				title: 'PDFTemplate.pdfTemplates',
