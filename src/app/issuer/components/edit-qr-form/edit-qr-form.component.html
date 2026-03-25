@@ -70,7 +70,11 @@
 				</div>
 
 				<!-- PDF Template Section -->
-				@if (issuer.currentUserStaffMember.canEditBadge && pdfTemplateManager.pdfEditorAvailable() && (!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota)) {
+				@if (
+					issuer.currentUserStaffMember.canEditBadge &&
+					pdfTemplateManager.pdfEditorAvailable() &&
+					(!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota)
+				) {
 					<div
 						class="tw-mb-10 tw-flex tw-bg-white tw-border-purple tw-border-solid tw-border tw-rounded-[15px] tw-p-6 tw-flex-col tw-gap-2"
 					>

@@ -49,7 +49,12 @@
 					>
 					</oeb-button>
 				}
-				@if (isFullIssuer(issuer) && pdfTemplateManager.pdfEditorAvailable() && (!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota) && activeTab === 'pdf-templates') {
+				@if (
+					isFullIssuer(issuer) &&
+					pdfTemplateManager.pdfEditorAvailable() &&
+					(!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota) &&
+					activeTab === 'pdf-templates'
+				) {
 					<oeb-button
 						class="tw-whitespace-nowrap"
 						*ngIf="!public"
@@ -198,7 +203,12 @@
 			>
 			</oeb-button>
 		}
-		@if (isFullIssuer(issuer) && pdfTemplateManager.pdfEditorAvailable() && (!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota) && activeTab === 'pdf-templates') {
+		@if (
+			isFullIssuer(issuer) &&
+			pdfTemplateManager.pdfEditorAvailable() &&
+			(!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota) &&
+			activeTab === 'pdf-templates'
+		) {
 			<oeb-button
 				width="full_width"
 				*ngIf="!public"
@@ -320,7 +330,11 @@
 			</ng-template>
 		</div>
 	</ng-template>
-	@if (isFullIssuer(issuer) && pdfTemplateManager.pdfEditorAvailable() && (!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota)) {
+	@if (
+		isFullIssuer(issuer) &&
+		pdfTemplateManager.pdfEditorAvailable() &&
+		(!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota)
+	) {
 		<ng-template #pdfTemplatesTemplate>
 			<div class="oeb-section-sm">
 				<ng-template [bgAwaitPromises]="pdfTemplatesPromise">

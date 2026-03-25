@@ -119,7 +119,9 @@
 		[courseUrlDefaultOpen]="badgeInstanceCourseUrl() !== null && badgeInstanceCourseUrl().length > 0"
 	/>
 
-	@if (pdfTemplateManager.pdfEditorAvailable() && (!issuer()?.quotas || issuer()?.quotas?.quotas['PDFEDITOR'].quota)) {
+	@if (
+		pdfTemplateManager.pdfEditorAvailable() && (!issuer()?.quotas || issuer()?.quotas?.quotas['PDFEDITOR'].quota)
+	) {
 		<section
 			class="tw-mt-6 tw-border tw-border-purple tw-border-solid tw-bg-white tw-rounded-[10px] tw-flex tw-flex-col tw-items-start tw-gap-4 tw-p-6"
 		>
