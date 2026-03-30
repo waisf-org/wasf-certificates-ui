@@ -1407,7 +1407,7 @@ export class BadgeClassEditFormComponent
 				return;
 			}
 
-			if (this.issuer.quotas) {
+			if (this.issuer.quotas && !this.existingBadgeClass) {
 				// recheck quotas and show dialog if something changed while starting the creation process
 				await this.issuer.update();
 				if (!this.checkQuotasDialog('BADGE_CREATE')) {
