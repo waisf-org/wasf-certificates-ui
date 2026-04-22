@@ -68,6 +68,8 @@ import { QuotaInformationComponent } from '~/issuer/components/quota-information
 import { LinkEntry } from '../bg-breadcrumbs/bg-breadcrumbs.component';
 import { QuotaExceededDialog } from '~/issuer/components/issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
 import { Network } from '~/issuer/network.model';
+import { OebDashboardOverviewComponent } from '~/dashboard/components/oeb-dashboard-overview/oeb-dashboard-overview.component';
+import { OebDashboardLearnersComponent } from '~/dashboard/components/oeb-dashboard-learners/oeb-dashboard-learners.component';
 import { LearningPath } from '~/issuer/models/learningpath.model';
 
 @Component({
@@ -100,6 +102,8 @@ import { LearningPath } from '~/issuer/models/learningpath.model';
 		CommonModule,
 		QuotaInformationComponent,
 		QuotaExceededDialog,
+		OebDashboardOverviewComponent,
+		OebDashboardLearnersComponent,
 	],
 })
 export class OebIssuerDetailComponent implements OnInit {
@@ -187,6 +191,7 @@ export class OebIssuerDetailComponent implements OnInit {
 	badgeTemplateTabs: any = undefined;
 	activeTabBadgeTemplate = 'issuer-badges';
 
+	readonly dashboardTemplate = viewChild<TemplateRef<any>>('dashboardTemplate');
 	readonly badgesTemplate = viewChild<TemplateRef<any>>('badgesTemplate');
 	readonly learningPathTemplate = viewChild<TemplateRef<any>>('learningPathTemplate');
 	readonly issuerBadgesTemplate = viewChild<TemplateRef<any>>('issuerBadgesTemplate');
@@ -514,17 +519,35 @@ export class OebIssuerDetailComponent implements OnInit {
 				}, 0);
 		}
 
+		this.tabs = [];
+
+		if (this.isFullIssuer(this.issuer)) {
+			if (!this.issuer.quotas || this.issuer.quotas.quotas['DASHBOARD'].quota) {
+				this.tabs = [
+					{
+						key: 'dashboard',
+						title: 'NavItems.dashboard',
+						component: this.dashboardTemplate(),
+					},
+				];
+				this.activeTab = 'dashboard';
+			}
+		}
+
 		this.tabs = [
-			{
-				key: 'badges',
-				title: 'Badges',
-				component: this.badgesTemplate(),
-			},
-			{
-				key: 'micro-degrees',
-				title: 'LearningPath.learningpathsPlural',
-				component: this.learningPathTemplate(),
-			},
+			...this.tabs,
+			...[
+				{
+					key: 'badges',
+					title: 'Badges',
+					component: this.badgesTemplate(),
+				},
+				{
+					key: 'micro-degrees',
+					title: 'LearningPath.learningpathsPlural',
+					component: this.learningPathTemplate(),
+				},
+			],
 		];
 
 		if (
