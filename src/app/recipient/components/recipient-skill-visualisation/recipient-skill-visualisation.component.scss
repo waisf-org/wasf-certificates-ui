@@ -123,6 +123,20 @@
 					fill: var(--color-yellow-200);
 				}
 			}
+			&.bne,
+			&.bne-sub {
+				color: #2c2c2c;
+				circle {
+					stroke: #2c2c2c;
+					fill: #60fa99;
+				}
+			}
+			&.bne-sub {
+				circle {
+					stroke: #00441c;
+					fill: #c4fdda;
+				}
+			}
 		}
 
 		g.group,
@@ -177,7 +191,7 @@
 		gap: 4px;
 
 		&:before {
-			content: '';
+			content: "";
 			display: block;
 			border: 1px solid var(--color-black);
 			height: 16px;

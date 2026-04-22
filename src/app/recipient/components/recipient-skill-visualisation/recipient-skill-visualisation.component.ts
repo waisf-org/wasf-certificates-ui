@@ -57,6 +57,7 @@ import * as d3 from 'd3';
 import d3ForceBoundary from 'd3-force-boundary';
 
 import futureSkills from './recipient-skill-visualisation.future.json';
+import bneSkills from './recipient-skill-visualisation.bne.json';
 
 interface ExtendedApiSkill extends Partial<ApiSkill> {
 	id: string;
@@ -126,7 +127,7 @@ const skillIconMap = {
 	'/esco/skill/43f425aa-f45d-4bb4-a200-6f82fa211b66': lucideMessageSquare,
 	'/esco/skill/e434e71a-f068-44ed-8059-d1af9eb592d7': lucideLanguages,
 	'future-skills': lucideRocket,
-	bne: lucideEarth,
+	'bne-skills': lucideEarth,
 };
 
 @Component({
@@ -199,10 +200,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 	areaClick = output<CompetencyAreaClickData>();
 
 	skillTree: Map<string, ExtendedApiSkill>;
-	d3data: { nodes: ExtendedApiSkill[]; links: SkillLink[] } = {
-		nodes: [],
-		links: [],
-	};
+	d3data: { nodes: ExtendedApiSkill[]; links: SkillLink[] } = { nodes: [], links: [] };
 
 	mobile = window.innerWidth <= VISUALISATION_BREAKPOINT_MAX_WIDTH;
 	hasFutureSkills = false;
@@ -246,46 +244,45 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 		this.hasFutureSkills = false;
 
 		// DEBUG: add your own future skill for testing
-		// futureSkills['escoMap']['/esco/skill/2c6439c2-77a5-436a-b222-5e12d435c3eb'] = 'lernkompetenz';
+		futureSkills['escoMap']['/esco/skill/2c6439c2-77a5-436a-b222-5e12d435c3eb'] = 'lernkompetenz';
+		bneSkills['escoMap']['/esco/skill/2c6439c2-77a5-436a-b222-5e12d435c3eb'] = 'weltoffen';
+
+		const extraSkills = [futureSkills, bneSkills];
 
 		skills.forEach((s) => {
 			const breadcrumbs = s.breadcrumb_paths;
 
 			// add future skills to breadcrumbs if applicable
-			if (futureSkills['escoMap'][s.concept_uri]) {
-				const emptyFs = {
-					preferred_label: '',
-					concept_uri: '',
-					description: '',
-					type: '',
-					alt_labels: [],
-					reuse_level: null,
-				};
-				const baseFs = futureSkills['futureSkills'][futureSkills['escoMap'][s.concept_uri]];
-				const futureSkill = {
-					...emptyFs,
-					...{
-						concept_uri: baseFs['concept_uri'],
-						preferred_label: baseFs[this.translate.currentLang]['preferred_label'],
-						description: baseFs[this.translate.currentLang]['description'],
-					},
-				};
-
-				breadcrumbs.push([
-					emptyFs,
-					{
+			extraSkills.forEach((skillMap) => {
+				if (skillMap['escoMap'][s.concept_uri]) {
+					const emptyFs = {
+						preferred_label: '',
+						concept_uri: '',
+						description: '',
+						type: '',
+						alt_labels: [],
+						reuse_level: null,
+					};
+					const baseFs = skillMap['skills'][skillMap['escoMap'][s.concept_uri]];
+					const extraSkill = {
 						...emptyFs,
 						...{
-							preferred_label: 'future skills',
-							concept_uri: 'future-skills',
+							concept_uri: baseFs['concept_uri'],
+							preferred_label: baseFs[this.translate.currentLang]['preferred_label'],
+							description: baseFs[this.translate.currentLang]['description'],
 						},
-					},
-					futureSkill,
-					s,
-				]);
+					};
 
-				this.hasFutureSkills = true;
-			}
+					breadcrumbs.push([
+						emptyFs,
+						{ ...emptyFs, ...{ preferred_label: skillMap['label'], concept_uri: skillMap['uri'] } },
+						extraSkill,
+						s,
+					]);
+
+					// this.hasFutureSkills = true;
+				}
+			});
 
 			// loop breadcrumbs to augment skill data
 			breadcrumbs.forEach((breadcrumb) => {
@@ -326,9 +323,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 							entry.ancestors.add(ancestor);
 						}
 
-						Object.assign(entry, {
-							height: Math.max(breadcrumb.length - j, entry.height),
-						});
+						Object.assign(entry, { height: Math.max(breadcrumb.length - j, entry.height) });
 
 						if (j == 1) {
 							ancestor = id;
@@ -354,6 +349,9 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 		const hasFuture = Array.from(this.skillTree.values()).reduce((c, s) => {
 			return s.id == 'future-skills' || c;
 		}, false);
+		const hasBNE = Array.from(this.skillTree.values()).reduce((c, s) => {
+			return s.id == 'bne-skills' || c;
+		}, false);
 		// find top level nodes with highest studyLoad, either top 5 or 4 if future skills exist
 		const topAncestors = new Set(
 			Array.from(this.skillTree.values())
@@ -367,6 +365,9 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 		// add future skills if available
 		if (hasFuture) {
 			topAncestors.add('future-skills');
+		}
+		if (hasBNE) {
+			topAncestors.add('bne-skills');
 		}
 
 		// add nodes that either are topAncestors or have a topAncestor or are in future skills
@@ -394,10 +395,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 					// parents might have been removed in topancestors filter
 					if (d3NodeIds.includes(parent.id)) {
 						parent.children.push(node.id);
-						this.d3data.links.push({
-							source: node.id,
-							target: parentId,
-						});
+						this.d3data.links.push({ source: node.id, target: parentId });
 					}
 				}
 			});
@@ -674,6 +672,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 				level-${d.depth}
 				${d.clickable ? 'clickable' : ''}
 				${d.id == 'future-skills' ? 'future' : ''}
+				${d.id == 'bne-skills' ? 'bne' : ''}
 			`,
 		);
 
@@ -724,6 +723,8 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 				${d.clickable ? 'clickable' : ''}
 				${d.id == 'future-skills' ? 'future' : ''}
 				${d.parents.has('future-skills') ? 'future-sub' : ''}
+				${d.id == 'bne-skills' ? 'bne' : ''}
+				${d.parents.has('bne-skills') ? 'bne-sub' : ''}
 			`,
 		);
 
