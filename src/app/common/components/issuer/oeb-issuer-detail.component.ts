@@ -630,7 +630,7 @@ export class OebIssuerDetailComponent implements OnInit {
 		}
 	}
 
-	async openDeleteDialog(pdfTemplateName: string, pdfTemplateSlug: string, issuerSlug: string) {
+	async openDeletePDFTemplateDialog(pdfTemplateName: string, pdfTemplateSlug: string, issuerSlug: string) {
 		const pt = await this.pdfTemplateApiService.getPDFTemplate(issuerSlug, pdfTemplateSlug);
 
 		if (pt.used) {
