@@ -16,14 +16,19 @@ import { UserProfileManager } from '../../../common/services/user-profile-manage
 import { AppConfigService } from '../../../common/app-config.service';
 import { Issuer } from '../../../issuer/models/issuer.model';
 import { BadgeClass } from '../../../issuer/models/badgeclass.model';
+import { PDFTemplate } from '../../../issuer/models/pdftemplate.model';
 import { IssuerManager } from '../../../issuer/services/issuer-manager.service';
 import { MenuItem } from '../badge-detail/badge-detail.component.types';
 import { TranslateService, TranslatePipe, TranslateModule } from '@ngx-translate/core';
 import { ApiLearningPath } from '../../../common/model/learningpath-api.model';
+import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 import { LearningPathApiService } from '../../../common/services/learningpath-api.service';
+import { PDFTemplateApiService } from '../../../common/services/pdftemplate-api.service';
+import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
 import { DangerDialogComponentTemplate } from '../../dialogs/oeb-dialogs/danger-dialog-template.component';
 import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
 import { InfoDialogComponent } from '../../dialogs/oeb-dialogs/info-dialog.component';
+import { DialogComponent } from '../../../../app/components/dialog.component';
 import { QrCodeApiService } from '../../../issuer/services/qrcode-api.service';
 import { ApiQRCode } from '../../../issuer/models/qrcode-api.model';
 import { SessionService } from '../../services/session.service';
@@ -40,6 +45,7 @@ import { BgBadgecard } from '../bg-badgecard';
 import { LearningPathDatatableComponent } from '../../../components/datatable-learningpaths.component';
 import { LearningPathArchivedDatatableComponent } from '~/components/datatable-learningpaths-archived.component';
 import { BgLearningPathCard } from '../bg-learningpathcard';
+import { BgPDFTemplateCard } from '../bg-pdftemplatecard';
 import { PublicApiBadgeClass, PublicApiIssuer, PublicApiLearningPath } from '../../../public/models/public-api.model';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmH1, HlmP } from '@spartan-ng/helm/typography';
@@ -47,6 +53,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { NetworkApiService } from '~/issuer/services/network-api.service';
 import { CommonEntityManager } from '~/entity-manager/services/common-entity-manager.service';
 import { IssuerApiService } from '~/issuer/services/issuer-api.service';
+import { CommonModule } from '@angular/common';
 import { PublicApiService } from '~/public/services/public-api.service';
 
 interface NetworkBadgeGroup {
@@ -88,9 +95,11 @@ import { LearningPath } from '~/issuer/models/learningpath.model';
 		LearningPathDatatableComponent,
 		LearningPathArchivedDatatableComponent,
 		BgLearningPathCard,
+		BgPDFTemplateCard,
 		TranslatePipe,
 		TranslateModule,
 		NgTemplateOutlet,
+		CommonModule,
 		QuotaInformationComponent,
 		QuotaExceededDialog,
 		OebDashboardOverviewComponent,
@@ -113,11 +122,14 @@ export class OebIssuerDetailComponent implements OnInit {
 	private networkApiService = inject(NetworkApiService);
 	private issuerApiService = inject(IssuerApiService);
 	private publicApiService = inject(PublicApiService);
+	private pdfTemplateApiService = inject(PDFTemplateApiService);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
 
 	@Input() issuer: Issuer | PublicApiIssuer;
 	@Input() issuerPlaceholderSrc: string;
 	@Input() issuerActionsMenu: any;
 	@Input() badges: BadgeClass[] | PublicApiBadgeClass[];
+	@Input() pdfTemplates: ApiPDFTemplate[];
 	@Input() networks: PublicApiIssuer[];
 	@Input() partner_issuers: PublicApiIssuer[];
 	@Input() public: boolean = false;
@@ -125,6 +137,7 @@ export class OebIssuerDetailComponent implements OnInit {
 	@Output() issuerDeleted = new EventEmitter();
 
 	learningPathsPromise: Promise<unknown>;
+	pdfTemplatesPromise: Promise<unknown>;
 	learningPaths: (ApiLearningPath | PublicApiLearningPath)[];
 	requestsLoaded: Promise<Map<string, ApiQRCode[]>>;
 	networkRequestsLoaded: Promise<Map<string, ApiQRCode[]>>;
@@ -183,6 +196,7 @@ export class OebIssuerDetailComponent implements OnInit {
 	readonly learningPathTemplate = viewChild<TemplateRef<any>>('learningPathTemplate');
 	readonly issuerBadgesTemplate = viewChild<TemplateRef<any>>('issuerBadgesTemplate');
 	readonly networkBadgesTemplate = viewChild<TemplateRef<any>>('networkBadgesTemplate');
+	readonly pdfTemplatesTemplate = viewChild<TemplateRef<any>>('pdfTemplatesTemplate');
 
 	badgeResults: BadgeResult[] = [];
 	networkBadgeInstanceResults: NetworkBadgeGroup[] = [];
@@ -461,6 +475,7 @@ export class OebIssuerDetailComponent implements OnInit {
 		if (this.sessionService.isLoggedIn) {
 			if (this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
 				await this.getLearningPathsForIssuerApi(this.issuer.slug);
+				this.getPDFTemplatesForIssuerApi(this.issuer.slug);
 			}
 			this.issuerManager.myIssuers$.subscribe((issuers) => {
 				this.userIsMember = issuers.some((i) => this.issuer.slug == i.slug);
@@ -534,6 +549,23 @@ export class OebIssuerDetailComponent implements OnInit {
 				},
 			],
 		];
+
+		if (
+			this.isFullIssuer(this.issuer) &&
+			this.pdfTemplateManager.pdfEditorAvailable() &&
+			(!this.issuer.quotas || this.issuer.quotas?.quotas['PDFEDITOR'].quota)
+		) {
+			this.tabs.push({
+				key: 'pdf-templates',
+				title: 'PDFTemplate.pdfTemplates',
+				component: this.pdfTemplatesTemplate(),
+			});
+		}
+
+		const fragment = this.router.parseUrl(this.router.url).fragment;
+		if (fragment && this.tabs.find((tab) => tab.key === fragment)) {
+			this.activeTab = fragment;
+		}
 	}
 
 	delete(event) {
@@ -597,6 +629,51 @@ export class OebIssuerDetailComponent implements OnInit {
 				this.router.navigate(['/issuer/issuers/', issuer.slug, 'badges', badge.slug, 'qr']);
 			}
 		});
+	}
+
+	async openEditDialog(pdfTemplateSlug: string, issuerSlug: string) {
+		const pt = await this.pdfTemplateApiService.getPDFTemplate(issuerSlug, pdfTemplateSlug);
+
+		if (pt.used) {
+			const dialogRef = this._hlmDialogService.open(InfoDialogComponent, {
+				context: {
+					variant: 'info',
+					caption: this.translate.instant('PDFTemplate.openEditDialogTitle'),
+					text: this.translate.instant('PDFTemplate.openEditDialogText'),
+					cancelText: this.translate.instant('General.cancel'),
+					forwardText: this.translate.instant('PDFTemplate.openEditDialogForward'),
+				},
+			});
+			dialogRef.closed$.subscribe((result) => {
+				if (result === 'continue')
+					this.router.navigate(['/issuer/issuers/', issuerSlug, 'pdftemplates', pdfTemplateSlug, 'edit']);
+			});
+		} else {
+			this.router.navigate(['/issuer/issuers/', issuerSlug, 'pdftemplates', pdfTemplateSlug, 'edit']);
+		}
+	}
+
+	async openDeletePDFTemplateDialog(pdfTemplateName: string, pdfTemplateSlug: string, issuerSlug: string) {
+		const pt = await this.pdfTemplateApiService.getPDFTemplate(issuerSlug, pdfTemplateSlug);
+
+		if (pt.used) {
+			const dialogRef = this._hlmDialogService.open(DialogComponent, {
+				context: {
+					variant: 'failure',
+					message: this.translate.instant('PDFTemplate.deleteNotPossibleDialogTitle'),
+				},
+			});
+		} else {
+			const dialogRef = this._hlmDialogService.open(DangerDialogComponentTemplate, {
+				context: {
+					delete: () => this.deletePDFTemplateApi(pdfTemplateSlug, issuerSlug),
+					variant: 'danger',
+					title: this.translate.instant('PDFTemplate.openDeleteDialogTitle', {
+						title: pdfTemplateName,
+					}),
+				},
+			});
+		}
 	}
 
 	routeToBadgeDetail(badge, issuer, focusRequests: boolean = false) {
@@ -690,6 +767,23 @@ export class OebIssuerDetailComponent implements OnInit {
 				this.archivedLearningPaths = this.public ? [] : sortedLearningPaths.filter((lp) => lp.archived);
 				this.refreshLearningPathTables();
 			});
+	}
+
+	getPDFTemplatesForIssuerApi(issuerSlug) {
+		this.pdfTemplatesPromise = this.pdfTemplateManager
+			.getPDFTemplatesForIssuer(issuerSlug)
+			.then(
+				(pdfTemplates) =>
+					(this.pdfTemplates = pdfTemplates.sort(
+						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+					)),
+			);
+	}
+
+	deletePDFTemplateApi(pdfTemplateSlug, issuerSlug) {
+		this.pdfTemplateApiService
+			.deletePDFTemplate(issuerSlug, pdfTemplateSlug)
+			.then(() => (this.pdfTemplates = this.pdfTemplates.filter((value) => value.slug != pdfTemplateSlug)));
 	}
 
 	get rawJsonUrl() {

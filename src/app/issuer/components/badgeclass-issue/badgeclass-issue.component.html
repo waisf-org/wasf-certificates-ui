@@ -15,10 +15,8 @@
 							</span>
 						</h1>
 					</div>
-					<div class="tw-flex tw-flex-wrap oeb-standard-padding-bottom">
-						<div
-							class="md:tw-max-w-[300px] tw-max-w-[150px] tw-text-center tw-mr-6 md:tw-h-[300px] tw-h-[200px]"
-						>
+					<div class="tw-flex tw-flex-wrap tw-gap-6 oeb-standard-padding-bottom">
+						<div class="tw-w-[300px] tw-text-center tw-h-[300px]">
 							<div
 								class="tw-px-6 tw-py-4 tw-border-purple tw-border-solid tw-border tw-rounded-[15px] tw-h-full tw-mb-1 tw-flex"
 							>
@@ -31,7 +29,7 @@
 							</div>
 							<p size="sm" hlmP>{{ 'Issuer.badgePreview' | translate }}</p>
 						</div>
-						<div class="md:tw-max-w-[300px] tw-max-w-[150px] tw-text-center md:tw-h-[300px] tw-h-[200px]">
+						<div class="tw-w-[300px] tw-text-center tw-h-[300px]" [hidden]="pdfTemplateSelected()">
 							<div
 								class="tw-px-6 tw-py-4 tw-border-purple tw-border-solid tw-border tw-rounded-[15px] tw-relative tw-h-full tw-mb-1 tw-overflow-hidden tw-flex"
 							>
@@ -50,8 +48,54 @@
 							</div>
 							<p size="sm" hlmP [innerHTML]="'Issuer.certPreview' | translate"></p>
 						</div>
+
+						<div class="tw-w-[300px] tw-text-center tw-h-[300px]" [hidden]="!pdfTemplateSelected()">
+							<div
+								class="tw-px-6 tw-py-4 tw-border-purple tw-border-solid tw-border tw-rounded-[15px] tw-relative tw-h-full tw-mb-1 tw-overflow-hidden tw-flex tw-justify-center l-flex-aligncenter"
+							>
+								<canvas id="previewCanvas"></canvas>
+							</div>
+							<p size="sm" hlmP [innerHTML]="'Issuer.certPreview' | translate"></p>
+						</div>
 					</div>
 				</div>
+
+				@if (
+					pdfTemplateManager.pdfEditorAvailable() &&
+					(!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota)
+				) {
+					<div class="tw-mt-10 tw-mb-10 tw-flex tw-flex-wrap tw-gap-6 tw-items-end">
+						<oeb-select
+							class="tw-block tw-flex-grow"
+							[options]="selectPDFTemplateOptions"
+							[control]="issueForm.rawControlMap.pdftemplate"
+							[noTopMargin]="true"
+							label="{{ 'PDFTemplate.backgroundLabel' | translate }}"
+						></oeb-select>
+
+						@if (issuer.currentUserStaffMember.canEditBadge) {
+							<oeb-button
+								[id]="'create-new-pdftemplate-btn'"
+								[class.disabled]="!issuer.canCreateBadge"
+								class="tw-whitespace-nowrap tw-flex-grow"
+								[routerLink]="['/issuer/issuers', issuer.slug]"
+								fragment="pdf-templates"
+								[disabled]="!issuer.currentUserStaffMember"
+								[text]="'PDFTemplate.createCustomPDFTemplate' | translate"
+								width="full_width"
+								size="sm"
+								variant="secondary"
+								weight="normal"
+								icon="lucidePlus"
+								iconSize="sm"
+								[iconLeft]="true"
+								[umamiEvent]="'create-pdftemplate'"
+							>
+							</oeb-button>
+						}
+					</div>
+				}
+
 				<div class="tw-border-purple tw-border-solid tw-border tw-p-6 tw-rounded-[15px] tw-my-6">
 					<span hlmP [innerHTML]="'Issuer.batchAwardText1' | translate"></span>&nbsp;
 					<a

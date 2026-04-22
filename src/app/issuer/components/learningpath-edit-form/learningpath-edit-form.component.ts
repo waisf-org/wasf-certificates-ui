@@ -62,12 +62,17 @@ import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmH2, HlmP } from '@spartan-ng/helm/typography';
 import { UpperCasePipe } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
+import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
+import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 import { NetworkApiService } from '~/issuer/services/network-api.service';
 import { CommonEntityManager } from '~/entity-manager/services/common-entity-manager.service';
 import { NgIcon } from '@ng-icons/core';
 import { HlmIcon } from '@spartan-ng/helm/icon';
-import { AUTH_PROVIDER, AuthenticationService } from '~/common/services/authentication-service';
+import { AUTH_PROVIDER } from '~/common/services/authentication-service';
 import { Network } from '~/issuer/network.model';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { SessionService } from '~/common/services/session.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
 
 type BadgeResult = BadgeClass & { selected?: boolean };
@@ -111,7 +116,6 @@ export class LearningPathEditFormComponent
 	extends BaseAuthenticatedRoutableComponent
 	implements OnInit, OnChanges, AfterViewInit
 {
-	protected loginService: AuthenticationService;
 	protected messageService = inject(MessageService);
 	protected learningPathApiService = inject(LearningPathApiService);
 	protected issuerManager = inject(IssuerManager);
@@ -124,6 +128,8 @@ export class LearningPathEditFormComponent
 	protected badgeInstanceManager = inject(BadgeInstanceManager);
 	protected learningPathManager = inject(LearningPathManager);
 	protected configService = inject(AppConfigService);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
+	protected authService: SessionService;
 
 	@ViewChild(StepperComponent) stepper: StepperComponent;
 
@@ -273,9 +279,18 @@ export class LearningPathEditFormComponent
 
 	selectMinBadgesOptions: FormFieldSelectOption[] = [];
 
+	pdfTemplatesPromise: Promise<unknown>;
+	pdfTemplates: ApiPDFTemplate[];
+	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
+
 	constructor() {
-		super();
-		this.loginService = inject(AUTH_PROVIDER);
+		const sessionService = inject(SessionService);
+		const router = inject(Router);
+		const route = inject(ActivatedRoute);
+
+		super(router, route, sessionService);
+		this.authService = sessionService;
+
 		this.baseUrl = this.configService.apiConfig.baseUrl;
 		if (!this.issuer)
 			this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
@@ -383,6 +398,7 @@ export class LearningPathEditFormComponent
 					legalCode: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
 				},
 			],
+			pdftemplate: lp.pdftemplate,
 		});
 		this.selectedBadges = lp.badges.map((b) => b.badge);
 
@@ -487,9 +503,10 @@ export class LearningPathEditFormComponent
 					UrlValidator.validUrl,
 				),
 			Validators.required,
-		);
+		)
+		.addControl('pdftemplate', null);
 
-	ngAfterViewInit() {
+	async ngAfterViewInit() {
 		this.focusActivation = this.route.snapshot.queryParamMap.get('focusActivation') === 'true';
 
 		if (this.focusActivation && this.initialisedLearningpath && this.stepper) {
@@ -510,6 +527,20 @@ export class LearningPathEditFormComponent
 		this.learningPathForm.controls.badges.rawControl.valueChanges.subscribe((value) => {
 			this.selectMinBadgesOptions = this.generateSelectMinBadgesOptions(value);
 		});
+
+		if (this.authService.isLoggedIn) {
+			this.getPDFTemplatesForIssuerApi(this.issuerSlug);
+			await this.pdfTemplatesPromise;
+
+			this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
+				label: t.name,
+				value: t.slug,
+			}));
+			this.selectPDFTemplateOptions.push({
+				label: this.translate.instant('PDFTemplate.oebDesign'),
+				value: null,
+			});
+		}
 	}
 
 	private generateSelectMinBadgesOptions(badges: any[]): FormFieldSelectOption[] {
@@ -903,6 +934,7 @@ export class LearningPathEditFormComponent
 			this.initialisedLearningpath.badges = this.draggableList.map((item, index) => {
 				return { badge: item, order: item.order };
 			});
+			this.initialisedLearningpath.pdftemplate = formState.pdftemplate;
 
 			this.savePromise = this.initialisedLearningpath.save();
 
@@ -984,6 +1016,7 @@ export class LearningPathEditFormComponent
 						required_badges_count: formState.required_badges_count ?? this.selectedBadges.length,
 						participationBadge_id: participationBadge.slug,
 						activated: formState.activated,
+						pdftemplate: formState.pdftemplate,
 					});
 
 					if (this.issuer.quotas) {
@@ -1023,6 +1056,17 @@ export class LearningPathEditFormComponent
 		return this.selectedBadges.length >= 2
 			? null
 			: { minSelectedBadges: { required: 2, actual: this.selectedBadges.length } };
+	}
+
+	getPDFTemplatesForIssuerApi(issuerSlug) {
+		this.pdfTemplatesPromise = this.pdfTemplateManager
+			.getPDFTemplatesForIssuer(issuerSlug)
+			.then(
+				(pdfTemplates) =>
+					(this.pdfTemplates = pdfTemplates.sort(
+						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+					)),
+			);
 	}
 
 	checkQuotasDialog(quota: string) {
