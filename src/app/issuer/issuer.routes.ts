@@ -20,6 +20,8 @@ import { NetworkCreateComponent } from './components/network-create/network-crea
 import { NetworkDashboardComponent } from './components/network-dashboard/network-dashboard.component';
 import { NetworkInviteConfirmationComponent } from './components/network-invite-confirmation/network-invite-confirmation.component';
 import { NetworkEditComponent } from './components/network-edit/network-edit.component';
+import { NetworkBadgeAnalysisComponent } from './components/network-badge-analysis/network-badge-analysis.component';
+import { DashboardCompetencyTrackingComponent } from './components/network-competency-tracking/network-competency-tracking.component';
 import { IssuerQuotasComponent } from './components/issuer-quotas/issuer-quotas.component';
 
 export const routes = [
@@ -43,6 +45,18 @@ export const routes = [
 	{
 		path: 'networks/:networkSlug/edit',
 		component: NetworkEditComponent,
+	},
+	{
+		path: 'networks/:networkSlug/badge-analysis',
+		component: NetworkBadgeAnalysisComponent,
+	},
+	{
+		path: 'networks/:networkSlug/competency-tracking',
+		component: DashboardCompetencyTrackingComponent,
+	},
+	{
+		path: 'networks/:networkSlug/competency-tracking/:competencyId',
+		component: DashboardCompetencyTrackingComponent,
 	},
 	{
 		path: 'networks/invite/:inviteSlug',
@@ -115,6 +129,18 @@ export const routes = [
 	{
 		path: 'issuers/:issuerSlug/badges/:badgeSlug/bulk-import',
 		component: BadgeClassIssueBulkAwardComponent,
+	},
+	{
+		path: 'issuers/:networkSlug/badge-analysis',
+		component: NetworkBadgeAnalysisComponent,
+	},
+	{
+		path: 'issuers/:networkSlug/competency-tracking',
+		component: DashboardCompetencyTrackingComponent,
+	},
+	{
+		path: 'issuers/:networkSlug/competency-tracking/:competencyId',
+		component: DashboardCompetencyTrackingComponent,
 	},
 	{
 		path: 'issuers/:issuerSlug/quotas',
