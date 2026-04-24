@@ -19,7 +19,8 @@
 				[errorMessage]="'General.validationCompleteForm' | translate"
 				[completed]="(validateFields(['name', 'description', 'language']) && !imageValidation()) || isDevMode"
 				[hasError]="
-					((!validateFields(['name', 'description', 'language']) && dirtyFields(['name', 'description', 'language'])) ||
+					((!validateFields(['name', 'description', 'language']) &&
+						dirtyFields(['name', 'description', 'language'])) ||
 						(imageFieldDirty && imageValidation())) &&
 					!isDevMode
 				"
