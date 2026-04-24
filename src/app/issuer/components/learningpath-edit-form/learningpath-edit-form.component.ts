@@ -489,10 +489,7 @@ export class LearningPathEditFormComponent
 	learningPathForm = typedFormGroup([this.imageValidation.bind(this), this.minSelectedBadges.bind(this)])
 		.addControl('name', '', [Validators.required, Validators.maxLength(60)])
 		.addControl('description', '', [Validators.required, Validators.maxLength(700)])
-		.addControl<'language', (typeof lngs)[number]>(
-			'language',
-			this.languageService.getSelectedLngValue(),
-		)
+		.addControl<'language', (typeof lngs)[number]>('language', this.languageService.getSelectedLngValue())
 		.addControl('badge_image', '')
 		.addControl('badge_category', 'learningpath')
 		.addControl('badge_customImage', '')
