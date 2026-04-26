@@ -18,7 +18,7 @@ import { LinkEntry, BgBreadcrumbsComponent } from '../../../common/components/bg
 import { MenuItem } from '../../../common/components/badge-detail/badge-detail.component.types';
 import { LearningPathApiService } from '../../../common/services/learningpath-api.service';
 import { ApiLearningPath } from '../../../common/model/learningpath-api.model';
-import { first, firstValueFrom } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { FormMessageComponent } from '../../../common/components/form-message.component';
 import { BgAwaitPromises } from '../../../common/directives/bg-await-promises';
@@ -109,19 +109,21 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 					{ title: this.issuer.name, routerLink: ['/issuer/issuers/' + this.issuer.slug] },
 				];
 
-				this.badgesLoaded = firstValueFrom(this.badgeClassService.badgesByIssuerUrl$)
-					.then((badgesByIssuer) => {
-						const cmp = (a, b) => (a === b ? 0 : a < b ? -1 : 1);
-						this.badges = (badgesByIssuer[this.issuer.issuerUrl] || []).sort((a, b) =>
-							cmp(b.createdAt, a.createdAt),
-						);
-					})
-					.catch((error) => {
-						this.messageService.reportAndThrowError(
-							`Failed to load badges for ${this.issuer ? this.issuer.name : this.issuerSlug}`,
-							error,
-						);
-					});
+				this.badgesLoaded = this.badgeClassService.badgesList.updateList().then(() =>
+					firstValueFrom(this.badgeClassService.badgesByIssuerUrl$)
+						.then((badgesByIssuer) => {
+							const cmp = (a, b) => (a === b ? 0 : a < b ? -1 : 1);
+							this.badges = (badgesByIssuer[this.issuer.issuerUrl] || []).sort((a, b) =>
+								cmp(b.createdAt, a.createdAt),
+							);
+						})
+						.catch((error) => {
+							this.messageService.reportAndThrowError(
+								`Failed to load badges for ${this.issuer ? this.issuer.name : this.issuerSlug}`,
+								error,
+							);
+						}),
+				);
 			},
 			(error) => {
 				this.messageService.reportLoadingError(
