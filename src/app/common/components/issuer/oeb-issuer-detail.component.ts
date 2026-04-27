@@ -2,8 +2,6 @@ import {
 	Component,
 	Input,
 	OnInit,
-	OnChanges,
-	SimpleChanges,
 	Output,
 	EventEmitter,
 	inject,
@@ -105,7 +103,7 @@ import { OebDashboardLearnersComponent } from '~/dashboard/components/oeb-dashbo
 		OebDashboardLearnersComponent,
 	],
 })
-export class OebIssuerDetailComponent implements OnInit, OnChanges {
+export class OebIssuerDetailComponent implements OnInit {
 	private router = inject(Router);
 	private route = inject(ActivatedRoute);
 	translate = inject(TranslateService);
@@ -445,12 +443,6 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 		const bTime =
 			b.badge instanceof BadgeClass ? b.badge.createdAt.getTime() : new Date(b.badge.created_at).getTime();
 		return bTime - aTime;
-	}
-
-	ngOnChanges(changes: SimpleChanges) {
-		if (changes['badges'] && !changes['badges'].firstChange) {
-			this.updateResults();
-		}
 	}
 
 	async ngOnInit() {
@@ -811,6 +803,11 @@ export class BadgeResult {
 		public badge: BadgeClass | PublicApiBadgeClass,
 		public issuerName: string,
 		public requestCount: number,
-		public awardedCount: number,
+		private _awardedCount?: number,
 	) {}
+
+	get awardedCount(): number {
+		if (this._awardedCount !== undefined) return this._awardedCount;
+		return this.badge instanceof BadgeClass ? this.badge.recipientCount : 0;
+	}
 }
