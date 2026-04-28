@@ -803,6 +803,11 @@ export class BadgeResult {
 		public badge: BadgeClass | PublicApiBadgeClass,
 		public issuerName: string,
 		public requestCount: number,
-		public awardedCount: number,
+		private _awardedCount?: number,
 	) {}
+
+	get awardedCount(): number {
+		if (this._awardedCount !== undefined) return this._awardedCount;
+		return this.badge instanceof BadgeClass ? this.badge.recipientCount : 0;
+	}
 }
