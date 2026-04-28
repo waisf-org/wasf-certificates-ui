@@ -88,6 +88,27 @@
 									</p>
 								</div>
 							}
+
+							@if (
+								!issuer.is_network &&
+								learningPath.activated &&
+								pdfTemplateManager.pdfEditorAvailable() &&
+								(!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota)
+							) {
+								<oeb-button
+									[text]="'PDFTemplate.editPDF' | translate"
+									width="full_width"
+									[routerLink]="[
+										`/issuer/issuers/${issuer.slug}/learningpaths/${learningPath.slug}/pdftemplate`,
+									]"
+									[disabled]="!issuer.canCreateBadge"
+									[class]="
+										issuer.canCreateBadge
+											? 'tw-whitespace-nowrap tw-hidden md:tw-block'
+											: 'disabled'
+									"
+								></oeb-button>
+							}
 						</div>
 					</div>
 
