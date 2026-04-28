@@ -105,22 +105,13 @@ export class IssuerManager {
 	}
 
 	issuerOrNetworkBySlug(issuerSlug: IssuerSlug): Promise<Issuer | Network> {
-		try {
-			const loadIssuer = this.issuerBySlug(issuerSlug);
-			const loadNetwork = this.networkBySlug(issuerSlug);
-			return Promise.allSettled([loadIssuer, loadNetwork]).then(([i, n]) => {
-				if (i.status === 'fulfilled' && !i.value.is_network) return i.value;
-				else if (i.status === 'fulfilled' && i.value.is_network) {
-					if (n.status === 'fulfilled') {
-						return n.value;
-					} else {
-						throw new Error('Could not properly load network information');
-					}
-				}
-			});
-		} catch (e) {
-			this.throwError(`Issuer/Network Slug '${issuerSlug}' not found`);
-		}
+		const loadIssuer = this.issuerBySlug(issuerSlug);
+		const loadNetwork = this.networkBySlug(issuerSlug);
+		return Promise.allSettled([loadIssuer, loadNetwork]).then(([i, n]) => {
+			if (i.status === 'fulfilled' && !i.value.is_network) return i.value;
+			if (n.status === 'fulfilled') return n.value;
+			throw new Error(`Issuer/Network Slug '${issuerSlug}' not found`);
+		});
 	}
 
 	issuersByUrls(issuerUrls: string[]): Promise<Issuer[]> {
