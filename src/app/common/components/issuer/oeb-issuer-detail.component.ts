@@ -1,19 +1,34 @@
-import { Component, Input, OnInit, Output, EventEmitter, inject, TemplateRef, viewChild } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import {
+	Component,
+	Input,
+	OnInit,
+	Output,
+	EventEmitter,
+	inject,
+	TemplateRef,
+	viewChild,
+	ViewChild,
+} from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MessageService } from '../../../common/services/message.service';
 import { Title } from '@angular/platform-browser';
 import { UserProfileManager } from '../../../common/services/user-profile-manager.service';
 import { AppConfigService } from '../../../common/app-config.service';
 import { Issuer } from '../../../issuer/models/issuer.model';
 import { BadgeClass } from '../../../issuer/models/badgeclass.model';
+import { PDFTemplate } from '../../../issuer/models/pdftemplate.model';
 import { IssuerManager } from '../../../issuer/services/issuer-manager.service';
 import { MenuItem } from '../badge-detail/badge-detail.component.types';
 import { TranslateService, TranslatePipe, TranslateModule } from '@ngx-translate/core';
 import { ApiLearningPath } from '../../../common/model/learningpath-api.model';
+import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 import { LearningPathApiService } from '../../../common/services/learningpath-api.service';
+import { PDFTemplateApiService } from '../../../common/services/pdftemplate-api.service';
+import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
 import { DangerDialogComponentTemplate } from '../../dialogs/oeb-dialogs/danger-dialog-template.component';
 import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
 import { InfoDialogComponent } from '../../dialogs/oeb-dialogs/info-dialog.component';
+import { DialogComponent } from '../../../../app/components/dialog.component';
 import { QrCodeApiService } from '../../../issuer/services/qrcode-api.service';
 import { ApiQRCode } from '../../../issuer/models/qrcode-api.model';
 import { SessionService } from '../../services/session.service';
@@ -29,6 +44,7 @@ import { FormsModule } from '@angular/forms';
 import { BgBadgecard } from '../bg-badgecard';
 import { LearningPathDatatableComponent } from '../../../components/datatable-learningpaths.component';
 import { BgLearningPathCard } from '../bg-learningpathcard';
+import { BgPDFTemplateCard } from '../bg-pdftemplatecard';
 import { PublicApiBadgeClass, PublicApiIssuer, PublicApiLearningPath } from '../../../public/models/public-api.model';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmH1, HlmP } from '@spartan-ng/helm/typography';
@@ -36,6 +52,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { NetworkApiService } from '~/issuer/services/network-api.service';
 import { CommonEntityManager } from '~/entity-manager/services/common-entity-manager.service';
 import { IssuerApiService } from '~/issuer/services/issuer-api.service';
+import { CommonModule } from '@angular/common';
 import { PublicApiService } from '~/public/services/public-api.service';
 
 interface NetworkBadgeGroup {
@@ -46,7 +63,12 @@ interface NetworkBadgeGroup {
 import { MatchingAlgorithm } from '~/common/util/matching-algorithm';
 import { ApiBadgeClassNetworkShare } from '~/issuer/models/badgeclass-api.model';
 import { environment } from 'src/environments/environment';
+import { QuotaInformationComponent } from '~/issuer/components/quota-information/quota-information.component';
 import { LinkEntry } from '../bg-breadcrumbs/bg-breadcrumbs.component';
+import { QuotaExceededDialog } from '~/issuer/components/issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { Network } from '~/issuer/network.model';
+import { OebDashboardOverviewComponent } from '~/dashboard/components/oeb-dashboard-overview/oeb-dashboard-overview.component';
+import { OebDashboardLearnersComponent } from '~/dashboard/components/oeb-dashboard-learners/oeb-dashboard-learners.component';
 
 @Component({
 	selector: 'oeb-issuer-detail',
@@ -70,13 +92,20 @@ import { LinkEntry } from '../bg-breadcrumbs/bg-breadcrumbs.component';
 		BgBadgecard,
 		LearningPathDatatableComponent,
 		BgLearningPathCard,
+		BgPDFTemplateCard,
 		TranslatePipe,
 		TranslateModule,
 		NgTemplateOutlet,
+		CommonModule,
+		QuotaInformationComponent,
+		QuotaExceededDialog,
+		OebDashboardOverviewComponent,
+		OebDashboardLearnersComponent,
 	],
 })
 export class OebIssuerDetailComponent implements OnInit {
 	private router = inject(Router);
+	private route = inject(ActivatedRoute);
 	translate = inject(TranslateService);
 	protected messageService = inject(MessageService);
 	protected title = inject(Title);
@@ -90,11 +119,14 @@ export class OebIssuerDetailComponent implements OnInit {
 	private networkApiService = inject(NetworkApiService);
 	private issuerApiService = inject(IssuerApiService);
 	private publicApiService = inject(PublicApiService);
+	private pdfTemplateApiService = inject(PDFTemplateApiService);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
 
 	@Input() issuer: Issuer | PublicApiIssuer;
 	@Input() issuerPlaceholderSrc: string;
 	@Input() issuerActionsMenu: any;
 	@Input() badges: BadgeClass[] | PublicApiBadgeClass[];
+	@Input() pdfTemplates: ApiPDFTemplate[];
 	@Input() networks: PublicApiIssuer[];
 	@Input() partner_issuers: PublicApiIssuer[];
 	@Input() public: boolean = false;
@@ -102,6 +134,7 @@ export class OebIssuerDetailComponent implements OnInit {
 	@Output() issuerDeleted = new EventEmitter();
 
 	learningPathsPromise: Promise<unknown>;
+	pdfTemplatesPromise: Promise<unknown>;
 	learningPaths: (ApiLearningPath | PublicApiLearningPath)[];
 	requestsLoaded: Promise<Map<string, ApiQRCode[]>>;
 	networkRequestsLoaded: Promise<Map<string, ApiQRCode[]>>;
@@ -110,7 +143,7 @@ export class OebIssuerDetailComponent implements OnInit {
 
 	private readonly _hlmDialogService = inject(HlmDialogService);
 
-	isFullIssuer(issuer: Issuer | PublicApiIssuer): issuer is Issuer {
+	isFullIssuer(issuer: Issuer | PublicApiIssuer | Network): issuer is Issuer {
 		return 'currentUserStaffMember' in issuer;
 	}
 
@@ -123,7 +156,8 @@ export class OebIssuerDetailComponent implements OnInit {
 		},
 	];
 
-	menuItems: MenuItem[] = [
+	menuItemsMember: MenuItem[] = [];
+	menuItemsOwner: MenuItem[] = [
 		{
 			title: 'General.edit',
 			routerLink: ['./edit'],
@@ -141,6 +175,7 @@ export class OebIssuerDetailComponent implements OnInit {
 			icon: 'lucideUsers',
 		},
 	];
+	menuItems: MenuItem[] = [];
 
 	networkGroups: Map<string, { network: any; badges: BadgeResult[]; sharedAt: string }> = new Map();
 	networkGroupsArray: { network: any; badges: BadgeResult[]; sharedAt: string }[] = [];
@@ -153,10 +188,12 @@ export class OebIssuerDetailComponent implements OnInit {
 	badgeTemplateTabs: any = undefined;
 	activeTabBadgeTemplate = 'issuer-badges';
 
+	readonly dashboardTemplate = viewChild<TemplateRef<any>>('dashboardTemplate');
 	readonly badgesTemplate = viewChild<TemplateRef<any>>('badgesTemplate');
 	readonly learningPathTemplate = viewChild<TemplateRef<any>>('learningPathTemplate');
 	readonly issuerBadgesTemplate = viewChild<TemplateRef<any>>('issuerBadgesTemplate');
 	readonly networkBadgesTemplate = viewChild<TemplateRef<any>>('networkBadgesTemplate');
+	readonly pdfTemplatesTemplate = viewChild<TemplateRef<any>>('pdfTemplatesTemplate');
 
 	badgeResults: BadgeResult[] = [];
 	networkBadgeInstanceResults: NetworkBadgeGroup[] = [];
@@ -409,10 +446,27 @@ export class OebIssuerDetailComponent implements OnInit {
 	}
 
 	async ngOnInit() {
+		if (this.isFullIssuer(this.issuer)) {
+			if (this.issuer.canUpdateDeleteIssuer) {
+				this.menuItems = this.menuItemsOwner;
+			} else {
+				this.menuItems = this.menuItemsMember;
+			}
+			if (this.issuer.quotas) {
+				const menuItemQuotas = {
+					title: 'Quotas.QuotasMenuItem',
+					routerLink: ['./quotas'],
+					icon: 'lucidePuzzle',
+				};
+				this.menuItems.unshift(menuItemQuotas);
+			}
+		}
+
 		// initialize counts as 0 and update after data has loaded
 		if (this.sessionService.isLoggedIn) {
 			if (this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
 				await this.getLearningPathsForIssuerApi(this.issuer.slug);
+				this.getPDFTemplatesForIssuerApi(this.issuer.slug);
 			}
 			this.issuerManager.myIssuers$.subscribe((issuers) => {
 				this.userIsMember = issuers.some((i) => this.issuer.slug == i.slug);
@@ -451,18 +505,53 @@ export class OebIssuerDetailComponent implements OnInit {
 				}, 0);
 		}
 
+		this.tabs = [];
+
+		if (this.isFullIssuer(this.issuer)) {
+			if (!this.issuer.quotas || this.issuer.quotas.quotas['DASHBOARD'].quota) {
+				this.tabs = [
+					{
+						key: 'dashboard',
+						title: 'NavItems.dashboard',
+						component: this.dashboardTemplate(),
+					},
+				];
+				this.activeTab = 'dashboard';
+			}
+		}
+
 		this.tabs = [
-			{
-				key: 'badges',
-				title: 'Badges',
-				component: this.badgesTemplate(),
-			},
-			{
-				key: 'micro-degrees',
-				title: 'LearningPath.learningpathsPlural',
-				component: this.learningPathTemplate(),
-			},
+			...this.tabs,
+			...[
+				{
+					key: 'badges',
+					title: 'Badges',
+					component: this.badgesTemplate(),
+				},
+				{
+					key: 'micro-degrees',
+					title: 'LearningPath.learningpathsPlural',
+					component: this.learningPathTemplate(),
+				},
+			],
 		];
+
+		if (
+			this.isFullIssuer(this.issuer) &&
+			this.pdfTemplateManager.pdfEditorAvailable() &&
+			(!this.issuer.quotas || this.issuer.quotas?.quotas['PDFEDITOR'].quota)
+		) {
+			this.tabs.push({
+				key: 'pdf-templates',
+				title: 'PDFTemplate.pdfTemplates',
+				component: this.pdfTemplatesTemplate(),
+			});
+		}
+
+		const fragment = this.router.parseUrl(this.router.url).fragment;
+		if (fragment && this.tabs.find((tab) => tab.key === fragment)) {
+			this.activeTab = fragment;
+		}
 	}
 
 	delete(event) {
@@ -479,7 +568,10 @@ export class OebIssuerDetailComponent implements OnInit {
 		}
 	}
 
-	routeToBadgeAward(badge: BadgeClass, issuer) {
+	async routeToBadgeAward(badge: BadgeClass, issuer) {
+		if (!(await this.checkQuotasDialog(badge))) {
+			return false;
+		}
 		this.qrCodeApiService.getQrCodesForIssuerByBadgeClass(this.issuer.slug, badge.slug).then((qrCodes) => {
 			if (badge.recipientCount === 0 && qrCodes.length === 0) {
 				const dialogRef = this._hlmDialogService.open(InfoDialogComponent, {
@@ -523,6 +615,51 @@ export class OebIssuerDetailComponent implements OnInit {
 				this.router.navigate(['/issuer/issuers/', issuer.slug, 'badges', badge.slug, 'qr']);
 			}
 		});
+	}
+
+	async openEditDialog(pdfTemplateSlug: string, issuerSlug: string) {
+		const pt = await this.pdfTemplateApiService.getPDFTemplate(issuerSlug, pdfTemplateSlug);
+
+		if (pt.used) {
+			const dialogRef = this._hlmDialogService.open(InfoDialogComponent, {
+				context: {
+					variant: 'info',
+					caption: this.translate.instant('PDFTemplate.openEditDialogTitle'),
+					text: this.translate.instant('PDFTemplate.openEditDialogText'),
+					cancelText: this.translate.instant('General.cancel'),
+					forwardText: this.translate.instant('PDFTemplate.openEditDialogForward'),
+				},
+			});
+			dialogRef.closed$.subscribe((result) => {
+				if (result === 'continue')
+					this.router.navigate(['/issuer/issuers/', issuerSlug, 'pdftemplates', pdfTemplateSlug, 'edit']);
+			});
+		} else {
+			this.router.navigate(['/issuer/issuers/', issuerSlug, 'pdftemplates', pdfTemplateSlug, 'edit']);
+		}
+	}
+
+	async openDeletePDFTemplateDialog(pdfTemplateName: string, pdfTemplateSlug: string, issuerSlug: string) {
+		const pt = await this.pdfTemplateApiService.getPDFTemplate(issuerSlug, pdfTemplateSlug);
+
+		if (pt.used) {
+			const dialogRef = this._hlmDialogService.open(DialogComponent, {
+				context: {
+					variant: 'failure',
+					message: this.translate.instant('PDFTemplate.deleteNotPossibleDialogTitle'),
+				},
+			});
+		} else {
+			const dialogRef = this._hlmDialogService.open(DangerDialogComponentTemplate, {
+				context: {
+					delete: () => this.deletePDFTemplateApi(pdfTemplateSlug, issuerSlug),
+					variant: 'danger',
+					title: this.translate.instant('PDFTemplate.openDeleteDialogTitle', {
+						title: pdfTemplateName,
+					}),
+				},
+			});
+		}
 	}
 
 	routeToBadgeDetail(badge, issuer, focusRequests: boolean = false) {
@@ -574,6 +711,23 @@ export class OebIssuerDetailComponent implements OnInit {
 			);
 	}
 
+	getPDFTemplatesForIssuerApi(issuerSlug) {
+		this.pdfTemplatesPromise = this.pdfTemplateManager
+			.getPDFTemplatesForIssuer(issuerSlug)
+			.then(
+				(pdfTemplates) =>
+					(this.pdfTemplates = pdfTemplates.sort(
+						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+					)),
+			);
+	}
+
+	deletePDFTemplateApi(pdfTemplateSlug, issuerSlug) {
+		this.pdfTemplateApiService
+			.deletePDFTemplate(issuerSlug, pdfTemplateSlug)
+			.then(() => (this.pdfTemplates = this.pdfTemplates.filter((value) => value.slug != pdfTemplateSlug)));
+	}
+
 	get rawJsonUrl() {
 		if (this.issuer) return `${this.configService.apiConfig.baseUrl}/public/issuers/${this.issuer.slug}.json`;
 	}
@@ -606,6 +760,42 @@ export class OebIssuerDetailComponent implements OnInit {
 			return acc + studyLoad;
 		}, 0);
 	}
+
+	async clickCreateBadge() {
+		const url = this.activeTab === 'badges' ? ['./badges/select'] : ['./learningpaths/create'];
+		if (this.activeTab !== 'badges') {
+			if (!(await this.checkQuotasDialog(undefined, 'LEARNINGPATH_CREATE'))) {
+				return false;
+			}
+		}
+		this.router.navigate(url, { relativeTo: this.route });
+	}
+
+	async checkQuotasDialog(badge?: BadgeClass, quota = 'BADGE_AWARD') {
+		let issuer: Issuer | Network = this.issuer as Issuer;
+		if (badge) {
+			if (badge.isNetworkBadge) {
+				issuer = await this.issuerManager.issuerOrNetworkBySlug(badge.issuerSlug);
+			} else if (badge.sharedOnNetwork) {
+				issuer = await this.issuerManager.issuerOrNetworkBySlug(badge.sharedOnNetwork.slug);
+			}
+		} else {
+			issuer = await this.issuerManager.issuerOrNetworkBySlug(this.issuer.slug);
+		}
+
+		if (this.isFullIssuer(issuer) && issuer.quotas) {
+			if (issuer.quotas?.quotas[quota]?.quota === 0) {
+				this._hlmDialogService.open(QuotaExceededDialog, {
+					context: {
+						issuer: issuer,
+						variant: 'quotas',
+					},
+				});
+				return false;
+			}
+		}
+		return true;
+	}
 }
 
 export class BadgeResult {
@@ -613,6 +803,11 @@ export class BadgeResult {
 		public badge: BadgeClass | PublicApiBadgeClass,
 		public issuerName: string,
 		public requestCount: number,
-		public awardedCount: number,
+		private _awardedCount?: number,
 	) {}
+
+	get awardedCount(): number {
+		if (this._awardedCount !== undefined) return this._awardedCount;
+		return this.badge instanceof BadgeClass ? this.badge.recipientCount : 0;
+	}
 }

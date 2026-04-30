@@ -42,11 +42,18 @@ import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { HlmH1, HlmP } from '@spartan-ng/helm/typography';
 import { OebCollapsibleComponent } from '~/components/oeb-collapsible.component';
 import { DateRangeValidator } from '~/common/validators/date-range.validator';
+import { FormFieldSelectOption } from '~/common/components/formfield-select';
+import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
+import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
+import { PreviewCanvas } from '~/common/util/pdftemplate-util';
+import { PDFTemplate } from '~/issuer/models/pdftemplate.model';
 import { NgIcon } from '@ng-icons/core';
 import { OebSeparatorComponent } from '~/components/oeb-separator.component';
 import { OptionalDetailsComponent } from '../optional-details/optional-details.component';
 import { setupActivityOnlineSync } from '~/common/util/activity-place-sync-helper';
 import { Subscription } from 'rxjs';
+import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { Network } from '~/issuer/network.model';
 
 @Component({
 	selector: 'badgeclass-issue',
@@ -56,6 +63,25 @@ import { Subscription } from 'rxjs';
 			:host ::ng-deep {
 				brn-collapsible[data-state='open'] > button > span {
 					font-weight: bold !important;
+				}
+
+				.canvas-container {
+					width: 100% !important;
+					height: 100% !important;
+					align-content: center;
+					justify-items: center;
+
+					.portrait {
+						aspect-ratio: 210 / 297;
+						width: 188px !important;
+						height: 266px !important;
+					}
+
+					.landscape {
+						aspect-ratio: 297 / 210;
+						width: 250px !important;
+						height: 178px !important;
+					}
 				}
 			}
 		`,
@@ -96,6 +122,8 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 	protected dialogService = inject(CommonDialogsService);
 	protected configService = inject(AppConfigService);
 	protected translate = inject(TranslateService);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
+	protected authService: SessionService;
 
 	readonly badgeLoadingImageUrl = '../../../breakdown/static/images/badge-loading.svg';
 	readonly badgeFailedImageUrl = '../../../breakdown/static/images/badge-failed.svg';
@@ -177,7 +205,8 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		.addArray(
 			'evidence_items',
 			typedFormGroup().addControl('narrative', '').addControl('evidence_url', '', UrlValidator.validUrl),
-		);
+		)
+		.addControl('pdftemplate', null);
 
 	badgeClass: BadgeClass;
 
@@ -195,12 +224,18 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		// telephone: "Telephone",
 	};
 
+	pdfTemplatesPromise: Promise<unknown>;
+	pdfTemplates: ApiPDFTemplate[];
+	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
+	pdfTemplatePreviewCanvas: PreviewCanvas;
+
 	constructor() {
 		const sessionService = inject(SessionService);
 		const router = inject(Router);
 		const route = inject(ActivatedRoute);
 
 		super(router, route, sessionService);
+		this.authService = sessionService;
 		const title = this.title;
 
 		title.setTitle(`Award Badge - ${this.configService.theme['serviceName'] || 'Badgr'}`);
@@ -248,25 +283,106 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		});
 	}
 
-	ngOnInit() {
+	async ngOnInit() {
 		super.ngOnInit();
 		this.subscriptions.push(...setupActivityOnlineSync(this.issueForm));
 		if (this.issueForm.controls.evidence_items.length === 0) {
 			this.issueForm.controls.evidence_items.addFromTemplate();
 		}
+
+		await this.issuerLoaded;
+
+		if (this.authService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
+			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
+			await this.pdfTemplatesPromise;
+
+			this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
+				label: t.name,
+				value: t.slug,
+			}));
+			this.selectPDFTemplateOptions.push({
+				label: this.translate.instant('PDFTemplate.oebDesign'),
+				value: null,
+			});
+		}
+
+		this.issueForm.rawControl.controls['pdftemplate'].valueChanges.subscribe((v) => {
+			if (v != null) {
+				for (let pt of this.pdfTemplates) {
+					if (pt.slug == v) {
+						if (this.pdfTemplatePreviewCanvas === undefined) {
+							this.setHTMLCanvasDimensions(pt);
+
+							this.pdfTemplatePreviewCanvas = new PreviewCanvas(
+								this.translate,
+								pt.format == 0 ? 'portrait' : 'landscape',
+								pt.scale,
+								pt.alignment == 0 ? 'left' : 'center',
+								pt.posX,
+								pt.posY,
+								pt.image,
+								1,
+								'previewCanvas',
+								this.badgeClass.image,
+								false,
+							);
+						} else {
+							this.setHTMLCanvasDimensions(pt);
+
+							this.pdfTemplatePreviewCanvas.updateValues(
+								pt.format == 0 ? 'portrait' : 'landscape',
+								pt.scale,
+								pt.alignment == 0 ? 'left' : 'center',
+								pt.posX,
+								pt.posY,
+								pt.image,
+							);
+						}
+
+						break;
+					}
+				}
+			}
+		});
 	}
 
 	ngOnDestroy() {
 		this.subscriptions.forEach((s) => s.unsubscribe());
 	}
 
+	setHTMLCanvasDimensions(pt: ApiPDFTemplate) {
+		let canvas = document.querySelector<HTMLCanvasElement>('#previewCanvas');
+
+		if (pt.format == 0) {
+			canvas.width = 794;
+			canvas.height = 1123;
+			canvas.classList.remove('landscape');
+			canvas.classList.add('portrait');
+		} else {
+			canvas.width = 1123;
+			canvas.height = 794;
+			canvas.classList.remove('portrait');
+			canvas.classList.add('landscape');
+		}
+	}
+
+	pdfTemplateSelected() {
+		return this.issueForm.controls.pdftemplate.value != null;
+	}
+
 	addEvidence() {
 		this.issueForm.controls.evidence_items.addFromTemplate();
 	}
 
-	onSubmit() {
+	async onSubmit() {
 		if (!this.issueForm.markTreeDirtyAndValidate()) {
 			return;
+		}
+
+		if (this.issuer.quotas) {
+			if (!(await this.checkQuotasDialog('BADGE_AWARD'))) {
+				return;
+			}
 		}
 
 		const formState = this.issueForm.value;
@@ -317,6 +433,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 				extensions,
 				activity_start_date: activityStartDate,
 				activity_end_date: activityEndDate,
+				pdftemplate: formState.pdftemplate,
 				activity_zip: formState.activity_zip,
 				activity_city: formState.activity_city,
 				activity_online: formState.activity_online,
@@ -331,6 +448,9 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 						queryParams: { tab: 'recipients' },
 					});
 					this.messageService.setMessage('Badge awarded to ' + formState.recipient_identifier, 'success');
+					if (this.issuer.quotas) {
+						this.issuer.update();
+					}
 				},
 				(error) => {
 					this.messageService.setMessage(
@@ -377,5 +497,37 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 				variant: 'success',
 			},
 		});
+	}
+
+	getPDFTemplatesForIssuerApi(issuerSlug) {
+		this.pdfTemplatesPromise = this.pdfTemplateManager
+			.getPDFTemplatesForIssuer(issuerSlug)
+			.then(
+				(pdfTemplates) =>
+					(this.pdfTemplates = pdfTemplates.sort(
+						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+					)),
+			);
+	}
+
+	async checkQuotasDialog(quota: string) {
+		let issuer: Issuer | Network = this.issuer as Issuer;
+		if (this.badgeClass.isNetworkBadge) {
+			issuer = await this.issuerManager.issuerOrNetworkBySlug(this.badgeClass.issuerSlug);
+		} else if (this.badgeClass.sharedOnNetwork) {
+			issuer = await this.issuerManager.issuerOrNetworkBySlug(this.badgeClass.sharedOnNetwork.slug);
+		}
+
+		await issuer.update();
+		if (issuer.quotas?.quotas[quota]?.quota === 0) {
+			this._hlmDialogService.open(QuotaExceededDialog, {
+				context: {
+					issuer: issuer,
+					variant: 'quotas',
+				},
+			});
+			return false;
+		}
+		return true;
 	}
 }

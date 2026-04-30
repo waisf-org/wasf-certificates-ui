@@ -11,9 +11,10 @@ import {
 	OnInit,
 	input,
 	signal,
+	computed,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SessionService } from '../../../common/services/session.service';
 import { MessageService } from '../../../common/services/message.service';
 import { Title } from '@angular/platform-browser';
@@ -38,15 +39,32 @@ import { FormsModule } from '@angular/forms';
 import { isValidEmail } from '~/common/util/is-valid-email';
 import { DateValidator } from '~/common/validators/date.validator';
 import { DateRangeValidator } from '~/common/validators/date-range.validator';
+import { IssuerManager } from '../../services/issuer-manager.service';
+import { Issuer } from '../../models/issuer.model';
+import { OebSelectComponent } from '../../../components/select.component';
+import { FormFieldSelectOption } from '~/common/components/formfield-select';
+import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
+import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 import { OptionalDetailsComponent } from '../optional-details/optional-details.component';
 import { setupActivityOnlineSync } from '~/common/util/activity-place-sync-helper';
 import { UrlValidator } from '~/common/validators/url.validator';
 import { BadgeClass } from '~/issuer/models/badgeclass.model';
+import { Network } from '~/issuer/network.model';
 
 @Component({
 	selector: 'badgeclass-issue-bulk-award-confirmation',
 	templateUrl: './badgeclass-issue-bulk-award-confirmation.component.html',
-	imports: [HlmH1, HlmP, OebButtonComponent, TranslatePipe, NgClass, FormsModule, OptionalDetailsComponent],
+	imports: [
+		HlmH1,
+		HlmP,
+		OebButtonComponent,
+		TranslatePipe,
+		NgClass,
+		FormsModule,
+		OptionalDetailsComponent,
+		OebSelectComponent,
+		RouterLink,
+	],
 })
 export class BadgeclassIssueBulkAwardConformation
 	extends BaseAuthenticatedRoutableComponent
@@ -62,6 +80,8 @@ export class BadgeclassIssueBulkAwardConformation
 	protected title = inject(Title);
 	protected taskService = inject(TaskPollingManagerService);
 	protected translate = inject(TranslateService);
+	protected issuerManager = inject(IssuerManager);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
 
 	readonly transformedImportData = input<TransformedImportData>(undefined);
 	readonly badgeSlug = input<string>(undefined);
@@ -93,11 +113,39 @@ export class BadgeclassIssueBulkAwardConformation
 		.addArray(
 			'evidence_items',
 			typedFormGroup().addControl('narrative', '').addControl('evidence_url', '', UrlValidator.validUrl),
-		);
+		)
+		.addControl('pdftemplate', null);
 
 	buttonDisabledClass = true;
 	buttonDisabledAttribute = true;
-	issuer: string;
+	issuer = signal<Issuer>(null);
+	network = signal<Network>(null);
+	importDataRowCount = signal(0);
+
+	quotasRecipientsOver = computed(() => {
+		if (!this.issuer()?.quotas) {
+			return 0;
+		}
+		console.log(1);
+		if (this.network()) {
+			console.log(2);
+			console.log(this.network()?.quotas?.quotas['BADGE_AWARD'].quota);
+			return this.importDataRowCount() - (this.network()?.quotas?.quotas['BADGE_AWARD'].quota || 0);
+		} else {
+			return this.importDataRowCount() - this.issuer()?.quotas?.quotas['BADGE_AWARD'].quota || 0;
+		}
+	});
+
+	quotasCanIssue = computed(() => {
+		if (!this.issuer()?.quotas) return true;
+		if (this.network()) {
+			return (
+				!this.network().quotas || this.network().quotas.quotas['BADGE_AWARD'].quota >= this.importDataRowCount()
+			);
+		} else {
+			return this.issuer().quotas.quotas['BADGE_AWARD'].quota >= this.importDataRowCount();
+		}
+	});
 
 	issueBadgeFinished: Promise<unknown>;
 
@@ -107,6 +155,10 @@ export class BadgeclassIssueBulkAwardConformation
 	currentTaskStatus: TaskResult | null = null;
 
 	private focusedRow: BulkIssueData | null = null;
+
+	pdfTemplatesPromise: Promise<unknown>;
+	pdfTemplates: ApiPDFTemplate[];
+	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
 
 	constructor() {
 		const sessionService = inject(SessionService);
@@ -120,7 +172,8 @@ export class BadgeclassIssueBulkAwardConformation
 		this.route = route;
 	}
 
-	ngOnInit(): void {
+	async ngOnInit(): Promise<void> {
+		this.importDataRowCount.set(this.transformedImportData().validRowsTransformed.size);
 		this.enableActionButton();
 		this.subscriptions.push(...setupActivityOnlineSync(this.optionalDetailsForm));
 		if (this.optionalDetailsForm.controls.evidence_items.length === 0) {
@@ -128,6 +181,36 @@ export class BadgeclassIssueBulkAwardConformation
 		}
 		this.optionalDetailsForm.controls.courseUrl.setValue(this.badgeClass().courseUrl ?? null);
 		this.badgeInstanceCourseUrl.set(this.optionalDetailsForm.controls.courseUrl.value);
+
+		this.issuerManager.myIssuers$.subscribe(async (issuers) => {
+			this.issuer.set(issuers.find((i) => i.slug === this.issuerSlug()));
+
+			if (
+				this.authService.isLoggedIn &&
+				this.issuer() instanceof Issuer &&
+				this.issuer().currentUserStaffMember
+			) {
+				this.getPDFTemplatesForIssuerApi(this.issuer().slug);
+				await this.pdfTemplatesPromise;
+
+				this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
+					label: t.name,
+					value: t.slug,
+				}));
+				this.selectPDFTemplateOptions.push({
+					label: this.translate.instant('PDFTemplate.oebDesign'),
+					value: null,
+				});
+			}
+		});
+
+		if (this.badgeClass().isNetworkBadge) {
+			this.network.set((await this.issuerManager.issuerOrNetworkBySlug(this.badgeClass().issuerSlug)) as Network);
+		} else if (this.badgeClass().sharedOnNetwork) {
+			this.network.set(
+				(await this.issuerManager.issuerOrNetworkBySlug(this.badgeClass().sharedOnNetwork.slug)) as Network,
+			);
+		}
 	}
 
 	ngOnDestroy() {
@@ -238,6 +321,7 @@ export class BadgeclassIssueBulkAwardConformation
 				extensions: extensions,
 				activity_start_date: activityStartDate,
 				activity_end_date: activityEndDate,
+				pdftemplate: formState.pdftemplate,
 				activity_zip: formState.activity_zip,
 				activity_city: formState.activity_city,
 				activity_online: formState.activity_online,
@@ -307,10 +391,22 @@ export class BadgeclassIssueBulkAwardConformation
 		this.updateStateEmitter.emit(state);
 	}
 
-	removeValidRowsTransformed(row) {
+	removeValidRowsTransformed(row: BulkIssueData) {
 		this.transformedImportData().validRowsTransformed.delete(row);
+		this.importDataRowCount.set(this.transformedImportData().validRowsTransformed.size);
 		if (!this.transformedImportData().validRowsTransformed.size) {
 			this.disableActionButton();
 		}
+	}
+
+	getPDFTemplatesForIssuerApi(issuerSlug) {
+		this.pdfTemplatesPromise = this.pdfTemplateManager
+			.getPDFTemplatesForIssuer(issuerSlug)
+			.then(
+				(pdfTemplates) =>
+					(this.pdfTemplates = pdfTemplates.sort(
+						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+					)),
+			);
 	}
 }
