@@ -1,31 +1,34 @@
 <header class="tw-relative">
-	<div class="tw-flex tw-justify-between tw-gap-6 tw-items-center">
-		<div class="tw-flex oeb-section-sm md:tw-max-w-[70%]">
-			<figure class="tw-relative">
-				<img
-					[loaded-src]="issuer?.image"
-					[loading-src]="issuerPlaceholderSrc"
-					[error-src]="issuerPlaceholderSrc"
-					alt="{{ issuer.name }} avatar"
-					class="tw-h-[70px] md:tw-h-[100px] tw-w-auto tw-min-w-[70px] md:tw-min-w-[100px] tw-aspect-square"
-				/>
-			</figure>
-			<hgroup class="tw-flex tw-flex-col tw-justify-center tw-pl-8 tw-max-w-[80%] oeb-break-words">
-				<h1 hlmH1 class="tw-text-purple tw-font-semibold md:tw-text-[35px] xl:tw-text-[46px]">
-					{{ issuer.name }}
-				</h1>
-				<ng-container *ngIf="!public && isFullIssuer(issuer)">
-					<p
-						class="tw-text-oebblack tw-mt-2 tw-font-semibold md:tw-text-[20px] md:tw-leading-[24.4px] tw-text-[14px] tw-leading-[19.6px]"
-					>
-						{{ 'Issuer.yourRole' | translate }}
-						{{ issuer.currentUserStaffMember?.roleInfo.label | translate }}
-					</p>
-				</ng-container>
-			</hgroup>
+	<div class="tw-flex tw-justify-evenly tw-items-start">
+		<div class="tw-flex tw-flex-col oeb-section-sm md:tw-max-w-[50%]">
+			<div class="tw-flex tw-items-center">
+				<figure class="tw-relative">
+					<img
+						[loaded-src]="issuer?.image"
+						[loading-src]="issuerPlaceholderSrc"
+						[error-src]="issuerPlaceholderSrc"
+						alt="{{ issuer.name }} avatar"
+						class="tw-h-[70px] md:tw-h-[100px] tw-w-auto tw-min-w-[70px] md:tw-min-w-[100px] tw-aspect-square"
+					/>
+				</figure>
+				<hgroup class="tw-flex tw-flex-col tw-justify-center tw-pl-8 oeb-break-words">
+					<h1 hlmH1 class="tw-text-purple tw-font-semibold md:tw-text-[35px] xl:tw-text-[46px]">
+						{{ issuer.name }}
+					</h1>
+					<ng-container *ngIf="!public && isFullIssuer(issuer)">
+						<p
+							class="tw-text-oebblack tw-mt-2 tw-font-semibold md:tw-text-[20px] md:tw-leading-[24.4px] tw-text-[14px] tw-leading-[19.6px]"
+						>
+							{{ 'Issuer.yourRole' | translate }}
+							{{ issuer.currentUserStaffMember?.roleInfo.label | translate }}
+						</p>
+					</ng-container>
+				</hgroup>
+			</div>
+			<p class="tw-text-oebblack tw-text-lg tw-mt-2 oeb-break-words">{{ issuer.description }}</p>
 		</div>
 
-		<aside class="tw-w-auto tw-hidden md:tw-grid !tw-content-center tw-absolute tw-right-0 tw-top-[17.5%]">
+		<aside class=" tw-w-auto tw-hidden md:tw-grid !tw-content-center tw-pt-4">
 			<p
 				*ngIf="isFullIssuer(issuer) && issuer.apiModel && !issuer.apiModel.verified"
 				class="u-margin-top1x u-width-paragraph"
@@ -147,31 +150,11 @@
 						</section>
 					}
 				</div>
-				<oeb-dropdown
-					[trigger]="svgTrigger"
-					class="tw-items-center tw-justify-center tw-flex tw-cursor-pointer tw-border tw-border-solid tw-border-[var(--color-purple)] tw-rounded-[7px]"
-					*ngIf="
-						(!isFullIssuer(issuer) && menuItemsPublic.length) || (isFullIssuer(issuer) && menuItems.length)
-					"
-					[menuItems]="public ? menuItemsPublic : menuItems"
-				></oeb-dropdown>
-				<ng-template #svgTrigger>
-					<svg
-						class="tw-w-[44.8px] tw-h-[44.8px] md:tw-w-[62px] md:tw-h-[62px]"
-						fill="var(--color-purple)"
-						icon="icon_more"
-					></svg>
-					<span class="visuallyhidden">Mehr</span>
-				</ng-template>
+
 			</div>
 		</aside>
 	</div>
 </header>
-
-<section aria-labelledby="description-heading" class="tw-mt-4 md:tw-pr-[350px]">
-	<h2 id="description-heading" class="tw-sr-only">Issuer Description</h2>
-	<p class="tw-text-oebblack tw-text-lg oeb-break-words">{{ issuer.description }}</p>
-</section>
 
 <quota-information quotas="BADGE_AWARD" class="tw-block tw-mt-6 tw-text-[18px]/[1.3em]" />
 
@@ -230,19 +213,7 @@
 		>
 		</oeb-button>
 
-		<oeb-dropdown
-			[trigger]="svgTrigger"
-			class="tw-items-center tw-justify-center tw-flex tw-cursor-pointer tw-border tw-border-solid tw-border-[var(--color-purple)] tw-rounded-[7px]"
-			[menuItems]="public ? menuItemsPublic : menuItems"
-		></oeb-dropdown>
-		<ng-template #svgTrigger>
-			<svg
-				class="tw-w-[44.8px] tw-h-[44.8px] md:tw-w-[64px] md:tw-h-[64px]"
-				fill="var(--color-purple)"
-				icon="icon_more"
-			></svg>
-			<span class="visuallyhidden">Mehr</span>
-		</ng-template>
+
 	</div>
 </div>
 
