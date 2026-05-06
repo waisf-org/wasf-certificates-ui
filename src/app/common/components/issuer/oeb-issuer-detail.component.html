@@ -28,7 +28,7 @@
 			<p class="tw-text-oebblack tw-text-lg tw-mt-2 oeb-break-words">{{ issuer.description }}</p>
 		</div>
 
-		<aside class=" tw-w-auto tw-hidden md:tw-grid !tw-content-center tw-pt-4">
+		<aside class="tw-w-auto tw-hidden md:tw-grid !tw-content-center tw-pt-4">
 			<p
 				*ngIf="isFullIssuer(issuer) && issuer.apiModel && !issuer.apiModel.verified"
 				class="u-margin-top1x u-width-paragraph"
@@ -75,6 +75,7 @@
 						(click)="routeToMemberView()"
 						[text]="'Issuer.memberView' | translate"
 						variant="secondary"
+						data-testid="member-view-button"
 					>
 					</oeb-button>
 					<oeb-button
@@ -83,6 +84,7 @@
 						[width]="'full_width'"
 						(click)="routeToUrl(issuer.url)"
 						[text]="'General.website' | translate"
+						data-testid="website-button"
 					>
 					</oeb-button>
 
@@ -150,7 +152,6 @@
 						</section>
 					}
 				</div>
-
 			</div>
 		</aside>
 	</div>
@@ -212,8 +213,6 @@
 			[text]="'Issuer.visitWebsite' | translate"
 		>
 		</oeb-button>
-
-
 	</div>
 </div>
 
