@@ -26,7 +26,11 @@ export class PublicIssuerComponent {
 	protected translate = inject(TranslateService);
 	private title = inject(Title);
 
-	crumbs = [{ title: this.translate.instant('General.institutionsNav'), routerLink: ['/catalog/issuers'] }];
+	private readonly parentCrumb = {
+		title: this.translate.instant('General.institutionsNav'),
+		routerLink: ['/catalog/issuers'],
+	};
+	crumbs = [this.parentCrumb];
 
 	readonly issuerImagePlaceholderUrl = preloadImageURL(
 		'../../../../breakdown/static/images/placeholderavatar-issuer.svg',
@@ -63,7 +67,7 @@ export class PublicIssuerComponent {
 			const service: PublicApiService = injector.get(PublicApiService);
 			return service.getIssuerWithRelations(paramValue).then((result) => {
 				this.crumbs = [
-					{ title: this.translate.instant('General.institutionsNav'), routerLink: ['/catalog/issuers'] },
+					this.parentCrumb,
 					{ title: result.issuer.name, routerLink: ['/public/issuers/' + result.issuer.slug] },
 				];
 				return result;

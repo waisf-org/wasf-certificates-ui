@@ -25,7 +25,10 @@
 					</ng-container>
 				</hgroup>
 			</div>
-			<p class="tw-text-oebblack tw-text-lg tw-mt-2 oeb-break-words">{{ issuer.description }}</p>
+			<section aria-labelledby="description-heading" class="tw-mt-2">
+				<h2 id="description-heading" class="tw-sr-only">Issuer Description</h2>
+				<p class="tw-text-oebblack tw-text-lg oeb-break-words">{{ issuer.description }}</p>
+			</section>
 		</div>
 
 		<aside class="tw-w-auto tw-hidden md:tw-grid !tw-content-center tw-pt-4">
@@ -152,6 +155,20 @@
 						</section>
 					}
 				</div>
+				<oeb-dropdown
+					[trigger]="svgTrigger"
+					class="tw-items-center tw-justify-center tw-flex tw-cursor-pointer tw-border tw-border-solid tw-border-[var(--color-purple)] tw-rounded-[7px]"
+					*ngIf="!public && isFullIssuer(issuer) && menuItems.length"
+					[menuItems]="menuItems"
+				></oeb-dropdown>
+				<ng-template #svgTrigger>
+					<svg
+						class="tw-w-[44.8px] tw-h-[44.8px] md:tw-w-[62px] md:tw-h-[62px]"
+						fill="var(--color-purple)"
+						icon="icon_more"
+					></svg>
+					<span class="visuallyhidden">Mehr</span>
+				</ng-template>
 			</div>
 		</aside>
 	</div>
@@ -213,6 +230,20 @@
 			[text]="'Issuer.visitWebsite' | translate"
 		>
 		</oeb-button>
+		<oeb-dropdown
+			[trigger]="svgTriggerMobile"
+			class="tw-items-center tw-justify-center tw-flex tw-cursor-pointer tw-border tw-border-solid tw-border-[var(--color-purple)] tw-rounded-[7px]"
+			*ngIf="!public && isFullIssuer(issuer) && menuItems.length"
+			[menuItems]="menuItems"
+		></oeb-dropdown>
+		<ng-template #svgTriggerMobile>
+			<svg
+				class="tw-w-[44.8px] tw-h-[44.8px] md:tw-w-[64px] md:tw-h-[64px]"
+				fill="var(--color-purple)"
+				icon="icon_more"
+			></svg>
+			<span class="visuallyhidden">Mehr</span>
+		</ng-template>
 	</div>
 </div>
 

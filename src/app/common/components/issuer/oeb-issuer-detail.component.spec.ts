@@ -1,7 +1,8 @@
 import { getByTestId } from '../../../testing/query-helpers';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Subject } from 'rxjs';
+import { Subject, of } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { OebIssuerDetailComponent } from './oeb-issuer-detail.component';
 import { IssuerManager } from '../../../issuer/services/issuer-manager.service';
@@ -9,6 +10,7 @@ import { IssuerApiService } from '../../../issuer/services/issuer-api.service';
 import { PublicApiService } from '../../../public/services/public-api.service';
 import { LearningPathApiService } from '../../../common/services/learningpath-api.service';
 import { PDFTemplateManager } from '../../../issuer/services/pdftemplate-manager.service';
+import { NetworkApiService } from '../../../issuer/services/network-api.service';
 import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
 import { PublicApiIssuer } from '../../../public/models/public-api.model';
 import { createCommonProviders } from '../../../testing/common-providers';
@@ -27,22 +29,19 @@ export const mockPublicIssuer: PublicApiIssuer = {
 
 export const myIssuers$ = new Subject<any[]>();
 
-export async function setupIssuerDetail(
-	isLoggedIn: boolean,
-	userIsMember: boolean,
-): Promise<ComponentFixture<OebIssuerDetailComponent>> {
+export async function setupIssuerDetail(userIsMember: boolean): Promise<ComponentFixture<OebIssuerDetailComponent>> {
 	await TestBed.configureTestingModule({
-		imports: [
-			RouterTestingModule,
-			OebIssuerDetailComponent,
-			TranslateModule.forRoot(),
-			HttpClientTestingModule, // 👈 ADD THIS
-		],
+		imports: [RouterTestingModule, OebIssuerDetailComponent, TranslateModule.forRoot(), HttpClientTestingModule],
 		providers: [
-			...createCommonProviders(isLoggedIn),
+			...createCommonProviders(),
+			{
+				provide: ActivatedRoute,
+				useValue: { snapshot: { params: {} }, params: of({}), queryParams: of({}), data: of({}) },
+			},
 			{ provide: IssuerManager, useValue: { myIssuers$: myIssuers$.asObservable() } },
 			{ provide: LearningPathApiService, useValue: { getLearningPathsForIssuer: () => Promise.resolve([]) } },
 			{ provide: IssuerApiService, useValue: { listSharedNetworkBadges: () => Promise.resolve([]) } },
+			{ provide: NetworkApiService, useValue: { getIssuerNetworkBadges: () => Promise.resolve([]) } },
 			{
 				provide: PublicApiService,
 				useValue: {
@@ -64,11 +63,7 @@ export async function setupIssuerDetail(
 	component.partner_issuers = [];
 	component.badges = [];
 
-	spyOn<any>(component, 'ngOnInit').and.callFake(async () => {
-		component.userIsMember = userIsMember;
-	});
-
-	await component.ngOnInit();
+	component.userIsMember = userIsMember;
 	fixture.detectChanges();
 	await fixture.whenStable();
 	fixture.detectChanges();
@@ -81,24 +76,24 @@ describe('OebIssuerDetailComponent — public page button visibility', () => {
 
 	describe('when user is not a member of the institution', () => {
 		it('should show the website button', async () => {
-			const fixture = await setupIssuerDetail(false, false);
+			const fixture = await setupIssuerDetail(false);
 			expect(getByTestId(fixture, 'website-button')).toBeTruthy();
 		});
 
 		it('should not show the member view button', async () => {
-			const fixture = await setupIssuerDetail(false, false);
+			const fixture = await setupIssuerDetail(false);
 			expect(getByTestId(fixture, 'member-view-button')).toBeFalsy();
 		});
 	});
 
 	describe('when user is a member of the institution', () => {
 		it('should show the website button', async () => {
-			const fixture = await setupIssuerDetail(true, true);
+			const fixture = await setupIssuerDetail(true);
 			expect(getByTestId(fixture, 'website-button')).toBeTruthy();
 		});
 
 		it('should show the member view button', async () => {
-			const fixture = await setupIssuerDetail(true, true);
+			const fixture = await setupIssuerDetail(true);
 			expect(getByTestId(fixture, 'member-view-button')).toBeTruthy();
 		});
 	});
