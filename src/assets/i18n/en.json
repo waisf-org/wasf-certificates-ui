@@ -1416,6 +1416,12 @@
 		"previewCanvasFootnoteText1": "[E] = Competence according to ESCO (European Skills, Competencies, Qualifications and Occupations). The competency descriptions according to ESCO are available via ",
 		"previewCanvasFootnoteText2": "https://esco.ec.europa.eu/en."
 	},
+	"PDFEditorTeaser": {
+		"heading": "PDF Editor",
+		"body": "With every badge, a PDF certificate in the OEB design is automatically sent to your learners. With the PDF Editor you can upload <strong>personalized backgrounds in your own design</strong> that can then <strong>be selected when issuing badges</strong> instead of the OEB design.",
+		"upgradeLine": "Upgrade to our <a class='tw-text-link tw-underline' href='/page/pricing' target='_blank'>PRO plan</a> to use the PDF Editor.",
+		"buttonLabel": "Request upgrade"
+	},
 	"Dashboard": {
 		"title": "OEB Dashboard",
 		"description": "Overview of competencies, badges and educational offerings in your region",

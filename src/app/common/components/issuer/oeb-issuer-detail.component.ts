@@ -69,6 +69,7 @@ import { QuotaExceededDialog } from '~/issuer/components/issuer-quotas-quota-exc
 import { Network } from '~/issuer/network.model';
 import { OebDashboardOverviewComponent } from '~/dashboard/components/oeb-dashboard-overview/oeb-dashboard-overview.component';
 import { OebDashboardLearnersComponent } from '~/dashboard/components/oeb-dashboard-learners/oeb-dashboard-learners.component';
+import { OebFeatureTeaserComponent } from '~/common/components/feature-teaser/feature-teaser.component';
 
 @Component({
 	selector: 'oeb-issuer-detail',
@@ -101,6 +102,7 @@ import { OebDashboardLearnersComponent } from '~/dashboard/components/oeb-dashbo
 		QuotaExceededDialog,
 		OebDashboardOverviewComponent,
 		OebDashboardLearnersComponent,
+		OebFeatureTeaserComponent,
 	],
 })
 export class OebIssuerDetailComponent implements OnInit {
@@ -536,11 +538,7 @@ export class OebIssuerDetailComponent implements OnInit {
 			],
 		];
 
-		if (
-			this.isFullIssuer(this.issuer) &&
-			this.pdfTemplateManager.pdfEditorAvailable() &&
-			(!this.issuer.quotas || this.issuer.quotas?.quotas['PDFEDITOR'].quota)
-		) {
+		if (this.isFullIssuer(this.issuer) && this.pdfTemplateManager.pdfEditorAvailable()) {
 			this.tabs.push({
 				key: 'pdf-templates',
 				title: 'PDFTemplate.pdfTemplates',
@@ -742,6 +740,10 @@ export class OebIssuerDetailComponent implements OnInit {
 
 	routeToUrl(url) {
 		window.location.href = url;
+	}
+
+	emailSalesForPdfEditor() {
+		window.open('mailto:sales@openbadges.education?subject=Anfrage%20Pro-Paket%20(PDF-Editor)');
 	}
 
 	onTabChange(tab) {
