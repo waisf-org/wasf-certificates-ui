@@ -1429,7 +1429,11 @@
 		"heading": "PDF Editor",
 		"body": "With every badge, a PDF certificate in the OEB design is automatically sent to your learners. With the PDF Editor you can upload <strong>personalized backgrounds in your own design</strong> that can then <strong>be selected when issuing badges</strong> instead of the OEB design.",
 		"upgradeLine": "Upgrade to our <a class='tw-text-link tw-underline' href='/page/pricing' target='_blank'>PRO plan</a> to use the PDF Editor.",
-		"buttonLabel": "Request upgrade"
+		"buttonLabel": "Request upgrade",
+		"defaultCaption": "Badge PDF in the OEB design.",
+		"customCaption": "Badge info on a personalized PDF background (scalable).",
+		"defaultImage": "assets/oeb/images/teasers/vorschau-oeb-pdf_en.png",
+		"customImage": "assets/oeb/images/teasers/vorschau-individuelles-pdf_en.png"
 	},
 	"Dashboard": {
 		"title": "OEB Dashboard",
