@@ -1436,6 +1436,14 @@
 		"previewCanvasFootnoteText1": "[E] = Kompetenz nach ESCO (European Skills, Competencies, Qualifications and Occupations). Die Kompetenz-Beschreibungen gemäß ESCO sind abrufbar über ",
 		"previewCanvasFootnoteText2": "https://esco.ec.europa.eu/de."
 	},
+	"DashboardTeaser": {
+		"heading": "Institutions-Dashboard",
+		"body": "Wir erstellen automatisiert ein übersichtliches <strong>Daten-Dashboard, das die Wirkung deiner Lern-Angebote</strong> abbildet, unter anderem: Wie viele Badges habt ihr in welchem Zeitraum vergeben? Wie viele Lernende haben Badges bekommen? Welche Kompetenzen habt ihr in welchem Umfang gestärkt?",
+		"upgradeLine": "Upgrade auf unser <a class='tw-text-link tw-underline tw-uppercase' href='https://openbadges.education/page/produkte' target='_blank'>Enterprise-Paket</a>, um dein Institutions-Dashboard zu nutzen.",
+		"buttonLabel": "Upgrade anfragen",
+		"image": "assets/oeb/images/teasers/dashboard-teaser_de.png",
+		"imageCaption": "Beispiel-Ansicht eines OEB-Dashboards."
+	},
 	"PDFEditorTeaser": {
 		"heading": "PDF-Editor",
 		"body": "Mit jedem Badge wird automatisch auch ein PDF-Zertifikat im OEB-Design an deine Lernenden geschickt. Mit dem PDF-Editor kannst du <strong>personalisierte Hintergründe in deinem Design</strong> hochladen, die dann <strong>beim Badge-Vergeben</strong> statt des OEB-Designs für das Badge-PDF <strong>ausgewählt werden können</strong>.",
