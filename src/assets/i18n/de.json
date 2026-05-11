@@ -1440,7 +1440,11 @@
 		"heading": "PDF-Editor",
 		"body": "Mit jedem Badge wird automatisch auch ein PDF-Zertifikat im OEB-Design an deine Lernenden geschickt. Mit dem PDF-Editor kannst du <strong>personalisierte Hintergründe in deinem Design</strong> hochladen, die dann <strong>beim Badge-Vergeben</strong> statt des OEB-Designs für das Badge-PDF <strong>ausgewählt werden können</strong>.",
 		"upgradeLine": "Upgrade auf unser <a class='tw-text-link tw-underline' href='/page/produkte' target='_blank'>PRO-Paket</a>, um den PDF-Editor zu nutzen.",
-		"buttonLabel": "Upgrade anfragen"
+		"buttonLabel": "Upgrade anfragen",
+		"defaultCaption": "Badge-PDF im OEB-Design.",
+		"customCaption": "Badge-Infos bei personalisiertem PDF-Hintergrund (skalierbar).",
+		"defaultImage": "assets/oeb/images/teasers/vorschau-oeb-pdf_de.png",
+		"customImage": "assets/oeb/images/teasers/vorschau-individuelles-pdf_de.png"
 	},
 	"Dashboard": {
 		"title": "OEB Dashboard",

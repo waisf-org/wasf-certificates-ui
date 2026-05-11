@@ -410,12 +410,26 @@
 						>
 							{{ 'PDFEditorTeaser.heading' | translate }}
 						</h2>
-						<img
-							teaser-image
-							src="assets/oeb/images/teasers/pdf-editor-teaser.png"
-							alt=""
-							class="tw-w-full tw-max-w-[420px] tw-h-auto"
-						/>
+						<figure teaser-image class="tw-w-[calc(50%-12px)] tw-max-w-[200px] tw-m-0">
+							<img
+								[src]="'PDFEditorTeaser.defaultImage' | translate"
+								alt=""
+								class="tw-w-full tw-h-auto tw-border tw-border-solid tw-border-purple tw-rounded-md"
+							/>
+							<figcaption class="tw-mt-1 tw-text-xs tw-text-oebblack tw-leading-snug">
+								{{ 'PDFEditorTeaser.defaultCaption' | translate }}
+							</figcaption>
+						</figure>
+						<figure teaser-image class="tw-w-[calc(50%-12px)] tw-max-w-[200px] tw-m-0">
+							<img
+								[src]="'PDFEditorTeaser.customImage' | translate"
+								alt=""
+								class="tw-w-full tw-h-auto tw-border tw-border-solid tw-border-purple tw-rounded-md"
+							/>
+							<figcaption class="tw-mt-1 tw-text-xs tw-text-oebblack tw-leading-snug">
+								{{ 'PDFEditorTeaser.customCaption' | translate }}
+							</figcaption>
+						</figure>
 						<div teaser-body class="tw-flex tw-flex-col tw-gap-6">
 							<p hlmP [innerHTML]="'PDFEditorTeaser.body' | translate"></p>
 							<p
