@@ -43,6 +43,7 @@ import { DatatableComponent } from '../../../components/datatable-badges.compone
 import { FormsModule } from '@angular/forms';
 import { BgBadgecard } from '../bg-badgecard';
 import { LearningPathDatatableComponent } from '../../../components/datatable-learningpaths.component';
+import { LearningPathArchivedDatatableComponent } from '~/components/datatable-learningpaths-archived.component';
 import { BgLearningPathCard } from '../bg-learningpathcard';
 import { BgPDFTemplateCard } from '../bg-pdftemplatecard';
 import { PublicApiBadgeClass, PublicApiIssuer, PublicApiLearningPath } from '../../../public/models/public-api.model';
@@ -70,6 +71,7 @@ import { Network } from '~/issuer/network.model';
 import { OebDashboardOverviewComponent } from '~/dashboard/components/oeb-dashboard-overview/oeb-dashboard-overview.component';
 import { OebDashboardLearnersComponent } from '~/dashboard/components/oeb-dashboard-learners/oeb-dashboard-learners.component';
 import { OebFeatureTeaserComponent } from '~/common/components/feature-teaser/feature-teaser.component';
+import { LearningPath } from '~/issuer/models/learningpath.model';
 
 @Component({
 	selector: 'oeb-issuer-detail',
@@ -92,6 +94,7 @@ import { OebFeatureTeaserComponent } from '~/common/components/feature-teaser/fe
 		NgFor,
 		BgBadgecard,
 		LearningPathDatatableComponent,
+		LearningPathArchivedDatatableComponent,
 		BgLearningPathCard,
 		BgPDFTemplateCard,
 		TranslatePipe,
@@ -107,7 +110,7 @@ import { OebFeatureTeaserComponent } from '~/common/components/feature-teaser/fe
 })
 export class OebIssuerDetailComponent implements OnInit {
 	private router = inject(Router);
-	private route = inject(ActivatedRoute);
+	route = inject(ActivatedRoute);
 	translate = inject(TranslateService);
 	protected messageService = inject(MessageService);
 	protected title = inject(Title);
@@ -210,14 +213,8 @@ export class OebIssuerDetailComponent implements OnInit {
 		this.updateResults();
 	}
 
-	/**
-	 * Property used for rendering <learningpaths-datatable /> which is only
-	 * available if we are working with the non-public ApiLearningPaths
-	 * of an issuer. Therefore this remains null when public.
-	 */
-	get apiLearningPaths() {
-		return this.public ? null : (this.learningPaths as ApiLearningPath[]);
-	}
+	apiLearningPaths: ApiLearningPath[] = [];
+	archivedLearningPaths: ApiLearningPath[] = [];
 
 	private async updateResults() {
 		this.badgeResults.length = 0;
@@ -447,6 +444,18 @@ export class OebIssuerDetailComponent implements OnInit {
 		return bTime - aTime;
 	}
 
+	private refreshLearningPathTables(): void {
+		if (this.public) {
+			this.apiLearningPaths = [];
+			this.archivedLearningPaths = [];
+			return;
+		}
+
+		const apiLearningPaths = this.learningPaths as ApiLearningPath[];
+		this.apiLearningPaths = apiLearningPaths.filter((lp) => !lp.archived);
+		this.archivedLearningPaths = apiLearningPaths.filter((lp) => lp.archived);
+	}
+
 	async ngOnInit() {
 		if (this.isFullIssuer(this.issuer)) {
 			if (this.issuer.canUpdateDeleteIssuer) {
@@ -481,6 +490,11 @@ export class OebIssuerDetailComponent implements OnInit {
 		await this.updateSharedNetworkResults();
 		await this.updateNetworkResults();
 
+		this.route.queryParams.subscribe((params) => {
+			if (params['tab']) {
+				this.activeTab = params['tab'];
+			}
+		});
 		// await Promise.all([this.updateResults(), this.updateNetworkResults(), this.updateSharedNetworkResults()]);
 		this.badgeTemplateTabs = [
 			{
@@ -675,11 +689,19 @@ export class OebIssuerDetailComponent implements OnInit {
 		this.router.navigate(['/issuer/issuers/', issuer.slug, 'learningpaths', learningPathSlug]);
 	}
 
-	public deleteLearningPath(learningPathSlug, issuer) {
-		const dialogRef = this._hlmDialogService.open(DangerDialogComponentTemplate, {
+	public deleteLearningPath(learningPath: ApiLearningPath, issuer) {
+		if (learningPath.has_awarded_micro_degree) {
+			this.openArchiveDialog(learningPath, issuer);
+			return;
+		}
+
+		this.openDeleteDialog(learningPath, issuer);
+	}
+
+	private openDeleteDialog(learningPath: ApiLearningPath, issuer: Issuer) {
+		this._hlmDialogService.open(DangerDialogComponentTemplate, {
 			context: {
-				delete: () => this.deleteLearningPathApi(learningPathSlug, issuer),
-				// qrCodeRequested: () => {},
+				delete: () => this.deleteLearningPathApi(learningPath.slug, issuer),
 				variant: 'danger',
 				text: this.translate.instant('LearningPath.confirmDelete'),
 				title: this.translate.instant('LearningPath.deleteMd'),
@@ -687,26 +709,62 @@ export class OebIssuerDetailComponent implements OnInit {
 		});
 	}
 
-	deleteLearningPathApi(learningPathSlug, issuer) {
+	private openArchiveDialog(learningPath: ApiLearningPath | PublicApiLearningPath, issuer: Issuer) {
+		this._hlmDialogService.open(DangerDialogComponentTemplate, {
+			context: {
+				delete: () => this.archiveLearningPathApi(learningPath.slug, issuer),
+				variant: 'danger',
+				text: this.translate.instant('LearningPath.alreadyAwarded'),
+				title: this.translate.instant('LearningPath.archive'),
+			},
+		});
+	}
+
+	private deleteLearningPathApi(learningPathSlug: string, issuer: Issuer) {
 		this.learningPathApiService
 			.deleteLearningPath(issuer.slug, learningPathSlug)
-			.then(() => (this.learningPaths = this.learningPaths.filter((value) => value.slug != learningPathSlug)));
+			.then(() => {
+				this.learningPaths = this.learningPaths.filter((value) => value.slug !== learningPathSlug);
+				this.refreshLearningPathTables();
+			})
+			.catch((err) => {
+				if (err?.error?.code === 'learningpath_has_awards') {
+					const learningPath = this.learningPaths.find((lp) => lp.slug === learningPathSlug);
+					if (learningPath) {
+						this.openArchiveDialog(learningPath, issuer);
+						return;
+					}
+				}
+				throw err;
+			});
+	}
+
+	private archiveLearningPathApi(learningPathSlug: string, issuer: Issuer) {
+		this.learningPathApiService.archiveLearningPath(issuer.slug, learningPathSlug).then((updatedLp) => {
+			this.learningPaths = this.learningPaths.map((lp) => (lp.slug === learningPathSlug ? updatedLp : lp));
+		});
+		this.refreshLearningPathTables();
 	}
 
 	async getPublicLearningPaths(issuerSlug: string) {
 		const lps = await this.publicApiService.getIssuerLearningPaths(issuerSlug);
 		this.learningPaths = lps.filter((l) => l.activated);
+		this.refreshLearningPathTables();
 	}
 
-	getLearningPathsForIssuerApi(issuerSlug) {
+	getLearningPathsForIssuerApi(issuerSlug: string) {
 		this.learningPathsPromise = this.learningPathApiService
-			.getLearningPathsForIssuer(issuerSlug)
-			.then(
-				(learningPaths) =>
-					(this.learningPaths = learningPaths
-						.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-						.filter((lp) => (this.public ? lp.activated : true))),
-			);
+			.getAllLearningPathsForIssuer(issuerSlug)
+			.then((learningPaths: ApiLearningPath[]) => {
+				const sortedLearningPaths = learningPaths
+					.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+					.filter((lp) => (this.public ? lp.activated : true));
+
+				this.learningPaths = sortedLearningPaths;
+				this.apiLearningPaths = this.public ? [] : sortedLearningPaths.filter((lp) => !lp.archived);
+				this.archivedLearningPaths = this.public ? [] : sortedLearningPaths.filter((lp) => lp.archived);
+				this.refreshLearningPathTables();
+			});
 	}
 
 	getPDFTemplatesForIssuerApi(issuerSlug) {
