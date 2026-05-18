@@ -184,7 +184,7 @@ describe('OebIssuerDetailComponent — Dashboard tab visibility by quota', () =>
 		expect(component.activeTab).toBe('badges');
 	});
 
-	it('renders the dashboard teaser button on Free/Pro', async () => {
+	it('does not grant dashboard access on Free/Pro', async () => {
 		const fixture = await setupAuthenticatedIssuerDetail('free-or-pro');
 		const component = fixture.componentInstance;
 		expect(component.hasDashboardAccess()).toBe(false);
