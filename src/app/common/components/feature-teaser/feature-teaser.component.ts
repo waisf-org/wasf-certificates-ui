@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
 	selector: 'oeb-feature-teaser',
 	standalone: true,
 	templateUrl: './feature-teaser.component.html',
 })
-export class OebFeatureTeaserComponent {}
+export class OebFeatureTeaserComponent {
+	@Input() imagePosition: 'left' | 'right' = 'left';
+}

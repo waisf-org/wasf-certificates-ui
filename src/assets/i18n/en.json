@@ -1430,6 +1430,14 @@
 		"previewCanvasFootnoteText1": "[E] = Competence according to ESCO (European Skills, Competencies, Qualifications and Occupations). The competency descriptions according to ESCO are available via ",
 		"previewCanvasFootnoteText2": "https://esco.ec.europa.eu/en."
 	},
+	"DashboardTeaser": {
+		"heading": "Institution dashboard",
+		"body": "We automatically create a clear <strong>data dashboard that shows the impact of your learning offerings</strong>, including: How many badges have you awarded and over what period? How many learners have received badges? Which competencies have you strengthened and to what extent?",
+		"upgradeLine": "Upgrade to our <a class='tw-text-link tw-underline tw-uppercase' href='https://openbadges.education/page/produkte' target='_blank'>Enterprise plan</a> to use your institution dashboard.",
+		"buttonLabel": "Request upgrade",
+		"image": "assets/oeb/images/teasers/dashboard-teaser_de.png",
+		"imageCaption": "Example view of an OEB dashboard."
+	},
 	"PDFEditorTeaser": {
 		"heading": "PDF Editor",
 		"body": "With every badge, a PDF certificate in the OEB design is automatically sent to your learners. With the PDF Editor you can upload <strong>personalized backgrounds in your own design</strong> that can then <strong>be selected when issuing badges</strong> instead of the OEB design.",
