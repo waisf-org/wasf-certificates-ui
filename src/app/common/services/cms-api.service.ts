@@ -11,6 +11,13 @@ import { CacheService } from './cache.service';
 
 const CMS_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
+// Skip caching error responses (e.g. 404 for an unpublished slug) so a client
+// doesn't get stuck seeing "not found" for the full TTL if the page goes live.
+const isOkResponse = <T>(body: T): boolean => {
+	const status = (body as { data?: { status?: number } } | null | undefined)?.data?.status;
+	return !!body && (status === undefined || status === 200);
+};
+
 @Injectable({ providedIn: 'root' })
 export class CmsApiService extends BaseHttpApiService {
 	protected loginService: AuthenticationService;
@@ -46,18 +53,22 @@ export class CmsApiService extends BaseHttpApiService {
 	}
 
 	getPageBySlug(slug: string) {
+		const lang = this.languageService.getSelectedLngValue();
 		return this.cacheService.getOrFetch(
-			`cms:page:${slug}`,
+			`cms:page:${lang}:${slug}`,
 			() => this.get<CmsApiPage>(`/cms/page/slug/`, { slug: slug }, false, false).then((r) => r.body),
 			CMS_CACHE_TTL_MS,
+			{ shouldCache: isOkResponse },
 		);
 	}
 
 	getPostBySlug(slug: string) {
+		const lang = this.languageService.getSelectedLngValue();
 		return this.cacheService.getOrFetch(
-			`cms:post:${slug}`,
+			`cms:post:${lang}:${slug}`,
 			() => this.get<CmsApiPage>(`/cms/post/slug/`, { slug: slug }, false, false).then((r) => r.body),
 			CMS_CACHE_TTL_MS,
+			{ shouldCache: isOkResponse },
 		);
 	}
 
@@ -68,10 +79,6 @@ export class CmsApiService extends BaseHttpApiService {
 			() => this.get<CmsApiPost[]>(`/cms/post/list/`, { lang }, false, false).then((r) => r.body),
 			CMS_CACHE_TTL_MS,
 		);
-	}
-
-	clearCmsCache() {
-		this.cacheService.invalidate('cms:');
 	}
 
 	getStyles() {
