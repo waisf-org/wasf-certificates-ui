@@ -646,7 +646,7 @@ export class BadgeClassEditFormComponent
 			if (badgeClass.imageFrame) {
 				// regenerating the upload image for the issuer image in case it changed via copying
 				// or if it was not part of the badge image yet
-				this.generateUploadImage(this.currentImage, this.badgeClassForm.value, true, true);
+				this.generateUploadImage(this.currentImage, this.badgeClassForm.value, !this.issuer?.is_network, true);
 			} else if (badgeClass.image) {
 				const dataUrl = await this.urlToDataUrl(badgeClass.image);
 				this.currentImage = dataUrl;
