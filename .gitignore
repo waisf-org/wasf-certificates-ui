@@ -20,3 +20,8 @@ temp/
 .vscode
 
 src/environments/timestamp.ts
+
+# Claude Code
+.agents/
+.claude/
+skills-lock.json
