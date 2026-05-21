@@ -130,7 +130,8 @@
 		"end": "End",
 		"person": "person",
 		"persons": "persons",
-		"via": "via"
+		"via": "via",
+		"archive": "archive"
 	},
 	"NavItems": {
 		"register": "Register",
@@ -424,10 +425,13 @@
 	"Network": {
 		"networksNav": "Networks A-Z",
 		"noIssuer": "Create an institution first.",
-		"noIssuerInNetwork": "None of your institutions are currently members of a network.",
+		"noIssuerInNetwork": "<span class='tw-font-semibold'>None of your institutions</span> are currently members of a network.",
 		"networkLogoOnBadge": "The network logo is also displayed on the corresponding badge images.",
-		"networkDashboard": "Networks can collaboratively use badges and access shared visual data insights via the network dashboard.",
-		"upgradeToUse": "Upgrade to the NETWORK plan to create your own network.",
+		"networkDashboard": "Networks can collaboratively use badges, create shared learning paths and access cross-institutional visual data insights via the network dashboard.",
+		"canBeInvitedToExisting": "Existing networks can <span class='tw-font-semibold'>invite</span> you to join them.",
+		"upgradeToUse": "Upgrade to the NETWORK plan to <span class='tw-font-semibold'>create</span> your own network.",
+		"upgradeToUseNew": "Upgrade to the NETWORK plan to <span class='tw-font-semibold'>create</span> your own new network.",
+		"requestUpgrade": "Request network upgrade",
 		"youCanAddInstitutions": "You can create your own network and add your partner institutions:",
 		"create": "Create network",
 		"name": "Name of the network",
@@ -621,6 +625,7 @@
 		"deleteConfirm": "Delete badge",
 		"deleteRequest": "Delete badge request",
 		"deleteInstancesLeft": "All awarded Badges must be revoked before you can delete the Badge.",
+		"deleteWillDeleteLp": "Deleting this badge will also delete the learning path it belongs to.",
 		"confirmDeleteRequest1": "Do you really want to delete the badge request from ",
 		"confirmDeleteRequest2": "?",
 		"sortBy": "Sort by",
@@ -1248,6 +1253,7 @@
 		"getYourPath": "Get your Micro Degree badge",
 		"continue": "Continue learning",
 		"finished": "Finished",
+		"completedSuccessfully": "100% - learning path completed successfully",
 		"includedBadges": "Contained badges",
 		"badgeTabs": {
 			"all": "All",
@@ -1257,7 +1263,7 @@
 		"chooseBadges": "Choose included badges",
 		"badgeSequenceStep": "Badge order",
 		"badgeSequence": "Order of badges in the learning path",
-		"combineBadgeCategories": "You can combine competency badges and participation badges.",
+		"combineBadgeCategories": "You can combine all badge types.",
 		"min2Badges": "The learning path must contain at least 2 badges.",
 		"youHave": "You have",
 		"choosenForLp": "selected for the learning path.",
@@ -1272,6 +1278,7 @@
 		"selectedBadges": "You selected {{ count }} Badges for the learning path",
 		"selectedBadgesOne": "You selected 1 Badge for the learning path",
 		"deleteWarning": "Do you really want to delete this learning path?",
+		"deleteWarningWithDependents": "This microdegree is included in other learning paths. Deleting it will leave broken references in those paths.",
 		"lastBadgeInfo": "Learners automatically receive the <strong class='tw-text-purple'>Micro Degree</strong> badge by e-mail, as soon as they have earned all badges in the learning path.",
 		"activateMd": "Unlock learning path",
 		"activationInfo": "When you activate the learning path for use, <span class='tw-font-bold'>you can no longer edit it afterwards</span>. ",
@@ -1297,7 +1304,14 @@
 		"institution": "institution",
 		"institutions": "institutions",
 		"catalogAllLoaded": "All learning paths matching your search criteria loaded.",
-		"language": "Language"
+		"language": "Language",
+		"archive": "Archiving instead of deletion",
+		"alreadyAwarded": "At least one person has already earned the Micro Degree.",
+		"canOnlyBeArchived": "It can therefore only be archived.",
+		"mdArchived": "We have archived the micro degree.",
+		"archivedLearningPaths": "Archived learning paths",
+		"archivedSince": "Archived since {{ date }}",
+		"archivedBy": "This learning path was archived by {{ issuer }}."
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Summary description of the learning program.",
@@ -1415,6 +1429,24 @@
 		"previewCanvasNarrativeSubline2Text": "Here is an example narrative.",
 		"previewCanvasFootnoteText1": "[E] = Competence according to ESCO (European Skills, Competencies, Qualifications and Occupations). The competency descriptions according to ESCO are available via ",
 		"previewCanvasFootnoteText2": "https://esco.ec.europa.eu/en."
+	},
+	"DashboardTeaser": {
+		"heading": "Institution dashboard",
+		"body": "We automatically create a clear <strong>data dashboard that shows the impact of your learning offerings</strong>, including: How many badges have you awarded and over what period? How many learners have received badges? Which competencies have you strengthened and to what extent?",
+		"upgradeLine": "Upgrade to our <a class='tw-text-link tw-underline tw-uppercase' href='https://openbadges.education/page/produkte' target='_blank'>Enterprise plan</a> to use your institution dashboard.",
+		"buttonLabel": "Request upgrade",
+		"image": "assets/oeb/images/teasers/dashboard-teaser_de.png",
+		"imageCaption": "Example view of an OEB dashboard."
+	},
+	"PDFEditorTeaser": {
+		"heading": "PDF Editor",
+		"body": "With every badge, a PDF certificate in the OEB design is automatically sent to your learners. With the PDF Editor you can upload <strong>personalized backgrounds in your own design</strong> that can then <strong>be selected when issuing badges</strong> instead of the OEB design.",
+		"upgradeLine": "Upgrade to our <a class='tw-text-link tw-underline' href='/page/pricing' target='_blank'>PRO plan</a> to use the PDF Editor.",
+		"buttonLabel": "Request upgrade",
+		"defaultCaption": "Badge PDF in the OEB design.",
+		"customCaption": "Badge info on a personalized PDF background (scalable).",
+		"defaultImage": "assets/oeb/images/teasers/vorschau-oeb-pdf_en.png",
+		"customImage": "assets/oeb/images/teasers/vorschau-individuelles-pdf_en.png"
 	},
 	"Dashboard": {
 		"title": "OEB Dashboard",
