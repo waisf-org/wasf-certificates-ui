@@ -3,7 +3,11 @@
 		<ng-content select="[teaser-heading]" />
 	</header>
 
-	<div class="tw-flex tw-flex-col md:tw-flex-row tw-gap-10">
+	<div
+		class="tw-flex tw-flex-col tw-gap-10"
+		[class.md:tw-flex-row]="imagePosition === 'left'"
+		[class.md:tw-flex-row-reverse]="imagePosition === 'right'"
+	>
 		<div class="tw-flex tw-flex-row tw-flex-wrap tw-gap-6 md:tw-shrink-0 tw-items-start">
 			<ng-content select="[teaser-image]" />
 		</div>

@@ -425,10 +425,13 @@
 	"Network": {
 		"networksNav": "Networks A-Z",
 		"noIssuer": "Create an institution first.",
-		"noIssuerInNetwork": "None of your institutions are currently members of a network.",
+		"noIssuerInNetwork": "<span class='tw-font-semibold'>None of your institutions</span> are currently members of a network.",
 		"networkLogoOnBadge": "The network logo is also displayed on the corresponding badge images.",
-		"networkDashboard": "Networks can collaboratively use badges and access shared visual data insights via the network dashboard.",
-		"upgradeToUse": "Upgrade to the NETWORK plan to create your own network.",
+		"networkDashboard": "Networks can collaboratively use badges, create shared learning paths and access cross-institutional visual data insights via the network dashboard.",
+		"canBeInvitedToExisting": "Existing networks can <span class='tw-font-semibold'>invite</span> you to join them.",
+		"upgradeToUse": "Upgrade to the NETWORK plan to <span class='tw-font-semibold'>create</span> your own network.",
+		"upgradeToUseNew": "Upgrade to the NETWORK plan to <span class='tw-font-semibold'>create</span> your own new network.",
+		"requestUpgrade": "Request network upgrade",
 		"youCanAddInstitutions": "You can create your own network and add your partner institutions:",
 		"create": "Create network",
 		"name": "Name of the network",
@@ -1426,6 +1429,14 @@
 		"previewCanvasNarrativeSubline2Text": "Here is an example narrative.",
 		"previewCanvasFootnoteText1": "[E] = Competence according to ESCO (European Skills, Competencies, Qualifications and Occupations). The competency descriptions according to ESCO are available via ",
 		"previewCanvasFootnoteText2": "https://esco.ec.europa.eu/en."
+	},
+	"DashboardTeaser": {
+		"heading": "Institution dashboard",
+		"body": "We automatically create a clear <strong>data dashboard that shows the impact of your learning offerings</strong>, including: How many badges have you awarded and over what period? How many learners have received badges? Which competencies have you strengthened and to what extent?",
+		"upgradeLine": "Upgrade to our <a class='tw-text-link tw-underline tw-uppercase' href='https://openbadges.education/page/produkte' target='_blank'>Enterprise plan</a> to use your institution dashboard.",
+		"buttonLabel": "Request upgrade",
+		"image": "assets/oeb/images/teasers/dashboard-teaser_de.png",
+		"imageCaption": "Example view of an OEB dashboard."
 	},
 	"PDFEditorTeaser": {
 		"heading": "PDF Editor",

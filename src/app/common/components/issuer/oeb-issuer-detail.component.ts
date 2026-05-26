@@ -524,14 +524,14 @@ export class OebIssuerDetailComponent implements OnInit {
 		this.tabs = [];
 
 		if (this.isFullIssuer(this.issuer)) {
-			if (!this.issuer.quotas || this.issuer.quotas.quotas['DASHBOARD'].quota) {
-				this.tabs = [
-					{
-						key: 'dashboard',
-						title: 'NavItems.dashboard',
-						component: this.dashboardTemplate(),
-					},
-				];
+			this.tabs = [
+				{
+					key: 'dashboard',
+					title: 'NavItems.dashboard',
+					component: this.dashboardTemplate(),
+				},
+			];
+			if (this.hasDashboardAccess()) {
 				this.activeTab = 'dashboard';
 			}
 		}
@@ -802,6 +802,16 @@ export class OebIssuerDetailComponent implements OnInit {
 
 	emailSalesForPdfEditor() {
 		window.open('mailto:sales@openbadges.education?subject=Anfrage%20Pro-Paket%20(PDF-Editor)');
+	}
+
+	emailSalesForDashboard() {
+		window.open('mailto:sales@openbadges.education?subject=Anfrage%20Enterprise-Paket%20(Dashboard)');
+	}
+
+	hasDashboardAccess(): boolean {
+		if (!this.isFullIssuer(this.issuer)) return false;
+		if (!this.issuer.quotas) return true;
+		return Boolean(this.issuer.quotas.quotas['DASHBOARD']?.quota);
 	}
 
 	onTabChange(tab) {

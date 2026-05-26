@@ -1,5 +1,5 @@
 <header class="tw-relative">
-	<div class="tw-flex tw-justify-evenly tw-items-start">
+	<div class="tw-flex tw-justify-between tw-items-start">
 		<div class="tw-flex tw-flex-col oeb-section-sm md:tw-max-w-[50%]">
 			<div class="tw-flex tw-items-center">
 				<figure class="tw-relative">
@@ -256,15 +256,47 @@
 	></oeb-tabs>
 
 	<ng-template #dashboardTemplate>
-		<app-oeb-dashboard-overview [isNetwork]="false" [networkSlug]="issuer.slug"></app-oeb-dashboard-overview>
+		@if (hasDashboardAccess()) {
+			<app-oeb-dashboard-overview [isNetwork]="false" [networkSlug]="issuer.slug"></app-oeb-dashboard-overview>
 
-		<div class="tw-mt-8">
-			<app-oeb-dashboard-learners
-				[networkSlug]="issuer.slug"
-				[disableClick]="true"
-				[noGeneralStats]="true"
-			></app-oeb-dashboard-learners>
-		</div>
+			<div class="tw-mt-8">
+				<app-oeb-dashboard-learners
+					[networkSlug]="issuer.slug"
+					[disableClick]="true"
+					[noGeneralStats]="true"
+				></app-oeb-dashboard-learners>
+			</div>
+		} @else {
+			<oeb-feature-teaser imagePosition="right">
+				<h2
+					teaser-heading
+					hlmH2
+					class="oeb !tw-text-oebblack tw-uppercase tw-font-black tw-text-[22px]/[1.2em]"
+				>
+					{{ 'DashboardTeaser.heading' | translate }}
+				</h2>
+				<figure teaser-image class="tw-max-w-[260px] tw-m-0">
+					<img [src]="'DashboardTeaser.image' | translate" alt="" class="tw-w-full tw-h-auto" />
+					<figcaption class="tw-mt-2 tw-text-xs tw-text-oebblack tw-leading-snug tw-text-center">
+						{{ 'DashboardTeaser.imageCaption' | translate }}
+					</figcaption>
+				</figure>
+				<div teaser-body class="tw-flex tw-flex-col tw-gap-6">
+					<p hlmP [innerHTML]="'DashboardTeaser.body' | translate"></p>
+					<p
+						hlmP
+						class="tw-font-bold tw-text-purple"
+						[innerHTML]="'DashboardTeaser.upgradeLine' | translate"
+					></p>
+				</div>
+				<oeb-button
+					teaser-action
+					[text]="'DashboardTeaser.buttonLabel' | translate"
+					(click)="emailSalesForDashboard()"
+					[umamiEvent]="'dashboard-teaser-upgrade'"
+				/>
+			</oeb-feature-teaser>
+		}
 	</ng-template>
 	<ng-template #badgesTemplate>
 		@if (env.networksEnabled && !public) {

@@ -425,10 +425,13 @@
 	"Network": {
 		"networksNav": "Netzwerke A-Z",
 		"noIssuer": "Lege zunächst eine Institution an.",
-		"noIssuerInNetwork": "Bisher ist keine deiner Institutionen Mitglied in einem Netzwerk.",
+		"noIssuerInNetwork": "Bisher ist <span class='tw-font-semibold'>keine deiner Institutionen</span> Mitglied in einem Netzwerk.",
 		"networkLogoOnBadge": "Das Logo des Netzwerks wird zusätzlich auf den entsprechenden Badge-Bildern abgebildet.",
-		"networkDashboard": "Netzwerke können Badges gemeinsam nutzen und erhalten eine gemeinsame visuelle Datenauswertung im Netzwerk-Dashboard.",
-		"upgradeToUse": "Upgrade auf unser NETZWERK-Paket, um selbst ein Netzwerk zu erstellen.",
+		"networkDashboard": "Netzwerke können Badges gemeinsam nutzen, gemeinsame Lernpfade erstellen und erhalten eine Institutions-übergreifende visuelle Datenauswertung im Netzwerk-Dashboard.",
+		"canBeInvitedToExisting": "Du kannst zu bestehenden Netzwerken <span class='tw-font-semibold'>eingeladen</span> werden.",
+		"upgradeToUse": "Upgrade auf unser NETZWERK-Paket, um selbst ein Netzwerk zu <span class='tw-font-semibold'>erstellen</span>.",
+		"upgradeToUseNew": "Upgrade auf unser NETZWERK-Paket, um selbst ein neues Netzwerk zu <span class='tw-font-semibold'>erstellen</span>.",
+		"requestUpgrade": "Netzwerk-Upgrade anfragen",
 		"youCanAddInstitutions": "Du kannst selbst ein Netzwerk anlegen und deine Partner-Institutionen hinzufügen:",
 		"create": "Netzwerk anlegen",
 		"name": "Name des Netzwerks",
@@ -1437,6 +1440,14 @@
 		"previewCanvasNarrativeSubline2Text": "Hier steht ein Beispiel-Narrativ.",
 		"previewCanvasFootnoteText1": "[E] = Kompetenz nach ESCO (European Skills, Competencies, Qualifications and Occupations). Die Kompetenz-Beschreibungen gemäß ESCO sind abrufbar über ",
 		"previewCanvasFootnoteText2": "https://esco.ec.europa.eu/de."
+	},
+	"DashboardTeaser": {
+		"heading": "Institutions-Dashboard",
+		"body": "Wir erstellen automatisiert ein übersichtliches <strong>Daten-Dashboard, das die Wirkung deiner Lern-Angebote</strong> abbildet, unter anderem: Wie viele Badges habt ihr in welchem Zeitraum vergeben? Wie viele Lernende haben Badges bekommen? Welche Kompetenzen habt ihr in welchem Umfang gestärkt?",
+		"upgradeLine": "Upgrade auf unser <a class='tw-text-link tw-underline tw-uppercase' href='https://openbadges.education/page/produkte' target='_blank'>Enterprise-Paket</a>, um dein Institutions-Dashboard zu nutzen.",
+		"buttonLabel": "Upgrade anfragen",
+		"image": "assets/oeb/images/teasers/dashboard-teaser_de.png",
+		"imageCaption": "Beispiel-Ansicht eines OEB-Dashboards."
 	},
 	"PDFEditorTeaser": {
 		"heading": "PDF-Editor",
