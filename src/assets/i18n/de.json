@@ -496,6 +496,9 @@
 		"createLpInfo": "Um einen <span class='tw-font-bold'>Netzwerk-Lernpfad</span> anlegen zu können, müssen mindestens zwei Badges im Netzwerk erstellt oder von Partner-Institutionen für das Netzwerk freigegeben werden.",
 		"pendingInvites": "Unbestätigte Einladungen",
 		"edit": "Netzwerk bearbeiten",
+		"parentInstitution": "Träger-Institution des Netzwerks",
+		"selectInstitution": "Institution auswählen",
+		"noEligibleInstitution": "Du hast keine geeigneten Institutionen, um ein Netzwerk zu erstellen. Eine Institution muss das Netzwerkerstellungs-Kontingent besitzen und du musst Inhaber oder Redakteur sein.",
 		"Dashboard": {
 			"kpi": {
 				"institutionsCount": "Institutionen im Netzwerk",
