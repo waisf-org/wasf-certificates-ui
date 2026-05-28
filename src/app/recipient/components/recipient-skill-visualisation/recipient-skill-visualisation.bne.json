@@ -1,245 +1,201 @@
 {
 	"uri": "bne-skills",
-	"label": "BNE",
+	"label": {
+		"de": "Bildung für nachhaltige Entwicklung",
+		"en": "Education for Sustainable Development"
+	},
 	"skills": {
 		"weltoffen": {
 			"concept_uri": "weltoffen",
 			"de": {
-				"preferred_label": "1. Weltoffen und neue Perspektiven integrierend Wissen aufbauen.",
-				"description": "Die Schüler:innen.\n- benennen die Ansätze und Konzepte zur nachhaltigen Entwicklung von Entscheidungsträgern in der staatlichen Politik wie der Zivilgesellschaft\n- stellen aufgrund von Perspektivübernahme unterschiedliche Sichtweisen und Wissensformen (z.B. wissenschaftliches, tradiertes, alltägliches Wissen) über globale und lokale (nicht) nachhaltige Entwicklungen dar\n- bewerten auf der Basis der Informationen aus Perspektivübernahmen differente (nicht nachhaltige) Gestaltungsnotwendigkeiten sowie Handlungsmuster\n- beschreiben und beurteilen Vielfalt und Verschiedenheit (Diversität) im kulturellen und ökologischen Bereich"
+				"preferred_label": "Weltoffen und neue Perspektiven integrierend Wissen aufbauen",
+				"description": "Die Schüler:innen benennen die Ansätze und Konzepte zur nachhaltigen Entwicklung von Entscheidungsträgern in der staatlichen Politik wie der Zivilgesellschaft, stellen aufgrund von Perspektivübernahme unterschiedliche Sichtweisen und Wissensformen über globale und lokale (nicht) nachhaltige Entwicklungen dar und beschreiben Vielfalt und Verschiedenheit (Diversität) im kulturellen und ökologischen Bereich."
 			},
 			"en": {
-				"preferred_label": "Learning literacy",
-				"description": "Learning literacy is the ability and willingness to learn in a self-directed\nand self-initiated fashion. It entails metacognitive skills as well."
+				"preferred_label": "Building knowledge with openness and integration of new perspectives",
+				"description": "Learners can identify approaches to sustainable development, take different perspectives on global and local developments, and describe cultural and ecological diversity."
 			}
 		},
-		"selbstwirksamkeit": {
-			"concept_uri": "selbstwirksamkeit",
+		"vorausschauend": {
+			"concept_uri": "vorausschauend",
 			"de": {
-				"preferred_label": "Selbstwirksamkeit",
-				"description": "Selbstwirksamkeit als Future Skill ist die \u00dcberzeugung und das (Selbst-)Bewusstsein daf\u00fcr, die zu bew\u00e4ltigen Aufgaben mit den eigenen F\u00e4higkeiten umsetzen zu k\u00f6nnen, dabei Verantwortung zu \u00fcbernehmen und Entscheidungen treffen zu k\u00f6nnen."
+				"preferred_label": "Vorausschauend denken und handeln / Entwicklungen analysieren und beurteilen",
+				"description": "Die Fähigkeit, zukünftige Entwicklungen und deren Folgen antizipierend zu analysieren und zu beurteilen sowie vorausschauend und gestaltend zu handeln."
 			},
 			"en": {
-				"preferred_label": "Self-efficacy",
-				"description": "Self-efficacy as a Future Skill Profile refers to the belief and one\u2019s (self-)\nconfidence to be able to master the tasks at hand relying on one\u2019s own abilities\nand taking over responsibility for one\u2019s decisions."
+				"preferred_label": "Anticipatory thinking and acting / Analysing and assessing developments",
+				"description": "The ability to anticipatorily analyse and assess future developments and their consequences, and to act in a forward-looking and formative manner."
 			}
 		},
-		"selbstbestimmtheit": {
-			"concept_uri": "selbstbestimmtheit",
+		"interdisziplinaer": {
+			"concept_uri": "interdisziplinaer",
 			"de": {
-				"preferred_label": "Selbstbestimmtheit",
-				"description": "Die F\u00e4higkeit zur Selbstbestimmung als Future Skill oder auch Selbstbestimmungskompetenz bezeichnet die F\u00e4higkeit, im Spannungsverh\u00e4ltnis von Fremd- und Selbstbestimmung produktiv zu agieren und sich R\u00e4ume zur eigenen Autonomie und Entwicklung zu schaffen, sodass die Befriedigung der eigenen Bed\u00fcrfnisse in Freiheit und selbstbestimmt angestrebt werden kann."
+				"preferred_label": "Interdisziplinär Erkenntnisse gewinnen",
+				"description": "Die Fähigkeit, Erkenntnisse aus verschiedenen Disziplinen zu gewinnen, zusammenzuführen und ganzheitlich zu denken."
 			},
 			"en": {
-				"preferred_label": "Self-determination",
-				"description": "Self-determination as a Future Skill describes an individual\u2019s ability\nto act productively within the field of tension between external structure and\nself-organisation, and to create room for self-development and autonomy, so that\nthey can meet their own needs in freedom and self-organisation."
+				"preferred_label": "Gaining knowledge interdisciplinarily",
+				"description": "The ability to gather insights from different disciplines, to synthesise them, and to think holistically."
 			}
 		},
-		"selbstkompetenz": {
-			"concept_uri": "selbstkompetenz",
+		"risikokompetenz": {
+			"concept_uri": "risikokompetenz",
 			"de": {
-				"preferred_label": "Selbstkompetenz",
-				"description": "Selbstkompetenz als Future Skill ist die F\u00e4higkeit, eigene pers\u00f6nliche und berufliche Entwicklung weitgehend unabh\u00e4ngig von \u00e4u\u00dferen Einfl\u00fcssen zu gestalten. Dazu geh\u00f6ren weitere Kompetenzen wie zum Beispiel selbst\u00e4ndige Motivation und Planung. Aber auch die F\u00e4higkeit, sich Ziele zu setzen, das Zeitmanagement, Organisation, Lernf\u00e4higkeit und Erfolgskontrolle durch Feedback. Dar\u00fcber hinaus auch Cognitive Load Management und eine hohe Eigenverantwortlichkeit."
+				"preferred_label": "Risiken, Gefahren und Unsicherheiten erkennen und abwägen können",
+				"description": "Die Fähigkeit, Risiken, Gefahren und Unsicherheiten in Bezug auf nachhaltige Entwicklung zu erkennen, zu analysieren und abzuwägen."
 			},
 			"en": {
-				"preferred_label": "Self-competence",
-				"description": "Self-competence as a Future Skill is the ability to develop one\u2019s own\npersonal and professional capabilities largely independently of external influences. This includes other skills such as independent self-motivation\nand planning. But also the ability to set goals, time management, organization,\nlearning aptitude and success control through feedback. In addition, cognitive\nload management and a high degree of personal responsibility."
+				"preferred_label": "Identifying and weighing risks, hazards and uncertainties",
+				"description": "The ability to identify, analyse and weigh up risks, hazards and uncertainties in the context of sustainable development."
 			}
 		},
-		"reflexionskompetenz": {
-			"concept_uri": "reflexionskompetenz",
+		"gemeinsam-handeln": {
+			"concept_uri": "gemeinsam-handeln",
 			"de": {
-				"preferred_label": "Reflexionskompetenz",
-				"description": "Reflexionskompetenz als Future Skill umfasst die Bereitschaft und F\u00e4higkeit zur Reflexion, also die F\u00e4higkeit, sich selbst und andere zum Zweck der konstruktiven Weiterentwicklung hinterfragen zu k\u00f6nnen sowie zugrundeliegende Verhaltens-, Denk- und Werte-systeme zu erkennen und deren Konsequenzen f\u00fcr Handlungen und Entscheidungen holistisch einsch\u00e4tzen zu k\u00f6nnen."
+				"preferred_label": "Gemeinsam mit anderen planen und handeln können",
+				"description": "Die Fähigkeit, gemeinsam mit anderen zu planen, Verantwortung zu übernehmen und solidarisch zu handeln."
 			},
 			"en": {
-				"preferred_label": "Reflective competence",
-				"description": "Reflective competence as a Future Skill includes the willingness and\nability to reflect, i.e. the ability to question oneself and others for the purpose of\nconstructive further development, as well as to recognise underlying systems of\nbehaviour, thought and values and to assess their consequences for actions and\ndecisions holistically."
+				"preferred_label": "Planning and acting together with others",
+				"description": "The ability to plan together with others, take on responsibility and act in solidarity."
 			}
 		},
-		"entscheidungskompetenz": {
-			"concept_uri": "entscheidungskompetenz",
+		"partizipation": {
+			"concept_uri": "partizipation",
 			"de": {
-				"preferred_label": "Entscheidungskompetenz",
-				"description": "Entscheidungskompetenz als Future Skill ist die F\u00e4higkeit, Entscheidungsnotwendigkeiten wahrzunehmen sowie m\u00f6gliche alternative Entscheidungen gegeneinander abzuw\u00e4gen, eine Entscheidung zu treffen und diese zu verantworten"
+				"preferred_label": "An Entscheidungsprozessen partizipieren können",
+				"description": "Die Fähigkeit, an gesellschaftlichen und demokratischen Entscheidungsprozessen aktiv und konstruktiv teilzunehmen."
 			},
 			"en": {
-				"preferred_label": "Decision competence",
-				"description": "Decision competence as a Future Skill is the ability to seize decisions\nand to evaluate different alternatives against each other, as well as making a final\ndecision and taking over the responsibility for it."
+				"preferred_label": "Participating in decision-making processes",
+				"description": "The ability to actively and constructively participate in societal and democratic decision-making processes."
 			}
 		},
-		"initiativ-und-leistungskompetenz": {
-			"concept_uri": "initiativ-und-leistungskompetenz",
+		"motivationskompetenz": {
+			"concept_uri": "motivationskompetenz",
 			"de": {
-				"preferred_label": "Initiativ- und Leistungskompetenz",
-				"description": "Der Future Skill Initiativ- und Leistungskompetenz ist die F\u00e4higkeit zur Selbstmotivation, eine hohe Aktivit\u00e4ts- und Umsetzungskompetenz sowie der Wunsch, etwas beizutragen. Beharrlichkeit und Zielorientierung formen die Leistungsmotivation. Zus\u00e4tzlich spielt ein positives Selbstkonzept eine Rolle, sodass Erfolge und Misserfolge in einer Weise attribuiert werden, die nicht zur Senkung der Leistungsmotivation f\u00fchren."
+				"preferred_label": "Sich und andere motivieren können, aktiv zu werden",
+				"description": "Die Fähigkeit, sich selbst und andere zu motivieren, aktiv für eine nachhaltige Entwicklung einzutreten."
 			},
 			"en": {
-				"preferred_label": "Initiative and performance competence",
-				"description": "The Future Skill initiative and performance competence refers to an\nindividual\u2019s ability to motivate him-/herself as well as to his/her wish of contributing\nto achievement. Persistence and goal-orientation form the motivational basis for\nperformance. A positive self-concept also plays an important role as it serves to\nattribute success and failure in such a way that the performance motivation does\nnot decrease."
+				"preferred_label": "Motivating oneself and others to take action",
+				"description": "The ability to motivate oneself and others to actively engage for sustainable development."
 			}
 		},
-		"ambiguit\u00e4tskompetenz": {
-			"concept_uri": "ambiguit\u00e4tskompetenz",
+		"zielkonflikte": {
+			"concept_uri": "zielkonflikte",
 			"de": {
-				"preferred_label": "Ambiguit\u00e4tskompetenz",
-				"description": "Ambiguita\u0308tskompetenz ist die F\u00e4higkeit, Vieldeutigkeit, Heterogenit\u00e4t und Unsicherheit zu erkennen, zu verstehen und produktiv gestaltend damit umgehen zu k\u00f6nnen sowie in unterschiedlichen und auch konfligierenden Rollen agieren zu k\u00f6nnen."
+				"preferred_label": "Zielkonflikte bei der Reflexion über Handlungsstrategien berücksichtigen können",
+				"description": "Die Fähigkeit, Zielkonflikte zu erkennen, zu reflektieren und bei der Entwicklung von Handlungsstrategien zu berücksichtigen."
 			},
 			"en": {
-				"preferred_label": "Ambiguity competence",
-				"description": "Ambiguity competence as a Future Skill refers to an individual\u2019s ability\nto recognise, understand, and finally productively handle ambiguity, heterogeneity,\nand uncertainty, as well as to act in different roles."
+				"preferred_label": "Considering goal conflicts when reflecting on action strategies",
+				"description": "The ability to identify, reflect on and consider goal conflicts when developing action strategies."
 			}
 		},
-		"ethische-kompetenz": {
-			"concept_uri": "ethische-kompetenz",
+		"leitbilder-reflexion": {
+			"concept_uri": "leitbilder-reflexion",
 			"de": {
-				"preferred_label": "Ethische Kompetenz",
-				"description": "Ethische Kompetenz umfasst die F\u00e4higkeit zur Wahrnehmung eines Sachverhalts beziehungsweise einer Situation als ethisch relevant einschlie\u00dflich seiner/ ihrer begrifflichen, empirischen und kontextuellen Pr\u00fcfung (wahrnehmen), die F\u00e4higkeit zur Formulierung von einschl\u00e4gigen pr\u00e4skriptiven Pr\u00e4missen zusammen mit der Pr\u00fcfung ihrer Einschl\u00e4gigkeit, ihres Gewichts, ihrer Begr\u00fcndung, ihrer Verbindlichkeit und ihrer Anwendungsbedingungen (bewerten) sowie die F\u00e4higkeit zur Urteilsbildung und der Pr\u00fcfung ihrer logischen Konsis-tenz, ihrer Anwendungsbedingungen und ihrer Alternativen (urteilen)."
+				"preferred_label": "Die eigenen Leitbilder und die anderer reflektieren können",
+				"description": "Die Fähigkeit, eigene und fremde Leitbilder und Wertvorstellungen kritisch zu reflektieren und in Bezug auf Nachhaltigkeit zu beurteilen."
 			},
 			"en": {
-				"preferred_label": "Ethical competence",
-				"description": "Ethical competence as a Future Skill Profile comprises the ability\nto perceive a situation or situation as ethically relevant, including its conceptual,\nempirical and contextual consideration (perceive), the ability to formulate relevant\nprescriptive premises together with the evaluation of their relevance, their weight,\ntheir justification, their binding nature and their conditions of application (eval-\nuate) and the ability to form judgements and check their logical consistency, their\nconditions of use and their alternatives (judge)."
+				"preferred_label": "Reflecting on one's own guiding principles and those of others",
+				"description": "The ability to critically reflect on one's own and others' guiding principles and values, and to assess them in terms of sustainability."
 			}
 		},
-		"design-thinking-kompetenz": {
-			"concept_uri": "design-thinking-kompetenz",
+		"selbststaendig-handeln": {
+			"concept_uri": "selbststaendig-handeln",
 			"de": {
-				"preferred_label": "Design-Thinking-Kompetenz",
-				"description": "Das Future Skill Profil Design-Thinking-Kompetenz umfasst die F\u00e4higkeit, konkrete Methoden einzusetzen, um ergebnisoffen in Bezug auf gegebene Problem- und Themenstellungen kreative Entwicklungsprozesse durchzuf\u00fchren und dabei alle Stakeholder in einen gemeinsamen Prozess zum Problem- und L\u00f6sungsdesign mit einzubeziehen."
+				"preferred_label": "Selbstständig planen und handeln können",
+				"description": "Die Fähigkeit, eigenverantwortlich und selbstständig zu planen, Entscheidungen zu treffen und zu handeln."
 			},
 			"en": {
-				"preferred_label": "Design-thinking competence",
-				"description": "The Future Skill Profile design-thinking competence comprises the ability\nto use concrete methods to carry out creative development processes open-endedly\nwith regard to given problems and topics and to involve all stakeholders in a joint\nproblem and solution design process."
+				"preferred_label": "Planning and acting independently",
+				"description": "The ability to plan, make decisions and act responsibly and independently."
 			}
 		},
-		"innovationskompetenz": {
-			"concept_uri": "innovationskompetenz",
+		"empathie-solidaritaet": {
+			"concept_uri": "empathie-solidaritaet",
 			"de": {
-				"preferred_label": "Innovationskompetenz",
-				"description": "Innovationskompetenz als Future Skill Profil umfasst die Bereitschaft Innovation als integralen Bestandteil eines jeden Organisationsgegenstandes, -themas und -prozesses zu f\u00f6rdern und die F\u00e4higkeit zur Organisation als Innovations\u00f6kosystem beizutragen."
+				"preferred_label": "Empathie und Solidarität für Benachteiligte zeigen können",
+				"description": "Die Fähigkeit, Empathie zu zeigen, Solidarität mit Benachteiligten zu üben und interkulturelle Sensibilität zu entwickeln."
 			},
 			"en": {
-				"preferred_label": "Innovation competence",
-				"description": "Innovation competence as a Future Skill profile includes the willingness\nto promote innovation as an integral part of any organizational object, topic and\nprocess and the ability to contribute to the organization as an innovation ecosystem."
+				"preferred_label": "Showing empathy and solidarity for disadvantaged people",
+				"description": "The ability to show empathy, practise solidarity with disadvantaged people and develop intercultural sensitivity."
 			}
 		},
-		"systemkompetenz": {
-			"concept_uri": "systemkompetenz",
+		"gerechtigkeitssinn": {
+			"concept_uri": "gerechtigkeitssinn",
 			"de": {
-				"preferred_label": "Systemkompetenz",
-				"description": "Systemkompetenz als Future Skill ist die F\u00e4higkeit komplexe personal-psychische, soziale und technische (Organisations-)systeme sowie deren wechselseitige Einfl\u00fcsse zu erkennen, zu verstehen und darauf abgestimmte Planungs- und Umsetzungsprozesse f\u00fcr neue Vorhaben im System gestalten und/ oder begleiten zu k\u00f6nnen."
+				"preferred_label": "Vorstellungen von Gerechtigkeit als Entscheidungs- und Handlungsgrundlagen nutzen können",
+				"description": "Die Fähigkeit, Gerechtigkeitsvorstellungen als Grundlage für Entscheidungen und Handlungen zu nutzen und Empathie für andere zu zeigen."
 			},
 			"en": {
-				"preferred_label": "Systems competence",
-				"description": "Systems competence as a Future Skill is the ability to recognise and\nunderstand complex personal-psychological, social and technical (organisational)\nsystems as well as their mutual influences and to be able to design and/or accom-\npany coordinated planning and implementation processes for new initiatives in\nthe system."
-			}
-		},
-		"digitalkompetenz": {
-			"concept_uri": "digitalkompetenz",
-			"de": {
-				"preferred_label": "Digitalkompetenz",
-				"description": "Digitalkompetenz ist die F\u00e4higkeit, digitale Medien zu nutzen, produktiv gestaltend zu entwickeln, f\u00fcr das eigene Leben einzusetzen und reflektorisch, kritisch und analytisch ihre Wirkungsweise in Bezug auf die Einzelne/ den Einzelnen und die Gesellschaft als Ganzes zu verstehen sowie die Kenntnis \u00fcber die Potenziale und Grenzen digitaler Medien und ihrer Wirkungsweisen."
-			},
-			"en": {
-				"preferred_label": "Digital literacy",
-				"description": "Digital literacy is the ability and disposition to use digital media, to\ndevelop them in a productive and creative way, the capacity to critically reflect\non its usage and the impact media have on society and work, both for private and\nprofessional contexts, as well as the understanding of the potentials and limits\nof digital media and their effects."
-			}
-		},
-		"sensemaking": {
-			"concept_uri": "sensemaking",
-			"de": {
-				"preferred_label": "Sensemaking",
-				"description": "Das Future Skill Profil Sensemaking umfasst die Bereitschaft und F\u00e4higkeit, die sich schnell wandelnden Sinnstrukturen von Future Organisations zu verstehen, bestehende Sinnstrukturen weiterzuentwickeln oder die Entstehung neuer zu bef\u00f6rdern, dort wo sie abhandengekommen sind."
-			},
-			"en": {
-				"preferred_label": "Sensemaking",
-				"description": "The Future Skill Profile Sensemaking comprises the willingness and\nability to construct meaning and understanding from the rapidly changing struc-\ntures of meaning within future work and life contexts, to further develop existing\nstructures of meaning or to promote the creation of new ones where they have been\nlost."
-			}
-		},
-		"zukunfts-und-gestaltungskompetenz": {
-			"concept_uri": "zukunfts-und-gestaltungskompetenz",
-			"de": {
-				"preferred_label": "Zukunfts- und Gestaltungskompetenz",
-				"description": "Zukunfts- und Gestaltungskompetenz ist die F\u00e4higkeit, mit Mut zum Neuen, Ver\u00e4nderungsbereitschaft und Vorw\u00e4rtsgewandtheit, die derzeit gegebenen Situationen in andere, neue und bisher nicht bekannte Zukunftsvorstellungen weiterzuentwickeln und diese gestalterisch an-zugehen."
-			},
-			"en": {
-				"preferred_label": "Future and design competence",
-				"description": "Future and design competence is the ability to master the current sit-\nuation with courage for the new, willingness to change and forward thinking. To\ndevelop situations into other, new and previously unknown visions of the future\nand to approach these creatively."
-			}
-		},
-		"kooperationskompetenz": {
-			"concept_uri": "kooperationskompetenz",
-			"de": {
-				"preferred_label": "Kooperationskompetenz",
-				"description": "Kooperationskompetenz ist die F\u00e4higkeit zur Zusammenarbeit in Teams, auch interkulturell, in Pr\u00e4senzinteraktion oder durch Zuhilfenahme von Medien, innerhalb oder zwischen Organisationen, Zusammenarbeit so zu gestalten, dass bestehende Differenzen in Gemeinsamkeiten \u00fcberf\u00fchrt werden k\u00f6nnen. Dabei spielen soziale Intelligenz, Offenheit und Beratungskompetenz eine wichtige Rolle."
-			},
-			"en": {
-				"preferred_label": "Cooperation competence",
-				"description": "Cooperation competence as Future Skills relates to the is the ability\nand disposition to cooperate and collaborate in (intercultural) teams either in face-\nto-face or digitally-supported interactions within or between organisations with\nthe purpose of transforming differences into commonalities. Social intelligence,\nteam-working competences and consultation competence play a key role for this\ncompetence."
-			}
-		},
-		"kommunikationskompetenz": {
-			"concept_uri": "kommunikationskompetenz",
-			"de": {
-				"preferred_label": "Kommunikationskompetenz",
-				"description": "Kommunikationskompetenz umfasst neben sprachlichen F\u00e4higkeiten auch Diskurs-, Dialog und strategische Kommunikationsf\u00e4higkeit, um in unterschiedlichen Kontexten und Situationen situativ angemessen erfolgreich kommunikativ handlungsf\u00e4hig zu sein."
-			},
-			"en": {
-				"preferred_label": "Communication competence",
-				"description": "Communication competence as a Future Skill entails not only language\nskills, but also discourse, dialogue, and strategic communication aspects, which \u2013\ntaken together \u2013 serve the individual to communicate successfully and in accordance\nwith the respective situation and context, in view and empathy of her/his own and\nothers needs."
+				"preferred_label": "Using concepts of justice as a basis for decisions and actions",
+				"description": "The ability to apply concepts of justice as the basis for decisions and actions, and to show empathy for others."
 			}
 		}
 	},
 	"escoMap": {
-		"/esco/skill/2aaad52d-599e-4e77-a681-bbc236825821": "weltoffen",
-		"/esco/skill/deb3c1bc-d48a-42e6-b0cc-cb238534ec28": "weltoffen",
-		"/esco/skill/4c3ab565-747c-4db3-8c47-79e8d6f98cf4": "weltoffen",
-		"/esco/skill/7f321b88-3d16-4e30-8163-5494ca8ce978": "weltoffen",
-		"/esco/skill/d56e2c2f-3e01-4b76-a7bb-ecb6d430172f": "weltoffen",
-		"/esco/skill/2aaad52d-599e-4e77-a681-bbc236825821": "",
-		"/esco/skill/d56e2c2f-3e01-4b76-a7bb-ecb6d430172f": "",
-		"/esco/skill/03b9b491-fc9b-4868-914a-bf7cd47b5041": "",
-		"/esco/skill/e186976a-64f0-4052-a25b-297d19e1d0ec": "",
-		"/esco/skill/4707da90-9cfc-46ca-8de0-38a0b7bfb137": "",
-		"/esco/skill/c2a0c52c-0b4b-4180-a918-92650ea3b458": "",
-		"/esco/skill/f715be1d-5fc4-49d3-82a5-0b8090d12849": "",
-		"/esco/skill/469e19ed-a0bd-445a-ae2d-4ba9430e296b": "",
-		"/esco/skill/5354a726-ee64-4f34-90f8-8436f9f374b8": "",
-		"/esco/skill/d56e2c2f-3e01-4b76-a7bb-ecb6d430172f": "",
-		"/esco/skill/77f109c4-3107-4d2a-a512-5160ac103933": "",
-		"/esco/skill/2aaad52d-599e-4e77-a681-bbc236825821": "",
-		"/esco/skill/4e87c852-602a-4a0e-b8d8-20709ce14ac5": "",
-		"/esco/skill/64bd4157-5df0-4166-8259-ede237dd7cdf": "",
-		"/esco/skill/4707da90-9cfc-46ca-8de0-38a0b7bfb137": "",
-		"/esco/skill/31c69100-b612-4a61-8db5-fd314318854c": "",
-		"/esco/skill/6fc6f757-6baa-49fe-9a82-6ba6a52f2e13": "",
-		"/esco/skill/382c11ed-20d5-4ae7-b60e-15fec527fa6c": "",
-		"/esco/skill/deb3c1bc-d48a-42e6-b0cc-cb238534ec28": "",
-		"/esco/skill/0b709c64-a57a-4976-86bd-34d2cf34fa4f": "",
-		"/esco/skill/f715be1d-5fc4-49d3-82a5-0b8090d12849": "",
-		"/esco/skill/bf5ab3df-9589-4e99-b8f6-a83b494f40be": "",
-		"/esco/skill/469e19ed-a0bd-445a-ae2d-4ba9430e296b": "",
-		"/esco/skill/60c78287-22eb-4103-9c8c-28deaa460da0": "",
-		"/esco/skill/a2151ed1-82b9-4314-8ca3-339bc923da9d": "",
-		"/esco/skill/1fce1197-3a5b-45b7-8797-575cd3b57a01": "",
-		"/esco/skill/7d9bace0-63d0-4848-ac87-350a98082c12": "",
-		"/esco/skill/f4bcdb75-df28-441d-a52b-9730904f36a1": "",
-		"/esco/skill/d56e2c2f-3e01-4b76-a7bb-ecb6d430172f": "",
-		"/esco/skill/6eaeea3a-f100-43e4-b694-16a4dc5a79e1": "",
-		"/esco/skill/ee4a78d4-af84-42df-8ca0-039c0999e87c": "",
-		"/esco/skill/03b9b491-fc9b-4868-914a-bf7cd47b5041": "",
-		"/esco/skill/2aaad52d-599e-4e77-a681-bbc236825821": "",
-		"/esco/skill/7f321b88-3d16-4e30-8163-5494ca8ce978": "",
-		"/esco/skill/e1da04bb-4de8-4d17-af8a-75ea893fe36a": "",
-		"/esco/skill/2aaad52d-599e-4e77-a681-bbc236825821": "",
-		"/esco/skill/deb3c1bc-d48a-42e6-b0cc-cb238534ec28": "",
-		"/esco/skill/c29aa9d2-4da8-4bdd-831c-8d4a2fb51730": "",
-		"/esco/skill/77b636e8-fab3-41a8-8022-1e0a354059dc": "",
-		"/esco/skill/996243ee-543f-4c36-a31a-e0f2403c0c5d": "",
-		"/esco/skill/bf5ab3df-9589-4e99-b8f6-a83b494f40be": "",
-		"/esco/skill/7d23c508-c007-4221-bb84-0c9a479b8ea6": "",
-		"/esco/skill/7dd94ad3-13d6-43fe-8b94-51fcbf67ced9": "",
-		"/esco/skill/d56e2c2f-3e01-4b76-a7bb-ecb6d430172f": "",
-		"/esco/skill/2aaad52d-599e-4e77-a681-bbc236825821": ""
+		"/esco/skill/9a58cd26-58eb-4a1c-b1b6-64037fe9cfa1": "weltoffen",
+		"/esco/skill/4707da90-9cfc-46ca-8de0-38a0b7bfb137": ["weltoffen", "risikokompetenz"],
+		"/esco/skill/fd89f784-88dc-4d35-abd7-86aa073cab12": ["weltoffen", "interdisziplinaer"],
+		"/esco/skill/e186976a-64f0-4052-a25b-297d19e1d0ec": "weltoffen",
+		"/esco/skill/c29aa9d2-4da8-4bdd-831c-8d4a2fb51730": ["weltoffen", "selbststaendig-handeln"],
+		"/esco/skill/2aaad52d-599e-4e77-a681-bbc236825821": ["weltoffen", "leitbilder-reflexion", "gerechtigkeitssinn"],
+		"/esco/skill/d56e2c2f-3e01-4b76-a7bb-ecb6d430172f": [
+			"weltoffen",
+			"vorausschauend",
+			"interdisziplinaer",
+			"zielkonflikte",
+			"gerechtigkeitssinn"
+		],
+		"/esco/skill/4fc1d2b4-9645-4fda-be99-abdf8e66c88d": "vorausschauend",
+		"/esco/skill/c2a0c52c-0b4b-4180-a918-92650ea3b458": "vorausschauend",
+		"/esco/skill/adc6dc11-3376-467b-96c5-9b0a21edc869": "vorausschauend",
+		"/esco/skill/03b9b491-fc9b-4868-914a-bf7cd47b5041": [
+			"vorausschauend",
+			"zielkonflikte",
+			"selbststaendig-handeln"
+		],
+		"/esco/skill/c624c6a3-b0ba-4a31-a296-0d433fe47e41": "vorausschauend",
+		"/esco/skill/f715be1d-5fc4-49d3-82a5-0b8090d12849": ["interdisziplinaer", "gemeinsam-handeln"],
+		"/esco/skill/6eaeea3a-f100-43e4-b694-16a4dc5a79e1": ["interdisziplinaer", "zielkonflikte"],
+		"/esco/skill/0f9958d2-f700-4f62-b90b-a5873cb5ae4c": "interdisziplinaer",
+		"/esco/skill/d7b66759-c40c-44de-9f31-9418f84e10c5": "risikokompetenz",
+		"/esco/skill/75f312e1-622b-4751-8d93-815b32feaf8d": "risikokompetenz",
+		"/esco/skill/db33c0f3-43ee-4ba3-ba47-9269ac837697": "risikokompetenz",
+		"/esco/skill/bf5ab3df-9589-4e99-b8f6-a83b494f40be": ["gemeinsam-handeln", "empathie-solidaritaet"],
+		"/esco/skill/001115fb-569f-4ee6-8381-c6807ef2527f": "gemeinsam-handeln",
+		"/esco/skill/7f321b88-3d16-4e30-8163-5494ca8ce978": [
+			"gemeinsam-handeln",
+			"leitbilder-reflexion",
+			"gerechtigkeitssinn"
+		],
+		"/esco/skill/646d871b-4503-4dc8-a076-06d7085e4cde": "gemeinsam-handeln",
+		"/esco/skill/60c78287-22eb-4103-9c8c-28deaa460da0": "partizipation",
+		"/esco/skill/996243ee-543f-4c36-a31a-e0f2403c0c5d": ["partizipation", "empathie-solidaritaet"],
+		"/esco/skill/7954861c-86d4-4529-afbb-2c23dab9ac74": "partizipation",
+		"/esco/skill/59429f7f-8b95-4094-b1cf-97cbb556f03d": "partizipation",
+		"/esco/skill/99c4c69a-025c-464f-adda-874c7f107a31": "partizipation",
+		"/esco/skill/469e19ed-a0bd-445a-ae2d-4ba9430e296b": "partizipation",
+		"/esco/skill/6385444a-2e10-41c9-9a65-88455655543d": "partizipation",
+		"/esco/skill/96de2e86-e287-41f2-88ab-15a2343afc6f": "partizipation",
+		"/esco/skill/1fce1197-3a5b-45b7-8797-575cd3b57a01": "motivationskompetenz",
+		"/esco/skill/a2151ed1-82b9-4314-8ca3-339bc923da9d": "motivationskompetenz",
+		"/esco/skill/7d9bace0-63d0-4848-ac87-350a98082c12": "motivationskompetenz",
+		"/esco/skill/f4bcdb75-df28-441d-a52b-9730904f36a1": "motivationskompetenz",
+		"/esco/skill/409a0245-0e6c-4aac-ba16-0920ecb76a8d": ["motivationskompetenz", "selbststaendig-handeln"],
+		"/esco/skill/e2d44a9b-f28c-489e-9861-b654b5ded507": "motivationskompetenz",
+		"/esco/skill/7dd94ad3-13d6-43fe-8b94-51fcbf67ced9": ["zielkonflikte", "gerechtigkeitssinn"],
+		"/esco/skill/8abdc43c-2bfd-417c-97c2-27fcdaf53171": "zielkonflikte",
+		"/esco/skill/e541c69c-ea80-4b17-87cb-4001d0b9d303": "zielkonflikte",
+		"/esco/skill/a0cad388-3c4c-4786-b238-fc39f8c495af": "leitbilder-reflexion",
+		"/esco/skill/19a64e91-bfe3-4c48-9225-3bb1229b12f0": "selbststaendig-handeln",
+		"/esco/skill/77b636e8-fab3-41a8-8022-1e0a354059dc": "empathie-solidaritaet",
+		"/esco/skill/a1a8e4ae-f1e3-44aa-9067-e587e69634cd": "empathie-solidaritaet",
+		"/esco/skill/7ff2c668-0e86-418a-a962-4958262ee337": "gerechtigkeitssinn"
 	}
 }

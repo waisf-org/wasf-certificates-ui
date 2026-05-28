@@ -81,60 +81,60 @@
 
 		g {
 			font-weight: bold;
-			circle {
+			> circle {
 				stroke: var(--color-purple);
 			}
 			&.level-1 {
 				color: var(--color-white);
-				circle {
+				> circle {
 					fill: var(--color-purple);
 				}
 			}
 			&.level-2 {
 				color: var(--color-white);
-				circle {
+				> circle {
 					fill: var(--color-purple-600);
 				}
 			}
 			&.level-3 {
 				color: var(--color-black);
-				circle {
+				> circle {
 					fill: var(--color-purple-300);
 				}
 			}
 			&.level-4,
 			&.leaf {
 				color: var(--color-black);
-				circle {
+				> circle {
 					fill: var(--color-lightgray);
 				}
 			}
 			&.future,
 			&.future-sub {
 				color: var(--color-black);
-				circle {
+				> circle {
 					stroke: var(--color-yellow-900);
 					fill: var(--color-yellow);
 				}
 			}
 			&.future-sub {
-				circle {
+				> circle {
 					stroke: var(--color-purple);
 					fill: var(--color-yellow-200);
 				}
 			}
 			&.bne,
 			&.bne-sub {
-				color: #2c2c2c;
-				circle {
-					stroke: #2c2c2c;
-					fill: #60fa99;
+				color: var(--color-black);
+				> circle {
+					stroke: var(--color-black);
+					fill: var(--color-success-300);
 				}
 			}
 			&.bne-sub {
-				circle {
-					stroke: #00441c;
-					fill: #c4fdda;
+				> circle {
+					stroke: var(--color-darkgreen);
+					fill: var(--color-success-100);
 				}
 			}
 		}
@@ -165,6 +165,9 @@
 			&.level-1 {
 				opacity: 1;
 				z-index: 1;
+				&.dimmed {
+					opacity: 0;
+				}
 			}
 			&.show {
 				opacity: 1;
@@ -191,7 +194,7 @@
 		gap: 4px;
 
 		&:before {
-			content: "";
+			content: '';
 			display: block;
 			border: 1px solid var(--color-black);
 			height: 16px;
@@ -209,6 +212,13 @@
 	&__future {
 		&:before {
 			background-color: var(--color-yellow-300);
+		}
+	}
+
+	&__bne {
+		&:before {
+			background-color: var(--color-success-300);
+			border-color: var(--color-black);
 		}
 	}
 }
