@@ -393,6 +393,7 @@
 		"edit": "Edit network",
 		"parentInstitution": "Parent Institution of the Network",
 		"selectInstitution": "Select Institution",
+		"parentInstitutionInfo": "This institution will automatically become the first network member.",
 		"noEligibleInstitution": "You don't have any eligible institutions to create a network. An institution must have the network creation quota and you must be its owner or editor.",
 		"Dashboard": {
 			"kpi": {
