@@ -517,7 +517,6 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 
 		// Create a simulation with several forces.
 		// Compact mode: tighter packing, stronger center force, smaller boundary
-		const boundaryFactor = this.compactMode() ? 0.42 : 0.46;
 		const chargeStrength = this.compactMode() ? -300 : -1000;
 		const collisionMultiplier = this.compactMode() ? 1.05 : 1.1;
 
