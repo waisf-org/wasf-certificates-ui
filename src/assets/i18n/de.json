@@ -393,6 +393,7 @@
 		"edit": "Netzwerk bearbeiten",
 		"parentInstitution": "Träger-Institution des Netzwerks",
 		"selectInstitution": "Institution auswählen",
+		"parentInstitutionInfo": "Diese Institution ist auch automatisch das erste Netzwerk-Mitglied.",
 		"noEligibleInstitution": "Du hast keine geeigneten Institutionen, um ein Netzwerk zu erstellen. Eine Institution muss das Netzwerkerstellungs-Kontingent besitzen und du musst Inhaber oder Redakteur sein.",
 		"Dashboard": {
 			"kpi": {
