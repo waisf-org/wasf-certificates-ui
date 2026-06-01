@@ -200,6 +200,7 @@
 				class="tw-mt-8"
 				[control]="issuerForm.rawControlMap.parent_issuer"
 				[label]="'Network.parentInstitution' | translate"
+				[sublabel]="'Network.parentInstitutionInfo' | translate"
 				[placeholder]="networkParentIssuerOptions.length === 1 ? '' : ('Network.selectInstitution' | translate)"
 				[options]="networkParentIssuerOptions"
 			></oeb-select>
