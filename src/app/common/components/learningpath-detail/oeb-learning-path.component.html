@@ -216,6 +216,7 @@
 								[badgeIssueDate]="badge.badge.created_at"
 								[publicUrl]="badgeLink(badge.badge)"
 								[competencies]="badge.badge.extensions['extensions:CompetencyExtension']"
+								[category]="badge.badge.extensions['extensions:CategoryExtension']?.Category"
 							></bg-badgecard>
 						</div>
 					}
