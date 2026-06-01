@@ -1632,7 +1632,7 @@ export class BadgeClassEditFormComponent
 				'@context': competencyExtensionContextUrl,
 				type: ['Extension', 'extensions:CompetencyExtension'],
 				name: String(competency.name),
-				description: String(competency.description),
+				description: this.cleanDescription(String(competency.description)),
 				studyLoad: Number(competency.hours * 60) + Number(competency.minutes),
 				hours: Number(competency.hours),
 				minutes: Number(competency.minutes),
@@ -1647,7 +1647,7 @@ export class BadgeClassEditFormComponent
 						'@context': competencyExtensionContextUrl,
 						type: ['Extension', 'extensions:CompetencyExtension'],
 						name: aiCompetenciesSuggestions[index].preferred_label,
-						description: aiCompetenciesSuggestions[index].description,
+						description: this.cleanDescription(aiCompetenciesSuggestions[index].description),
 						framework_identifier: 'http://data.europa.eu' + aiCompetenciesSuggestions[index].concept_uri,
 						studyLoad: Number(aiCompetency.hours * 60) + Number(aiCompetency.minutes),
 						hours: Number(aiCompetency.hours),
@@ -1663,7 +1663,7 @@ export class BadgeClassEditFormComponent
 					'@context': competencyExtensionContextUrl,
 					type: ['Extension', 'extensions:CompetencyExtension'],
 					name: keywordCompetenciesResults[index].preferred_label,
-					description: keywordCompetenciesResults[index].description,
+					description: this.cleanDescription(keywordCompetenciesResults[index].description),
 					framework_identifier: 'http://data.europa.eu' + keywordCompetenciesResults[index].concept_uri,
 					studyLoad: Number(keywordCompetency.hours * 60) + Number(keywordCompetency.minutes),
 					hours: Number(keywordCompetency.hours),
@@ -1675,6 +1675,15 @@ export class BadgeClassEditFormComponent
 			);
 	}
 
+	//   Removes leading/trailing whitespace and tabs.
+	private cleanDescription(desc: string): string {
+		return desc
+			.replace(/\t/g, ' ')
+			.split('\n')
+			.map((line) => line.trimEnd())
+			.join('\n')
+			.trim();
+	}
 	cancelClicked() {
 		this.cancelEdit.emit();
 	}
