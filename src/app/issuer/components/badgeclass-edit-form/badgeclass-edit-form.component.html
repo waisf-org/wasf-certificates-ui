@@ -1020,27 +1020,6 @@
 						{{ 'CreateBadge.optionalBadgeDetails' | translate }}
 					</h2>
 
-					@if (!issuer.is_network) {
-						<div class="section tw-text-oebblack tw-mt-6">
-							<h2 hlmH2 class="!tw-text-oebblack">
-								{{ 'Badge.copyBadgeHeadline' | translate }}
-							</h2>
-							<span
-								class="tw-text-oebblack tw-italic tw-text-lg"
-								[innerHTML]="'Badge.copyBadgeDescription1' | translate"
-							></span>
-							<span
-								class="tw-text-purple tw-italic tw-text-lg tw-mt-2"
-								[innerHTML]="'Badge.copyBadgeDescription2' | translate"
-							></span>
-							<div class="tw-mt-2 tw-mb-2">
-								<oeb-checkbox
-									[control]="badgeClassForm.rawControlMap.copy_permissions_allow_others"
-									[text]="'Badge.copyLabelOthers' | translate"
-								/>
-							</div>
-						</div>
-					}
 					@if (category === 'competency') {
 						<div class="section tw-text-oebblack tw-mt-6">
 							<h2 hlmH2 class="tw-pt-1 tw-px-1 tw-mr-auto !tw-text-oebblack">
@@ -1165,6 +1144,40 @@
 							[innerHTML]="'CreateBadge.expirationInfo' | translate"
 						></p>
 					</section>
+
+					<div class="tw-mt-8">
+						<p
+							class="tw-text-oebblack tw-italic tw-text-lg"
+							[innerHTML]="'CreateBadge.licenseInfo' | translate"
+						></p>
+					</div>
+
+					@if (!issuer.is_network) {
+						<p
+							class="tw-text-purple tw-italic tw-text-lg tw-mt-4"
+							[innerHTML]="'CreateBadge.licenseTransferAttention' | translate"
+						></p>
+
+						<div class="section tw-text-oebblack tw-mt-4 !tw-mb-0">
+							<h2 hlmH2 class="!tw-text-oebblack tw-mb-2">
+								{{ 'Badge.copyBadgeHeadline' | translate }}
+							</h2>
+							<span
+								class="tw-text-oebblack tw-text-lg"
+								[innerHTML]="'Badge.copyBadgeDescription1' | translate"
+							></span>
+							<span
+								class="tw-text-lg tw-mt-2"
+								[innerHTML]="'Badge.copyBadgeDescription2' | translate"
+							></span>
+							<div class="tw-mt-4 tw-mb-2">
+								<oeb-checkbox
+									[control]="badgeClassForm.rawControlMap.copy_permissions_allow_others"
+									[text]="'Badge.copyLabelOthers' | translate"
+								/>
+							</div>
+						</div>
+					}
 				</cdk-step>
 			</oeb-stepper>
 		</ng-container>
@@ -1262,12 +1275,5 @@
               </div>
             </div>
           </div> -->
-
-		<div class="tw-mt-8">
-			<p
-				class="tw-text-end tw-text-oebblack tw-italic tw-text-lg"
-				[innerHTML]="'CreateBadge.licenseInfo' | translate"
-			></p>
-		</div>
 	</form>
 </div>
