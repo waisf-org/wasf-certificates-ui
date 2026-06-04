@@ -264,7 +264,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 						description: '',
 						type: '',
 						alt_labels: [],
-						reuse_level: null,
+						reuse_level: '',
 					};
 					const slugs: string[] = Array.isArray(mapping) ? mapping : [mapping];
 					slugs.forEach((slug) => {
@@ -760,67 +760,55 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 		// Only add hover effects if not in compactMode
 		if (!this.compactMode()) {
 			node.on('mouseenter', (e, d) => {
-				// find all node parents and links to toggle show
-				let ancestors = [d.id];
-				if (d.depth > 1) {
-					ancestors = Array.from(d.ancestors.values());
-				}
-				// dim level-1 nodes not in this node's top-level ancestry
+				const ancestors = d.depth > 1 ? Array.from(d.ancestors.values()) : [d.id];
+
+				// Dim all level-1 nodes not in this node's top-level ancestry
 				const activeTopIds = new Set(ancestors.filter((id) => (this.skillTree.get(id)?.depth ?? 0) === 1));
 				svg.selectAll<SVGElement, ExtendedApiSkill>('g.level-1')
 					.nodes()
 					.forEach((n: SVGElement) => {
 						const nd = d3.select(n).datum() as ExtendedApiSkill;
-						if (!activeTopIds.has(nd.id)) {
-							n.classList.add('dimmed');
-						}
+						if (!activeTopIds.has(nd.id)) n.classList.add('dimmed');
 					});
-				// in case of multiple ancestors show all breadcrumb paths
-				ancestors.forEach((id) => {
-					d = this.skillTree.get(id);
-					const children = svg
-						.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
-						.filter((d2) => d2.ancestors.has(d.id));
-					const linkedIds = [d.id, ...children.data().map((c) => c.id)];
-					children.nodes().forEach((n) => {
-						n.classList.add('show');
+
+				// Show the hovered node itself (depth-1 nodes are always visible via CSS)
+				// and its direct parents so the path to root stays visible
+				const selfAndParents = new Set([d.id, ...(d.depth > 1 ? Array.from(d.parents) : [])]);
+				svg.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
+					.nodes()
+					.forEach((n: SVGElement) => {
+						const nd = d3.select(n).datum() as ExtendedApiSkill;
+						if (selfAndParents.has(nd.id)) n.classList.add('show');
 					});
-					const links = svg
-						.selectAll<SVGElement, d3.HierarchyLink<ExtendedApiSkill>>('line')
-						.filter((l) => [l.target.id, l.source.id].every((i) => linkedIds.includes(i)));
-					links.nodes().forEach((n) => {
-						n.classList.add('show');
-					});
-				});
-			}).on('mouseout', (e, d) => {
-				let ancestors = [d.id];
-				if (d.depth > 1) {
-					ancestors = Array.from(d.ancestors.values());
-				}
-				// restore all level-1 nodes
+
+				// Show only direct children of the hovered node
+				const children = svg
+					.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
+					.filter((d2: ExtendedApiSkill) => d2.parents.has(d.id));
+				children.nodes().forEach((n: SVGElement) => n.classList.add('show'));
+
+				// Show links connecting the hovered node, its parents, and its children
+				const linkedIds = [...selfAndParents, ...children.data().map((c: ExtendedApiSkill) => c.id)];
+				svg.selectAll<SVGElement, d3.HierarchyLink<ExtendedApiSkill>>('line')
+					.filter((l: d3.HierarchyLink<ExtendedApiSkill>) =>
+						[l.target.id, l.source.id].every((i) => linkedIds.includes(i)),
+					)
+					.nodes()
+					.forEach((n: SVGElement) => n.classList.add('show'));
+			}).on('mouseout', () => {
+				// Restore all level-1 nodes and clear all transient show state
 				svg.selectAll<SVGElement, ExtendedApiSkill>('g.level-1')
 					.nodes()
 					.forEach((n: SVGElement) => n.classList.remove('dimmed'));
-				ancestors.forEach((id) => {
-					d = this.skillTree.get(id);
-					const children = svg
-						.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
-						.filter((d2) => d2.ancestors.has(d.id));
-					const linkedIds = [d.id, ...children.data().map((c) => c.id)];
-					children.nodes().forEach((n) => {
-						n.classList.remove('show');
-					});
-					const links = svg
-						.selectAll<SVGElement, d3.HierarchyLink<ExtendedApiSkill>>('line')
-						.filter((l) => [l.target.id, l.source.id].every((i) => linkedIds.includes(i)));
-					links.nodes().forEach((n) => {
-						n.classList.remove('show');
-					});
-				});
-
-				// hide all descriptions
-				const descriptionNodes = svg.selectAll<SVGElement, ExtendedApiSkill>('.show-description').nodes();
-				for (const n of descriptionNodes) n.classList.remove('show-description');
+				svg.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
+					.nodes()
+					.forEach((n: SVGElement) => n.classList.remove('show'));
+				svg.selectAll<SVGElement, d3.HierarchyLink<ExtendedApiSkill>>('line')
+					.nodes()
+					.forEach((n: SVGElement) => n.classList.remove('show'));
+				svg.selectAll<SVGElement, ExtendedApiSkill>('.show-description')
+					.nodes()
+					.forEach((n: SVGElement) => n.classList.remove('show-description'));
 			});
 		}
 
