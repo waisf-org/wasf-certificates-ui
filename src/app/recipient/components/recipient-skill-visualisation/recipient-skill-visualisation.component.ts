@@ -759,44 +759,10 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 
 		// Only add hover effects if not in compactMode
 		if (!this.compactMode()) {
-			node.on('mouseenter', (e, d) => {
-				const ancestors = d.depth > 1 ? Array.from(d.ancestors.values()) : [d.id];
+			let hoverOutTimer: ReturnType<typeof setTimeout> | null = null;
+			let hoverIntentTimer: ReturnType<typeof setTimeout> | null = null;
 
-				// Dim all level-1 nodes not in this node's top-level ancestry
-				const activeTopIds = new Set(ancestors.filter((id) => (this.skillTree.get(id)?.depth ?? 0) === 1));
-				svg.selectAll<SVGElement, ExtendedApiSkill>('g.level-1')
-					.nodes()
-					.forEach((n: SVGElement) => {
-						const nd = d3.select(n).datum() as ExtendedApiSkill;
-						if (!activeTopIds.has(nd.id)) n.classList.add('dimmed');
-					});
-
-				// Show the hovered node itself (depth-1 nodes are always visible via CSS)
-				// and its direct parents so the path to root stays visible
-				const selfAndParents = new Set([d.id, ...(d.depth > 1 ? Array.from(d.parents) : [])]);
-				svg.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
-					.nodes()
-					.forEach((n: SVGElement) => {
-						const nd = d3.select(n).datum() as ExtendedApiSkill;
-						if (selfAndParents.has(nd.id)) n.classList.add('show');
-					});
-
-				// Show only direct children of the hovered node
-				const children = svg
-					.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
-					.filter((d2: ExtendedApiSkill) => d2.parents.has(d.id));
-				children.nodes().forEach((n: SVGElement) => n.classList.add('show'));
-
-				// Show links connecting the hovered node, its parents, and its children
-				const linkedIds = [...selfAndParents, ...children.data().map((c: ExtendedApiSkill) => c.id)];
-				svg.selectAll<SVGElement, d3.HierarchyLink<ExtendedApiSkill>>('line')
-					.filter((l: d3.HierarchyLink<ExtendedApiSkill>) =>
-						[l.target.id, l.source.id].every((i) => linkedIds.includes(i)),
-					)
-					.nodes()
-					.forEach((n: SVGElement) => n.classList.add('show'));
-			}).on('mouseout', () => {
-				// Restore all level-1 nodes and clear all transient show state
+			const clearAllShow = () => {
 				svg.selectAll<SVGElement, ExtendedApiSkill>('g.level-1')
 					.nodes()
 					.forEach((n: SVGElement) => n.classList.remove('dimmed'));
@@ -809,6 +775,80 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 				svg.selectAll<SVGElement, ExtendedApiSkill>('.show-description')
 					.nodes()
 					.forEach((n: SVGElement) => n.classList.remove('show-description'));
+			};
+
+			node.on('mouseenter', (e, d) => {
+				// Cancel any pending cleanup so crossing gaps between nodes feels seamless
+				if (hoverOutTimer) {
+					clearTimeout(hoverOutTimer);
+					hoverOutTimer = null;
+				}
+				// Cancel any previous intent that hasn't fired yet
+				if (hoverIntentTimer) {
+					clearTimeout(hoverIntentTimer);
+					hoverIntentTimer = null;
+				}
+
+				const intentDelay = 500;
+
+				hoverIntentTimer = setTimeout(() => {
+					hoverIntentTimer = null;
+
+					// Clear previous show state before applying new state for this node
+					clearAllShow();
+
+					const ancestors = d.depth > 1 ? Array.from(d.ancestors.values()) : [d.id];
+
+					// Dim all level-1 nodes not in this node's top-level ancestry
+					const activeTopIds = new Set(ancestors.filter((id) => (this.skillTree.get(id)?.depth ?? 0) === 1));
+					svg.selectAll<SVGElement, ExtendedApiSkill>('g.level-1')
+						.nodes()
+						.forEach((n: SVGElement) => {
+							const nd = d3.select(n).datum() as ExtendedApiSkill;
+							if (!activeTopIds.has(nd.id)) n.classList.add('dimmed');
+						});
+
+					// Show the hovered node and its direct parents (keeps the path to root visible)
+					const selfAndParents = new Set([d.id, ...(d.depth > 1 ? Array.from(d.parents) : [])]);
+					svg.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
+						.nodes()
+						.forEach((n: SVGElement) => {
+							const nd = d3.select(n).datum() as ExtendedApiSkill;
+							if (selfAndParents.has(nd.id)) n.classList.add('show');
+						});
+
+					// Show only direct children of the hovered node
+					const children = svg
+						.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
+						.filter((d2: ExtendedApiSkill) => d2.parents.has(d.id));
+					children.nodes().forEach((n: SVGElement) => n.classList.add('show'));
+
+					// Show links connecting the hovered node, its parents, its depth-1 ancestors,
+					// and its children. Including ancestors ensures the full chain stays connected
+					// (e.g. Überkategorie → big bubble link is visible when hovering a skill).
+					const linkedIds = [
+						...selfAndParents,
+						...(d.depth > 1 ? Array.from(d.ancestors) : []),
+						...children.data().map((c: ExtendedApiSkill) => c.id),
+					];
+					svg.selectAll<SVGElement, d3.HierarchyLink<ExtendedApiSkill>>('line')
+						.filter((l: d3.HierarchyLink<ExtendedApiSkill>) =>
+							[l.target.id, l.source.id].every((i) => linkedIds.includes(i)),
+						)
+						.nodes()
+						.forEach((n: SVGElement) => n.classList.add('show'));
+				}, intentDelay);
+			}).on('mouseout', () => {
+				// Mouse left before intent threshold — cancel without triggering
+				if (hoverIntentTimer) {
+					clearTimeout(hoverIntentTimer);
+					hoverIntentTimer = null;
+				}
+				// Delay cleanup so the mouse has time to reach the next node across a gap
+				hoverOutTimer = setTimeout(() => {
+					hoverOutTimer = null;
+					clearAllShow();
+				}, 400);
 			});
 		}
 
