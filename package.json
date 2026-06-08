@@ -21,6 +21,7 @@
 		"test": "ng test",
 		"test-intellij": "ng test 2>&1 | perl -e '$|++; while (<>) { s/((ERROR|WARNING) in\\s*)(.*)/$1\\n$3/g; print $_; }'",
 		"test-headless": "ng test --source-map=false --watch=false --browsers=ChromeHeadless",
+		"e2e": "playwright test",
 		"lint": "ng lint --quiet web-components-cli && ng lint --quiet badgr-ui-cli",
 		"postversion": "git push && git push --tags",
 		"prepare": "husky"
@@ -159,7 +160,8 @@
 		"typescript-eslint": "^8.46.0",
 		"uglify-js": "^3.5.11",
 		"url-loader": "^4.1.1",
-		"webpack-cli": "^5.1.4"
+		"webpack-cli": "^5.1.4",
+		"@playwright/test": "^1.44.0"
 	},
 	"config": {
 		"commitizen": {

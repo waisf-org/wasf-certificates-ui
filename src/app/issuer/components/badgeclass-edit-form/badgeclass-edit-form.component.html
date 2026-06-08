@@ -908,7 +908,8 @@
 												<oeb-button
 													size="sm"
 													type="button"
-													(click)="addAnotherCompetency()"
+													[id]="'add-competency-btn'"
+												(click)="addAnotherCompetency()"
 													text="{{
 														(badgeClassForm.controls.competencies.controls.length > 0
 															? 'CreateBadge.addAnotherCompetency'
@@ -1204,6 +1205,7 @@
 			/>
 
 			@if (!lastStep()) {
+				<span data-testid="next-step-btn">
 				<oeb-button
 					class="tw-float-right"
 					type="button"
@@ -1213,9 +1215,11 @@
 						!existingBadgeClass ? `create-${category}-badge-${this.stepper?.selectedIndex + 1}` : undefined
 					"
 				/>
+				</span>
 			}
 
 			@if (lastStep()) {
+				<span data-testid="submit-badge-btn">
 				<oeb-button
 					id="create-badge-btn"
 					type="submit"
@@ -1240,6 +1244,7 @@
 					"
 				>
 				</oeb-button>
+				</span>
 			}
 		</div>
 
