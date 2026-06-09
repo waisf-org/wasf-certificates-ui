@@ -17,6 +17,14 @@ export interface AuthorizationTokenInformation {
 	expires_in?: number;
 	scope?: string;
 	token_typ?: string;
+	requires_2fa?: boolean;
+	partial_token?: string;
+}
+
+export class TwoFactorRequiredError extends Error {
+	constructor(public partialToken: string) {
+		super('2FA required');
+	}
 }
 
 @Injectable({ providedIn: 'root' })
@@ -100,6 +108,10 @@ export class SessionService implements AuthenticationService {
 			.then((r) => {
 				if (r.status < 200 || r.status >= 300) {
 					throw new Error('Login Failed: ' + r.status);
+				}
+
+				if (r.body?.requires_2fa) {
+					throw new TwoFactorRequiredError(r.body.partial_token);
 				}
 
 				this.storeToken(r.body, isOidcLogin);
@@ -208,6 +220,31 @@ export class SessionService implements AuthenticationService {
 			console.error(IS_OIDC_LOGIN_KEY, 'is set to false, which is still treated as true');
 		// Note that this treats all values except "" as true
 		return !!expirationString;
+	}
+
+	verify2FA(partialToken: string, code: string): Promise<void> {
+		const endpoint = this.baseUrl + '/v1/user/2fa/verify';
+		const headers = new HttpHeaders().append('Content-Type', 'application/json');
+		this.messageService.incrementPendingRequestCount();
+		return this.http
+			.post<AuthorizationTokenInformation>(
+				endpoint,
+				{ partial_token: partialToken, code },
+				{
+					observe: 'response',
+					responseType: 'json',
+					headers,
+					withCredentials: true,
+				},
+			)
+			.toPromise()
+			.finally(() => this.messageService.decrementPendingRequestCount())
+			.then((r) => {
+				if (!r || r.status < 200 || r.status >= 300) {
+					throw new Error('2FA verification failed');
+				}
+				this.storeToken(r.body, false);
+			});
 	}
 
 	exchangeCodeForToken(authCode: string): Promise<AuthorizationTokenInformation> {

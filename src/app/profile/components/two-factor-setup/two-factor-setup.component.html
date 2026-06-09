@@ -1,0 +1,136 @@
+<div class="tw-relative tw-w-full">
+	<div class="oeb page-padding">
+		<div class="oeb-headline-container-sm">
+			<div class="oeb-breadcrumbs">
+				<bg-breadcrumbs [linkentries]="crumbs"></bg-breadcrumbs>
+			</div>
+		</div>
+
+		<!-- Step 1: QR Code -->
+		<ng-container *ngIf="step === 'qr'">
+			<div class="oeb-headline-container-sm">
+				<h1 hlmH1 class="tw-text-purple">2-Faktor-Authentifizierung einrichten</h1>
+				<p hlmP class="tw-font-normal">
+					Scanne den QR-Code mit deiner Authenticator-App (z.B. Google Authenticator oder Authy).
+				</p>
+			</div>
+
+			<div class="oeb-max-form-width">
+				<div *ngIf="isLoading" class="tw-flex tw-justify-center tw-py-8">
+					<p hlmP>Wird geladen...</p>
+				</div>
+
+				<div *ngIf="qrCode && !isLoading" class="tw-flex tw-flex-col tw-items-center tw-gap-6">
+					<img
+						[src]="'data:image/png;base64,' + qrCode"
+						alt="QR Code für 2FA"
+						class="tw-w-48 tw-h-48 tw-border tw-border-grey-20 tw-rounded"
+					/>
+
+					<div class="tw-w-full">
+						<p hlmP size="sm" class="tw-text-grey-40 tw-mb-1">
+							Kein QR-Scanner? Gib diesen Code manuell ein:
+						</p>
+						<code class="tw-block tw-bg-grey-5 tw-rounded tw-p-3 tw-text-sm tw-break-all tw-font-mono">
+							{{ secret }}
+						</code>
+					</div>
+
+					<div class="tw-w-full tw-flex tw-justify-between tw-flex-wrap sm:tw-flex-nowrap tw-gap-2 tw-mt-4">
+						<oeb-button
+							variant="secondary"
+							type="button"
+							[routerLink]="['/profile/profile']"
+							text="Abbrechen"
+						></oeb-button>
+						<oeb-button
+							type="button"
+							width="max_content"
+							text="Weiter"
+							(click)="step = 'confirm'"
+						></oeb-button>
+					</div>
+				</div>
+			</div>
+		</ng-container>
+
+		<!-- Step 2: Enter verification code -->
+		<ng-container *ngIf="step === 'confirm'">
+			<div class="oeb-headline-container-sm">
+				<h1 hlmH1 class="tw-text-purple">Code bestätigen</h1>
+				<p hlmP class="tw-font-normal">
+					Gib den 6-stelligen Code aus deiner Authenticator-App ein, um die Einrichtung abzuschließen.
+				</p>
+			</div>
+
+			<form
+				class="oeb-max-form-width"
+				[formGroup]="codeForm.rawControl"
+				(ngSubmit)="submitCode()"
+				novalidate
+			>
+				<oeb-input
+					[control]="codeForm.rawControlMap.code"
+					label="Bestätigungscode"
+					[autofocus]="true"
+					errorMessage="Bitte gib einen 6-stelligen Code ein."
+					inputmode="numeric"
+					maxlength="6"
+				></oeb-input>
+
+				<div class="tw-flex tw-justify-between tw-flex-wrap sm:tw-flex-nowrap tw-gap-2 tw-mt-8">
+					<oeb-button
+						variant="secondary"
+						type="button"
+						(click)="step = 'qr'"
+						[disabled-when-requesting]="true"
+						text="Zurück"
+					></oeb-button>
+					<oeb-button
+						type="submit"
+						width="max_content"
+						[disabled-when-requesting]="true"
+						text="Bestätigen"
+					></oeb-button>
+				</div>
+			</form>
+		</ng-container>
+
+		<!-- Step 3: Backup codes -->
+		<ng-container *ngIf="step === 'backup'">
+			<div class="oeb-headline-container-sm">
+				<h1 hlmH1 class="tw-text-purple">2FA erfolgreich aktiviert</h1>
+				<p hlmP class="tw-font-normal">
+					Speichere diese Backup-Codes sicher. Jeder Code kann einmalig verwendet werden, falls du keinen
+					Zugriff auf deine Authenticator-App hast. <strong>Sie werden nicht erneut angezeigt.</strong>
+				</p>
+			</div>
+
+			<div class="oeb-max-form-width">
+				<div class="tw-bg-grey-5 tw-rounded tw-p-4 tw-mb-6">
+					<code
+						*ngFor="let code of backupCodes"
+						class="tw-block tw-font-mono tw-text-sm tw-py-1 tw-tracking-widest"
+					>
+						{{ code }}
+					</code>
+				</div>
+
+				<div class="tw-flex tw-justify-between tw-flex-wrap sm:tw-flex-nowrap tw-gap-2">
+					<oeb-button
+						variant="secondary"
+						type="button"
+						(click)="copyBackupCodes()"
+						[text]="copiedToClipboard ? 'Kopiert!' : 'Codes kopieren'"
+					></oeb-button>
+					<oeb-button
+						type="button"
+						width="max_content"
+						(click)="finish()"
+						text="Fertig"
+					></oeb-button>
+				</div>
+			</div>
+		</ng-container>
+	</div>
+</div>
