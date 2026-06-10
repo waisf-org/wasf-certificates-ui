@@ -9,15 +9,15 @@
 		<!-- Step 1: QR Code -->
 		<ng-container *ngIf="step === 'qr'">
 			<div class="oeb-headline-container-sm">
-				<h1 hlmH1 class="tw-text-purple">2-Faktor-Authentifizierung einrichten</h1>
+				<h1 hlmH1 class="tw-text-purple">{{ 'TwoFactor.setup.title' | translate }}</h1>
 				<p hlmP class="tw-font-normal">
-					Scanne den QR-Code mit deiner Authenticator-App (z.B. Google Authenticator oder Authy).
+					{{ 'TwoFactor.setup.scanInstructions' | translate }}
 				</p>
 			</div>
 
 			<div class="oeb-max-form-width">
 				<div *ngIf="isLoading" class="tw-flex tw-justify-center tw-py-8">
-					<p hlmP>Wird geladen...</p>
+					<p hlmP>{{ 'TwoFactor.setup.loading' | translate }}</p>
 				</div>
 
 				<div *ngIf="qrCode && !isLoading" class="tw-flex tw-flex-col tw-items-center tw-gap-6">
@@ -29,7 +29,7 @@
 
 					<div class="tw-w-full">
 						<p hlmP size="sm" class="tw-text-grey-40 tw-mb-1">
-							Kein QR-Scanner? Gib diesen Code manuell ein:
+							{{ 'TwoFactor.setup.manualEntry' | translate }}
 						</p>
 						<code class="tw-block tw-bg-grey-5 tw-rounded tw-p-3 tw-text-sm tw-break-all tw-font-mono">
 							{{ secret }}
@@ -41,12 +41,12 @@
 							variant="secondary"
 							type="button"
 							[routerLink]="['/profile/profile']"
-							text="Abbrechen"
+							[text]="'General.cancel' | translate"
 						></oeb-button>
 						<oeb-button
 							type="button"
 							width="max_content"
-							text="Weiter"
+							[text]="'General.forward' | translate"
 							(click)="step = 'confirm'"
 						></oeb-button>
 					</div>
@@ -57,9 +57,9 @@
 		<!-- Step 2: Enter verification code -->
 		<ng-container *ngIf="step === 'confirm'">
 			<div class="oeb-headline-container-sm">
-				<h1 hlmH1 class="tw-text-purple">Code bestätigen</h1>
+				<h1 hlmH1 class="tw-text-purple">{{ 'TwoFactor.setup.confirmTitle' | translate }}</h1>
 				<p hlmP class="tw-font-normal">
-					Gib den 6-stelligen Code aus deiner Authenticator-App ein, um die Einrichtung abzuschließen.
+					{{ 'TwoFactor.setup.confirmInstructions' | translate }}
 				</p>
 			</div>
 
@@ -71,9 +71,9 @@
 			>
 				<oeb-input
 					[control]="codeForm.rawControlMap.code"
-					label="Bestätigungscode"
+					[label]="'TwoFactor.setup.codeLabel' | translate"
 					[autofocus]="true"
-					errorMessage="Bitte gib einen 6-stelligen Code ein."
+					[errorMessage]="'TwoFactor.setup.codeError' | translate"
 					inputmode="numeric"
 					maxlength="6"
 				></oeb-input>
@@ -84,13 +84,13 @@
 						type="button"
 						(click)="step = 'qr'"
 						[disabled-when-requesting]="true"
-						text="Zurück"
+						[text]="'General.back' | translate"
 					></oeb-button>
 					<oeb-button
 						type="submit"
 						width="max_content"
 						[disabled-when-requesting]="true"
-						text="Bestätigen"
+						[text]="'TwoFactor.login.confirm' | translate"
 					></oeb-button>
 				</div>
 			</form>
@@ -99,10 +99,10 @@
 		<!-- Step 3: Backup codes -->
 		<ng-container *ngIf="step === 'backup'">
 			<div class="oeb-headline-container-sm">
-				<h1 hlmH1 class="tw-text-purple">2FA erfolgreich aktiviert</h1>
+				<h1 hlmH1 class="tw-text-purple">{{ 'TwoFactor.setup.backupTitle' | translate }}</h1>
 				<p hlmP class="tw-font-normal">
-					Speichere diese Backup-Codes sicher. Jeder Code kann einmalig verwendet werden, falls du keinen
-					Zugriff auf deine Authenticator-App hast. <strong>Sie werden nicht erneut angezeigt.</strong>
+					{{ 'TwoFactor.setup.backupInstructions' | translate }}
+					<strong>{{ 'TwoFactor.setup.backupWarning' | translate }}</strong>
 				</p>
 			</div>
 
@@ -121,13 +121,13 @@
 						variant="secondary"
 						type="button"
 						(click)="copyBackupCodes()"
-						[text]="copiedToClipboard ? 'Kopiert!' : 'Codes kopieren'"
+						[text]="(copiedToClipboard ? 'TwoFactor.setup.copied' : 'TwoFactor.setup.copyCodes') | translate"
 					></oeb-button>
 					<oeb-button
 						type="button"
 						width="max_content"
 						(click)="finish()"
-						text="Fertig"
+						[text]="'TwoFactor.setup.done' | translate"
 					></oeb-button>
 				</div>
 			</div>

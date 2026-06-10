@@ -9,6 +9,7 @@ import { UserProfileApiService } from '../../../common/services/user-profile-api
 import { MessageService } from '../../../common/services/message.service';
 import { AppConfigService } from '../../../common/app-config.service';
 import { typedFormGroup } from '../../../common/util/typed-forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LinkEntry, BgBreadcrumbsComponent } from '../../../common/components/bg-breadcrumbs/bg-breadcrumbs.component';
 import { OebInputComponent } from '../../../components/input.component';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
@@ -29,6 +30,7 @@ type SetupStep = 'qr' | 'confirm' | 'backup';
 		RouterLink,
 		HlmH1,
 		HlmP,
+		TranslatePipe,
 	],
 })
 export class TwoFactorSetupComponent extends BaseRoutableComponent {
@@ -37,6 +39,7 @@ export class TwoFactorSetupComponent extends BaseRoutableComponent {
 	private profileApiService = inject(UserProfileApiService);
 	private messageService = inject(MessageService);
 	protected configService = inject(AppConfigService);
+	private translate = inject(TranslateService);
 
 	step: SetupStep = 'qr';
 	qrCode: string | null = null;
@@ -47,10 +50,12 @@ export class TwoFactorSetupComponent extends BaseRoutableComponent {
 
 	codeForm = typedFormGroup().addControl('code', '', [Validators.required, Validators.minLength(6)]);
 
-	crumbs: LinkEntry[] = [
-		{ title: 'Profile', routerLink: ['/profile'] },
-		{ title: '2FA einrichten', routerLink: ['/profile/2fa'] },
-	];
+	get crumbs(): LinkEntry[] {
+		return [
+			{ title: this.translate.instant('Profile.profile'), routerLink: ['/profile'] },
+			{ title: this.translate.instant('TwoFactor.setup.breadcrumb'), routerLink: ['/profile/2fa'] },
+		];
+	}
 
 	/** Inserted by Angular inject() migration for backwards compatibility */
 	constructor(...args: unknown[]);
@@ -60,7 +65,9 @@ export class TwoFactorSetupComponent extends BaseRoutableComponent {
 		const router = inject(Router);
 		super(router, route);
 
-		this.title.setTitle(`2FA einrichten - ${this.configService.theme['serviceName'] || 'Badgr'}`);
+		this.title.setTitle(
+			`${this.translate.instant('TwoFactor.setup.title')} - ${this.configService.theme['serviceName'] || 'Badgr'}`,
+		);
 
 		this.profileManager.userProfilePromise.then((profile) => {
 			if (profile.totpEnabled) {
@@ -81,7 +88,7 @@ export class TwoFactorSetupComponent extends BaseRoutableComponent {
 				this.step = 'qr';
 			})
 			.catch(() => {
-				this.messageService.reportHandledError('Setup fehlgeschlagen. Bitte versuche es erneut.');
+				this.messageService.reportHandledError(this.translate.instant('TwoFactor.setup.setupError'));
 			})
 			.finally(() => {
 				this.isLoading = false;
@@ -101,7 +108,7 @@ export class TwoFactorSetupComponent extends BaseRoutableComponent {
 				this.profileManager.userProfileSet.updateList();
 			})
 			.catch(() => {
-				this.messageService.reportHandledError('Ungültiger Code. Bitte versuche es erneut.');
+				this.messageService.reportHandledError(this.translate.instant('TwoFactor.setup.invalidCode'));
 			})
 			.finally(() => {
 				this.isLoading = false;

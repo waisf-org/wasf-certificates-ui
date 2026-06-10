@@ -29,28 +29,29 @@
 					@if (showTwoFactor) {
 					<form class="tw-relative tw-z-20" [formGroup]="twoFactorForm.rawControl" (ngSubmit)="submitTwoFactor()" novalidate>
 						<p hlmP class="tw-text-oebblack tw-mb-4">
-							{{ useBackupCode ? 'Gib einen deiner Backup-Codes ein.' : 'Gib den 6-stelligen Code aus deiner Authenticator-App ein.' }}
+							{{ (useBackupCode ? 'TwoFactor.login.backupCodeHint' : 'TwoFactor.login.totpHint') | translate }}
 						</p>
 						<oeb-input
 							[control]="twoFactorForm.rawControlMap.code"
-							[label]="useBackupCode ? 'Backup-Code' : 'Authentifizierungscode'"
+							[label]="(useBackupCode ? 'TwoFactor.login.backupCodeLabel' : 'TwoFactor.login.totpLabel') | translate"
 							[autofocus]="true"
-							errorMessage="Bitte gib deinen Code ein."
-							[fieldType]="useBackupCode ? 'text' : 'text'"
+							[errorMessage]="'TwoFactor.login.codeError' | translate"
+							fieldType="text"
 						></oeb-input>
 						<div class="tw-flex tw-gap-2 tw-items-center tw-justify-between tw-mt-6">
-							<a
-								class="tw-underline !tw-text-link hover:!tw-text-buttonhover tw-cursor-pointer tw-text-sm"
-								(click)="useBackupCode = !useBackupCode; twoFactorForm.controls.code.setValue('')"
+							<button
+								type="button"
+								class="tw-underline !tw-text-link hover:!tw-text-buttonhover tw-cursor-pointer tw-text-sm tw-bg-transparent tw-border-0 tw-p-0"
+								(click)="toggleBackupCode()"
 							>
-								{{ useBackupCode ? 'Authenticator-App verwenden' : 'Backup-Code verwenden' }}
-							</a>
+								{{ (useBackupCode ? 'TwoFactor.login.useAuthApp' : 'TwoFactor.login.useBackupCode') | translate }}
+							</button>
 							<oeb-button
 								type="submit"
 								[disabled]="!!loginFinished"
-								text="Bestätigen"
+								[text]="'TwoFactor.login.confirm' | translate"
 								[loading-promises]="[loginFinished]"
-								loading-message="Wird geprüft..."
+								[loading-message]="'TwoFactor.login.checking' | translate"
 							></oeb-button>
 						</div>
 					</form>

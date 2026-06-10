@@ -15,7 +15,7 @@
 		"collection": "Collection",
 		"collections": "Collections",
 		"cancel": "Cancel",
-		"forward": "Ok",
+		"forward": "OK",
 		"or": "or",
 		"of": "of",
 		"and": "and",
@@ -70,7 +70,7 @@
 		"copy": "copy",
 		"place": "place",
 		"forwarded": "forwarded",
-		"revoke": "revoke",
+		"revoke": "Revoke",
 		"withdraw": "Withdraw",
 		"confirm": "Confirm",
 		"license": "License",
@@ -731,6 +731,7 @@
 		"forgotPassword": "Forgot password",
 		"welcome": "Welcome to",
 		"failLogin": "Login failed. Please check your email address and password and try again.",
+		"invalidTwoFactorCode": "Invalid code. Please try again.",
 		"loginBildungsraum": "Log in with Mein Bildungsraum",
 		"createAccount": "Create account",
 		"enterYourEmail": "Enter your email address and we will help you reset your password.",
@@ -910,6 +911,7 @@
 		"collectionNotPublic": "This collection is currently not available to the public."
 	},
 	"Profile": {
+		"profile": "Profile",
 		"more": "More",
 		"password": "Password",
 		"edit": "Edit",
@@ -1485,6 +1487,62 @@
 			"text2": "Check your current (Free) plan’s usage on your institution’s details page:",
 			"text3": "Your Bonus: As an existing institution, you’ll receive a 10% discount on all paid plans.",
 			"cta": "Explore plans"
+		}
+	},
+	"TwoFactor": {
+		"reminder": {
+			"title": "Protect your account with Two-Factor Authentication (2FA)",
+			"body": "Increase your account security by requiring a verification code from an authenticator app in addition to your password.",
+			"hintPrefix": "You can manage two-factor authentication at any time under",
+			"hintLink": "Account → My Account",
+			"hintSuffix": ".",
+			"remindLater": "Remind me later",
+			"setupNow": "Set up 2FA now",
+			"neverRemind": "Don't remind me again"
+		},
+		"disable": {
+			"title": "Disable two-factor authentication (2FA)",
+			"description1": "Do you really want to remove the additional layer of protection for your account?",
+			"description2": "Please confirm your identity with your password for security reasons.",
+			"passwordLabel": "Password",
+			"passwordError": "Please enter your password.",
+			"genericError": "An error occurred. Please try again.",
+			"disableButton": "Disable"
+		},
+		"login": {
+			"backupCodeHint": "Enter one of your backup codes.",
+			"totpHint": "Enter the 6-digit code from your authenticator app.",
+			"backupCodeLabel": "Backup Code",
+			"totpLabel": "Authentication Code",
+			"codeError": "Please enter your code.",
+			"useAuthApp": "Use authenticator app",
+			"useBackupCode": "Use backup code",
+			"confirm": "Confirm",
+			"checking": "Checking..."
+		},
+		"setup": {
+			"title": "Set up Two-Factor Authentication",
+			"breadcrumb": "Set up 2FA",
+			"scanInstructions": "Scan the QR code with your authenticator app (e.g. Google Authenticator or Authy).",
+			"loading": "Loading...",
+			"manualEntry": "No QR scanner? Enter this code manually:",
+			"confirmTitle": "Confirm Code",
+			"confirmInstructions": "Enter the 6-digit code from your authenticator app to complete setup.",
+			"codeLabel": "Verification Code",
+			"codeError": "Please enter a 6-digit code.",
+			"backupTitle": "2FA successfully activated",
+			"backupInstructions": "Save these backup codes securely. Each code can be used once if you don't have access to your authenticator app.",
+			"backupWarning": "They will not be shown again.",
+			"copyCodes": "Copy codes",
+			"copied": "Copied!",
+			"done": "Done",
+			"setupError": "Setup failed. Please try again.",
+			"invalidCode": "Invalid code. Please try again."
+		},
+		"profile": {
+			"menuItem": "Two-Factor Authentication",
+			"menuItemDisable": "Disable 2FA",
+			"disabledSuccess": "2FA has been disabled. A confirmation email has been sent to your address."
 		}
 	}
 }

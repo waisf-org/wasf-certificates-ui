@@ -1,27 +1,57 @@
 import { Component, inject } from '@angular/core';
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
-import { OebDialogComponent } from '../../../components/oeb-dialog.component';
+import { TranslatePipe } from '@ngx-translate/core';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
-import { HlmP, HlmH3 } from '../../../components/spartan/ui-typography-helm/src';
 
 @Component({
 	selector: 'mfa-reminder-dialog',
-	imports: [OebDialogComponent, OebButtonComponent, HlmP, HlmH3],
+	imports: [OebButtonComponent, TranslatePipe],
 	template: `
-		<oeb-dialog class="tw-text-center tw-text-oebblack">
-			<h3 hlmH3 class="tw-font-bold !tw-text-black tw-uppercase tw-mb-2">
-				2-Faktor-Authentifizierung
-			</h3>
-			<p hlmP class="tw-mb-6">
-				Schütze dein Konto mit der 2-Faktor-Authentifizierung. Nach der Einrichtung benötigst du beim Login
-				zusätzlich einen Code aus deiner Authenticator-App.
-			</p>
-			<div class="tw-flex tw-flex-col tw-gap-3">
-				<oeb-button width="full_width" text="Jetzt 2FA einrichten" (click)="setupNow()"></oeb-button>
-				<oeb-button width="full_width" variant="secondary" text="Später erinnern" (click)="remindLater()"></oeb-button>
-				<oeb-button width="full_width" variant="secondary" text="Nicht mehr erinnern" (click)="neverRemind()"></oeb-button>
+		<div class="tw-pt-4 tw-px-8 tw-pb-10">
+			<div class="tw-max-w-[440px] tw-mx-auto tw-flex tw-flex-col tw-items-center tw-text-center tw-pt-6">
+				<img
+					src="assets/oeb/images/2fa-icon.png"
+					alt=""
+					aria-hidden="true"
+					class="tw-w-[120px] tw-h-[120px] tw-mb-4"
+				/>
+				<div class="tw-flex tw-flex-col tw-items-center tw-gap-8 tw-w-full">
+					<h3 class="tw-text-purple tw-font-bold tw-text-[22px] tw-leading-[120%] tw-m-0">
+						{{ 'TwoFactor.reminder.title' | translate }}
+					</h3>
+					<p class="tw-text-lg tw-font-semibold tw-leading-[130%] tw-m-0">
+						{{ 'TwoFactor.reminder.body' | translate }}
+					</p>
+					<p class="tw-text-lg tw-font-semibold tw-italic tw-text-purple tw-leading-[130%] tw-m-0">
+						{{ 'TwoFactor.reminder.hintPrefix' | translate }}
+						<strong class="tw-font-bold tw-not-italic">{{
+							'TwoFactor.reminder.hintLink' | translate
+						}}</strong>
+						{{ 'TwoFactor.reminder.hintSuffix' | translate }}
+					</p>
+					<div class="tw-flex tw-gap-4 tw-justify-center">
+						<oeb-button
+							size="sm"
+							weight="normal"
+							variant="secondary"
+							[text]="'TwoFactor.reminder.remindLater' | translate"
+							(click)="remindLater()"
+						></oeb-button>
+						<oeb-button
+							size="sm"
+							[text]="'TwoFactor.reminder.setupNow' | translate"
+							(click)="setupNow()"
+						></oeb-button>
+					</div>
+					<button
+						class="tw-text-link tw-underline tw-text-sm tw-bg-transparent tw-border-0 tw-cursor-pointer"
+						(click)="neverRemind()"
+					>
+						{{ 'TwoFactor.reminder.neverRemind' | translate }}
+					</button>
+				</div>
 			</div>
-		</oeb-dialog>
+		</div>
 	`,
 })
 export class MfaReminderDialogComponent {

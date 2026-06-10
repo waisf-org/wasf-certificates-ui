@@ -5,7 +5,7 @@ import { MessageService } from './message.service';
 import { BaseHttpApiService } from './base-http-api.service';
 import { ExternalAuthProvider } from '../model/user-profile-api.model';
 import { UpdatableSubject } from '../util/updatable-subject';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { NavigationService } from './navigation.service';
 import { AuthenticationService } from './authentication-service';
 
@@ -106,16 +106,14 @@ export class SessionService implements AuthenticationService {
 			.then((r) => BaseHttpApiService.addTestingDelay(r, this.configService))
 			.finally(() => this.messageService.decrementPendingRequestCount())
 			.then((r) => {
-				if (r.status < 200 || r.status >= 300) {
-					throw new Error('Login Failed: ' + r.status);
-				}
-
-				if (r.body?.requires_2fa) {
-					throw new TwoFactorRequiredError(r.body.partial_token);
-				}
-
 				this.storeToken(r.body, isOidcLogin);
 				if (isOidcLogin) this.startRefreshTokenTimer(r.body.expires_in || DEFAULT_EXPIRATION_SECONDS);
+			})
+			.catch((err) => {
+				if (err instanceof HttpErrorResponse && err.status === 401 && err.error?.requires_2fa) {
+					throw new TwoFactorRequiredError(err.error.partial_token);
+				}
+				throw err;
 			});
 	}
 

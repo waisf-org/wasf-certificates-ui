@@ -1,60 +1,92 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
-import { OebDialogComponent } from '../../../components/oeb-dialog.component';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { NgIcon } from '@ng-icons/core';
+import { HlmIcon } from '@spartan-ng/helm/icon';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { OebInputComponent } from '../../../components/input.component';
-import { HlmP, HlmH3 } from '../../../components/spartan/ui-typography-helm/src';
 import { UserProfileApiService } from '../../services/user-profile-api.service';
 import { typedFormGroup } from '../../util/typed-forms';
 
 @Component({
 	selector: 'disable-two-factor-dialog',
-	imports: [OebDialogComponent, OebButtonComponent, OebInputComponent, HlmP, HlmH3, FormsModule, ReactiveFormsModule],
+	imports: [NgIcon, HlmIcon, OebButtonComponent, OebInputComponent, FormsModule, ReactiveFormsModule, TranslatePipe],
 	template: `
-		<oeb-dialog class="tw-text-oebblack">
-			<h3 hlmH3 class="tw-font-bold !tw-text-black tw-uppercase tw-mb-2">
-				2FA deaktivieren
-			</h3>
-			<p hlmP class="tw-mb-4">
-				Bitte gib dein Passwort und den aktuellen Authenticator-Code ein, um die 2-Faktor-Authentifizierung zu
-				deaktivieren.
-			</p>
-
-			<form [formGroup]="disableForm.rawControl" (ngSubmit)="submit()" novalidate>
-				<oeb-input
-					[control]="disableForm.rawControlMap.password"
-					label="Passwort"
-					[fieldType]="'password'"
-					[autofocus]="true"
-					errorMessage="Bitte gib dein Passwort ein."
-				></oeb-input>
-				<oeb-input
-					[control]="disableForm.rawControlMap.code"
-					label="Authenticator-Code"
-					errorMessage="Bitte gib deinen Code ein."
-				></oeb-input>
-
-				@if (errorMessage) {
-					<p hlmP class="tw-text-red-600 tw-text-sm tw-mt-2">{{ errorMessage }}</p>
-				}
-
-				<div class="tw-flex tw-justify-between tw-gap-2 tw-mt-6">
-					<oeb-button variant="secondary" type="button" text="Abbrechen" (click)="cancel()"></oeb-button>
-					<oeb-button type="submit" width="max_content" [disabled]="isLoading" text="Deaktivieren"></oeb-button>
+		<div class="tw-pt-4 tw-px-8 tw-pb-10">
+			<div class="tw-max-w-[440px] tw-mx-auto tw-flex tw-flex-col tw-items-center tw-text-center tw-pt-6">
+				<div class="tw-relative tw-w-[120px] tw-h-[120px] tw-mb-4 tw-text-red" aria-hidden="true">
+					<ng-icon
+						hlm
+						name="lucideCircle"
+						size="120px"
+						class="oeb-icon-stroke-only tw-absolute tw-top-0 tw-left-0"
+					></ng-icon>
+					<ng-icon
+						hlm
+						name="lucideCircleAlert"
+						size="90px"
+						class="oeb-icon-filled-alert tw-absolute tw-top-1/2 tw-left-1/2 -tw-translate-x-1/2 -tw-translate-y-1/2"
+					></ng-icon>
 				</div>
-			</form>
-		</oeb-dialog>
+				<div class="tw-flex tw-flex-col tw-items-center tw-gap-4 tw-w-full">
+					<h3 class="tw-text-black tw-font-bold tw-text-[22px] tw-leading-[120%] tw-m-0">
+						{{ 'TwoFactor.disable.title' | translate }}
+					</h3>
+					<p class="tw-text-lg tw-font-semibold tw-leading-[130%] tw-m-0">
+						{{ 'TwoFactor.disable.description1' | translate }}
+					</p>
+					<p class="tw-text-lg tw-font-semibold tw-italic tw-text-purple tw-leading-[130%] tw-m-0">
+						{{ 'TwoFactor.disable.description2' | translate }}
+					</p>
+
+					<form
+						class="tw-w-full tw-text-left"
+						[formGroup]="disableForm.rawControl"
+						(ngSubmit)="submit()"
+						novalidate
+					>
+						<oeb-input
+							[control]="disableForm.rawControlMap.password"
+							[label]="'TwoFactor.disable.passwordLabel' | translate"
+							[fieldType]="'password'"
+							[autofocus]="true"
+							[errorMessage]="'TwoFactor.disable.passwordError' | translate"
+						></oeb-input>
+
+						@if (errorMessage) {
+							<p class="tw-text-red-600 tw-text-sm tw-mt-2">{{ errorMessage }}</p>
+						}
+
+						<div class="tw-flex tw-gap-4 tw-justify-center tw-mt-6">
+							<oeb-button
+								size="sm"
+								weight="normal"
+								variant="secondary"
+								type="button"
+								[text]="'General.cancel' | translate"
+								(click)="cancel()"
+							></oeb-button>
+							<oeb-button
+								size="sm"
+								type="submit"
+								[disabled]="isLoading"
+								[text]="'TwoFactor.disable.disableButton' | translate"
+							></oeb-button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
 	`,
 })
 export class DisableTwoFactorDialogComponent {
 	private readonly _dialogRef = inject<BrnDialogRef>(BrnDialogRef);
 	private readonly _context = injectBrnDialogContext<{ onDisabled: () => void }>();
 	private profileApiService = inject(UserProfileApiService);
+	private translate = inject(TranslateService);
 
-	disableForm = typedFormGroup()
-		.addControl('password', '', [Validators.required])
-		.addControl('code', '', [Validators.required]);
+	disableForm = typedFormGroup().addControl('password', '', [Validators.required]);
 
 	errorMessage = '';
 	isLoading = false;
@@ -70,7 +102,7 @@ export class DisableTwoFactorDialogComponent {
 		this.errorMessage = '';
 
 		this.profileApiService
-			.disable2FA(this.disableForm.value.password, this.disableForm.value.code)
+			.disable2FA(this.disableForm.value.password)
 			.then(() => {
 				this._context.onDisabled();
 				this._dialogRef.close('disabled');
@@ -78,9 +110,9 @@ export class DisableTwoFactorDialogComponent {
 			.catch((err) => {
 				try {
 					const body = JSON.parse(err.message);
-					this.errorMessage = body?.error || 'Ein Fehler ist aufgetreten.';
+					this.errorMessage = body?.error || this.translate.instant('TwoFactor.disable.genericError');
 				} catch {
-					this.errorMessage = 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.';
+					this.errorMessage = this.translate.instant('TwoFactor.disable.genericError');
 				}
 			})
 			.finally(() => {

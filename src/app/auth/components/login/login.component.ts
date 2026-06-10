@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, OnInit, ViewChild, inject } from '@angular/core';
-import { FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AfterViewInit, Component, DestroyRef, OnInit, ViewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EmailValidator } from '../../../common/validators/email.validator';
 import { UserCredential } from '../../../common/model/user-credential.type';
@@ -52,7 +53,7 @@ type RedirectHttpResponse = HttpResponse<RedirectResponse>;
 	],
 })
 export class LoginComponent extends BaseRoutableComponent implements OnInit, AfterViewInit {
-	private fb = inject(FormBuilder);
+	private destroyRef = inject(DestroyRef);
 	private title = inject(Title);
 	sessionService = inject(SessionService);
 	private messageService = inject(MessageService);
@@ -84,6 +85,14 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 	partialToken: string | null = null;
 	twoFactorForm = typedFormGroup().addControl('code', '', [Validators.required, Validators.minLength(6)]);
 	useBackupCode = false;
+
+	toggleBackupCode() {
+		this.useBackupCode = !this.useBackupCode;
+		const control = this.twoFactorForm.rawControlMap.code;
+		control.setValue('');
+		control.setValidators([Validators.required, Validators.minLength(this.useBackupCode ? 8 : 6)]);
+		control.updateValueAndValidity();
+	}
 
 	@ViewChild('passwordField')
 	passwordField: FormFieldText;
@@ -151,6 +160,9 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 						if (profile.isVerified) {
 							if (!profile.totpEnabled && !profile.mfaReminderDismissed) {
 								const dialogRef = this.dialogService.open(MfaReminderDialogComponent, {
+									closeOnBackdropClick: false,
+									closeOnOutsidePointerEvents: false,
+									contentClass: 'tw-max-w-[600px] tw-border-4 tw-min-h-[614px]',
 									context: {
 										onNeverRemind: () => {
 											profile.mfaReminderDismissed = true;
@@ -158,7 +170,9 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 										},
 									},
 								});
-								dialogRef.closed$.subscribe(() => this.navigateAfterLogin());
+								dialogRef.closed$
+									.pipe(takeUntilDestroyed(this.destroyRef))
+									.subscribe(() => this.navigateAfterLogin());
 							} else {
 								this.navigateAfterLogin();
 							}
@@ -256,11 +270,7 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 			.verify2FA(this.partialToken, this.twoFactorForm.value.code)
 			.then(
 				() => this.afterLogin(),
-				() =>
-					this.messageService.reportHandledError(
-						this.translate.instant('Login.invalidTwoFactorCode') ||
-							'Ungültiger Code. Bitte versuche es erneut.',
-					),
+				() => this.messageService.reportHandledError(this.translate.instant('Login.invalidTwoFactorCode')),
 			)
 			.then(() => (this.loginFinished = null));
 	}

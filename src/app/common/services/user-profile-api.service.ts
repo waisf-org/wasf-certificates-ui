@@ -96,8 +96,8 @@ export class UserProfileApiService extends BaseHttpApiService {
 		return this.delete(`/v1/user/issuerStaffRequest/${requestId}`);
 	}
 
-	disable2FA(password: string, code: string): Promise<void> {
-		return this.post('/v1/user/2fa/disable', { password, code }).then(() => undefined);
+	disable2FA(password: string): Promise<void> {
+		return this.post('/v1/user/2fa/disable', { password }).then(() => undefined);
 	}
 
 	setup2FA(): Promise<{ qr_code: string; secret: string }> {
