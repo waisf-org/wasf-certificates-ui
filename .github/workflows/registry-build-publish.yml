@@ -84,32 +84,29 @@ jobs:
 
             - name: 🏗️ Build and push Docker image
               if: github.ref != 'refs/heads/develop'
-              uses: docker/build-push-action@v7.0.0
+              uses: docker/build-push-action@v5
               with:
                   context: .
                   push: true
-                  provenance: false
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
             - name: 🏗️ Build and push Docker Staging image
               # Only build main images for Staging
               if: github.ref == 'refs/heads/main'
-              uses: docker/build-push-action@v7.0.0
+              uses: docker/build-push-action@v5
               with:
                   context: .
                   push: true
-                  provenance: false
                   tags: ${{ steps.meta.outputs.tags }}-Staging
                   labels: ${{ steps.meta.outputs.labels }}-Staging
                   file: staging.Dockerfile
             - name: 🏗️ Build and push Docker develop image
               # Only build develop images for Staging
               if: github.ref == 'refs/heads/develop'
-              uses: docker/build-push-action@v7.0.0
+              uses: docker/build-push-action@v5
               with:
                   context: .
                   push: true
-                  provenance: false
                   tags: ${{ steps.meta.outputs.tags }}-Develop
                   labels: ${{ steps.meta.outputs.labels }}-Develop
                   file: develop.Dockerfile
