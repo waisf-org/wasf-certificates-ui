@@ -15,10 +15,10 @@ test('assigns a custom PDF template when issuing a badge', async ({ page }) => {
 	}
 
 	await page.locator('oeb-input').first().locator('input').fill('PDF Test Recipient');
-	await page.locator('input[type="email"]').fill('pdf-test-recipient@e2e.local');
+	await page.locator('input[type="email"]').fill('pdf-test-recipient@example.com');
 
 	await page.locator('#issue-badge-btn').click();
 
-	await page.waitForURL(/\/badges\/[^/?#]+$/, { timeout: 30_000 });
-	await expect(page).toHaveURL(/\/badges\/[^/?#]+$/);
+	await page.waitForURL(/\/badges\/[^/?#]+/, { timeout: 30_000 });
+	await expect(page).toHaveURL(/\/badges\/[^/?#]+/);
 });

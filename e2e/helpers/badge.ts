@@ -4,8 +4,9 @@ import path from 'path';
 const ISSUER_SLUG = () => process.env.ISSUER_SLUG!;
 
 export const urls = {
-	badgeCreate: (type: 'participation' | 'competency' | 'learningpath') =>
+	badgeCreate: (type: 'participation' | 'competency') =>
 		`/issuer/issuers/${ISSUER_SLUG()}/badges/create/${type}`,
+	learningPathCreate: () => `/issuer/issuers/${ISSUER_SLUG()}/learningpaths/create`,
 	badgeDetail: (slug: string) => `/issuer/issuers/${ISSUER_SLUG()}/badges/${slug}`,
 	badgeEdit: (slug: string) => `/issuer/issuers/${ISSUER_SLUG()}/badges/${slug}/edit`,
 	badgeIssue: (slug: string) => `/issuer/issuers/${ISSUER_SLUG()}/badges/${slug}/issue`,
@@ -57,7 +58,7 @@ export async function advanceToSubmit(page: Page): Promise<void> {
 
 export async function createBadge(
 	page: Page,
-	type: 'participation' | 'competency' | 'learningpath',
+	type: 'participation' | 'competency',
 	name: string,
 ): Promise<string> {
 	await page.goto(urls.badgeCreate(type));
@@ -80,7 +81,8 @@ export async function createBadge(
 		await page.locator('#add-competency-btn').click();
 		await page.waitForTimeout(300);
 		await page.locator('oeb-input[id="competencyTitle_0"] input').fill('Testkompetenz');
-		await page.locator('oeb-select[id="competencyCategory_0"] hlm-select-trigger').click();
+		await page.locator('oeb-input[id="competencyDescriptionInput_0"] textarea').fill('E2E test competency description');
+		await page.locator('brn-select[id="competencyCategory_0"] button').click();
 		await page.locator('hlm-option').first().waitFor({ state: 'visible', timeout: 5_000 });
 		await page.locator('hlm-option').first().click();
 		await clickNext(page);

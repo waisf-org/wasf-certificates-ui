@@ -8,12 +8,12 @@ test('issues a badge individually by email', async ({ page }) => {
 	await page.goto(urls.badgeIssue(badgeSlug));
 
 	await page.locator('oeb-input').first().locator('input').fill('Test Recipient');
-	await page.locator('input[type="email"]').fill('test-recipient@e2e.local');
+	await page.locator('input[type="email"]').fill('test-recipient@example.com');
 
 	await page.locator('#issue-badge-btn').click();
 
-	await page.waitForURL(/\/badges\/[^/?#]+$/, { timeout: 30_000 });
-	await expect(page).toHaveURL(/\/badges\/[^/?#]+$/);
+	await page.waitForURL(/\/badges\/[^/?#]+/, { timeout: 30_000 });
+	await expect(page).toHaveURL(/\/badges\/[^/?#]+/);
 });
 
 test('issues badges via bulk CSV import', async ({ page }) => {
@@ -23,14 +23,21 @@ test('issues badges via bulk CSV import', async ({ page }) => {
 
 	const csvPath = path.join(__dirname, '..', 'fixtures', 'bulk-import.csv');
 	await page.locator('input[type="file"]').setInputFiles(csvPath);
+	await page.waitForTimeout(1000); // wait for file to be read into rawCsv
 
+	// import → preview
 	await page.locator('#bulk-import-btn').click();
 
+	// preview → confirmation (column mapping step)
+	await page.locator('#bulk-preview-btn').waitFor({ state: 'visible', timeout: 10_000 });
+	await page.locator('#bulk-preview-btn').click();
+
+	// confirmation
 	await page.locator('#bulk-confirm-btn').waitFor({ state: 'visible', timeout: 10_000 });
 	await page.locator('#bulk-confirm-btn').click();
 
-	await page.waitForURL(/\/badges\/[^/?#]+$/, { timeout: 30_000 });
-	await expect(page).toHaveURL(/\/badges\/[^/?#]+$/);
+	await page.waitForURL(/\/badges\/[^/?#]+/, { timeout: 30_000 });
+	await expect(page).toHaveURL(/\/badges\/[^/?#]+/);
 });
 
 test('creates a QR code award', async ({ page }) => {

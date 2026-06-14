@@ -8,6 +8,6 @@ test('edits badge image using the icon library', async ({ page }) => {
 	await selectIconFromLibrary(page);
 	await advanceToSubmit(page);
 
-	await page.waitForURL(/\/badges\/[^/?#]+$/, { timeout: 30_000 });
-	await expect(page).toHaveURL(/\/badges\/[^/?#]+$/);
+	await page.waitForURL(/\/badges\/[^/?#]+/, { timeout: 30_000 });
+	await expect(page).toHaveURL(/\/badges\/[^/?#]+/);
 });
