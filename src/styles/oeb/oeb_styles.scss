@@ -217,13 +217,13 @@ html {
 			fill: var(--color-red);
 			stroke: var(--color-red);
 		}
-		line, path {
+		line,
+		path {
 			stroke: white;
 			fill: none;
 		}
 	}
 }
-
 
 .menutoggle:focus::before,
 .menutoggle:hover::before {

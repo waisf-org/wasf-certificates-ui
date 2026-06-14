@@ -23,7 +23,10 @@
 		<bg-popup-menu #editMenu class="menu" id="menu2">
 			<div (click)="manage2FA()" class="menuitem">
 				<ng-icon hlm name="lucideLockKeyhole"></ng-icon>
-				{{ (profile?.totpEnabled ? 'TwoFactor.profile.menuItemDisable' : 'TwoFactor.profile.menuItem') | translate }}
+				{{
+					(profile?.totpEnabled ? 'TwoFactor.profile.menuItemDisable' : 'TwoFactor.profile.menuItem')
+						| translate
+				}}
 			</div>
 			<div [routerLink]="['/profile/edit']" class="menuitem">
 				<ng-icon hlm name="lucidePencil"></ng-icon>

@@ -63,12 +63,7 @@
 				</p>
 			</div>
 
-			<form
-				class="oeb-max-form-width"
-				[formGroup]="codeForm.rawControl"
-				(ngSubmit)="submitCode()"
-				novalidate
-			>
+			<form class="oeb-max-form-width" [formGroup]="codeForm.rawControl" (ngSubmit)="submitCode()" novalidate>
 				<oeb-input
 					[control]="codeForm.rawControlMap.code"
 					[label]="'TwoFactor.setup.codeLabel' | translate"
@@ -121,7 +116,9 @@
 						variant="secondary"
 						type="button"
 						(click)="copyBackupCodes()"
-						[text]="(copiedToClipboard ? 'TwoFactor.setup.copied' : 'TwoFactor.setup.copyCodes') | translate"
+						[text]="
+							(copiedToClipboard ? 'TwoFactor.setup.copied' : 'TwoFactor.setup.copyCodes') | translate
+						"
 					></oeb-button>
 					<oeb-button
 						type="button"
