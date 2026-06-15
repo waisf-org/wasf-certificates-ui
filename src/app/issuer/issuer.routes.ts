@@ -26,6 +26,7 @@ import { NetworkEditComponent } from './components/network-edit/network-edit.com
 import { NetworkBadgeAnalysisComponent } from './components/network-badge-analysis/network-badge-analysis.component';
 import { DashboardCompetencyTrackingComponent } from './components/network-competency-tracking/network-competency-tracking.component';
 import { IssuerQuotasComponent } from './components/issuer-quotas/issuer-quotas.component';
+import { BadgeClassMembershipGuard } from '../common/guards/badgeclass-membership.guard';
 
 export const routes = [
 	/* Issuer */
@@ -92,6 +93,7 @@ export const routes = [
 	{
 		path: 'issuers/:issuerSlug/badges/:badgeSlug',
 		component: BadgeClassDetailComponent,
+		canActivate: [BadgeClassMembershipGuard],
 	},
 	{
 		path: 'issuers/:issuerSlug/learningpaths/create',
