@@ -614,8 +614,10 @@
 						[loading-promises]="[savePromise]"
 						loading-message="{{ submittingText }}"
 						text="{{
-							(initialisedLearningpath ? 'General.saveChanges' : 'Issuer.myInstitutionsCreateLearningPath')
-								| translate
+							(initialisedLearningpath
+								? 'General.saveChanges'
+								: 'Issuer.myInstitutionsCreateLearningPath'
+							) | translate
 						}}"
 						[umamiEvent]="
 							!existingLpBadge ? `create-micro-degree-done-${this.stepper?.selectedIndex + 1}` : undefined
