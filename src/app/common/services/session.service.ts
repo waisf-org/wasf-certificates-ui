@@ -6,6 +6,7 @@ import { BaseHttpApiService } from './base-http-api.service';
 import { ExternalAuthProvider } from '../model/user-profile-api.model';
 import { UpdatableSubject } from '../util/updatable-subject';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
 import { NavigationService } from './navigation.service';
 import { AuthenticationService } from './authentication-service';
 
@@ -95,14 +96,14 @@ export class SessionService implements AuthenticationService {
 		// Update global loading state
 		this.messageService.incrementPendingRequestCount();
 
-		return this.http
-			.post<AuthorizationTokenInformation>(endpoint, payload, {
+		return lastValueFrom(
+			this.http.post<AuthorizationTokenInformation>(endpoint, payload, {
 				observe: 'response',
 				responseType: 'json',
 				headers,
 				withCredentials: true,
-			})
-			.toPromise()
+			}),
+		)
 			.then((r) => BaseHttpApiService.addTestingDelay(r, this.configService))
 			.finally(() => this.messageService.decrementPendingRequestCount())
 			.then((r) => {
@@ -224,8 +225,8 @@ export class SessionService implements AuthenticationService {
 		const endpoint = this.baseUrl + '/v1/user/2fa/verify';
 		const headers = new HttpHeaders().append('Content-Type', 'application/json');
 		this.messageService.incrementPendingRequestCount();
-		return this.http
-			.post<AuthorizationTokenInformation>(
+		return lastValueFrom(
+			this.http.post<AuthorizationTokenInformation>(
 				endpoint,
 				{ partial_token: partialToken, code },
 				{
@@ -234,8 +235,8 @@ export class SessionService implements AuthenticationService {
 					headers,
 					withCredentials: true,
 				},
-			)
-			.toPromise()
+			),
+		)
 			.finally(() => this.messageService.decrementPendingRequestCount())
 			.then((r) => {
 				if (!r || r.status < 200 || r.status >= 300) {
@@ -246,39 +247,42 @@ export class SessionService implements AuthenticationService {
 	}
 
 	exchangeCodeForToken(authCode: string): Promise<AuthorizationTokenInformation> {
-		return this.http
-			.post<AuthorizationTokenInformation>(this.baseUrl + '/o/code', 'code=' + encodeURIComponent(authCode), {
-				observe: 'response',
-				responseType: 'json',
-				headers: new HttpHeaders().append('Content-Type', 'application/x-www-form-urlencoded'),
-			})
-			.toPromise()
-			.then((r) => r.body);
+		return lastValueFrom(
+			this.http.post<AuthorizationTokenInformation>(
+				this.baseUrl + '/o/code',
+				'code=' + encodeURIComponent(authCode),
+				{
+					observe: 'response',
+					responseType: 'json',
+					headers: new HttpHeaders().append('Content-Type', 'application/x-www-form-urlencoded'),
+				},
+			),
+		).then((r) => r.body);
 	}
 
 	submitResetPasswordRequest(email: string) {
 		// TODO: Define the type of this response
-		return this.http
-			.post<unknown>(this.baseUrl + '/v1/user/forgot-password', 'email=' + encodeURIComponent(email), {
+		return lastValueFrom(
+			this.http.post<unknown>(this.baseUrl + '/v1/user/forgot-password', 'email=' + encodeURIComponent(email), {
 				observe: 'response',
 				responseType: 'json',
 				headers: new HttpHeaders().append('Content-Type', 'application/x-www-form-urlencoded'),
-			})
-			.toPromise();
+			}),
+		);
 	}
 
 	submitForgotPasswordChange(newPassword: string, token: string) {
 		// TODO: Define the type of this response
-		return this.http
-			.put<unknown>(
+		return lastValueFrom(
+			this.http.put<unknown>(
 				this.baseUrl + '/v1/user/forgot-password',
 				{ password: newPassword, token },
 				{
 					observe: 'response',
 					responseType: 'json',
 				},
-			)
-			.toPromise();
+			),
+		);
 	}
 
 	/**
@@ -312,6 +316,6 @@ export class SessionService implements AuthenticationService {
 	 * To resend verification email for unlogged user.
 	 */
 	resendVerificationEmail_unloggedUser(emailToVerify: string) {
-		return this.http.put<unknown>(this.baseUrl + `/v1/user/resendemail`, { email: emailToVerify }).toPromise();
+		return lastValueFrom(this.http.put<unknown>(this.baseUrl + `/v1/user/resendemail`, { email: emailToVerify }));
 	}
 }

@@ -82,7 +82,7 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 	verifiedEmail: string;
 
 	showTwoFactor = false;
-	partialToken: string | null = null;
+	partialToken = '';
 	twoFactorForm = typedFormGroup().addControl('code', '', [Validators.required, Validators.minLength(6)]);
 	useBackupCode = false;
 

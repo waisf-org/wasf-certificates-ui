@@ -1525,6 +1525,7 @@
 			"breadcrumb": "Set up 2FA",
 			"scanInstructions": "Scan the QR code with your authenticator app (e.g. Google Authenticator or Authy).",
 			"loading": "Loading...",
+			"qrAlt": "QR code for two-factor authentication setup",
 			"manualEntry": "No QR scanner? Enter this code manually:",
 			"confirmTitle": "Confirm Code",
 			"confirmInstructions": "Enter the 6-digit code from your authenticator app to complete setup.",

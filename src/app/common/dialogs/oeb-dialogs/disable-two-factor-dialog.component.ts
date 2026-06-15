@@ -108,12 +108,7 @@ export class DisableTwoFactorDialogComponent {
 				this._dialogRef.close('disabled');
 			})
 			.catch((err) => {
-				try {
-					const body = JSON.parse(err.message);
-					this.errorMessage = body?.error || this.translate.instant('TwoFactor.disable.genericError');
-				} catch {
-					this.errorMessage = this.translate.instant('TwoFactor.disable.genericError');
-				}
+				this.errorMessage = err?.error?.error || this.translate.instant('TwoFactor.disable.genericError');
 			})
 			.finally(() => {
 				this.isLoading = false;

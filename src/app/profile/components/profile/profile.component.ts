@@ -299,7 +299,7 @@ export class ProfileComponent extends BaseAuthenticatedRoutableComponent impleme
 
 	manage2FA() {
 		if (!this.profile.totpEnabled) {
-			window.open('/profile/2fa', '_blank');
+			this.router.navigate(['/profile/2fa']);
 		} else {
 			this.hlmDialogService.open(DisableTwoFactorDialogComponent, {
 				closeOnBackdropClick: false,
