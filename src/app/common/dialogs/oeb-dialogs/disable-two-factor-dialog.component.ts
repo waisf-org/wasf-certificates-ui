@@ -33,10 +33,10 @@ import { typedFormGroup } from '../../util/typed-forms';
 					<h3 class="tw-text-black tw-font-bold tw-text-[22px] tw-leading-[120%] tw-m-0">
 						{{ 'TwoFactor.disable.title' | translate }}
 					</h3>
-					<p class="tw-text-lg tw-font-semibold tw-leading-[130%] tw-m-0">
+					<p class="tw-text-lg tw-font-normal tw-text-black tw-leading-[130%] tw-m-0">
 						{{ 'TwoFactor.disable.description1' | translate }}
 					</p>
-					<p class="tw-text-lg tw-font-semibold tw-italic tw-text-purple tw-leading-[130%] tw-m-0">
+					<p class="tw-text-lg tw-font-normal tw-italic tw-text-purple tw-leading-[130%] tw-m-0">
 						{{ 'TwoFactor.disable.description2' | translate }}
 					</p>
 
