@@ -1166,7 +1166,7 @@
 		"createCustomPDFTemplate": "Create own PDF template",
 		"ownPDFBackground": "Own PDF background",
 		"noTemplateDefaultDesign": "If you don't use your own template, the PDF for the badge will receive our OEB design.",
-		"exampleZipLink": "<a class='tw-block tw-mt-4 tw-underline tw-text-link' hlmA href='./assets/examplePDFCertificates.zip' download='Sample-View-PDF-Certificates.zip'>Download example file</a>",
+		"exampleZipLink": "<a class='tw-block tw-mt-4 tw-underline tw-text-link' hlmA href='./assets/Sample-View-PDF-Certificates.zip' download='Sample-View-PDF-Certificates.zip'>Download example file</a>",
 		"lpChooseTemplateHeadline": "PDF certificate",
 		"lpChooseTemplateDesc": "A PDF template can be selected here.",
 		"editPDF": "Edit PDF",
