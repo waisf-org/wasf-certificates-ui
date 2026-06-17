@@ -1123,7 +1123,7 @@
 		"descriptionText": "With each badge, a PDF certificate in OEB design is automatically sent to your apprentices. Here you can upload <strong>personalized PDF backgrounds for your institution</strong>, which can then <strong>be selected</strong> instead of the OEB design <strong>when awarding the badge</strong>.",
 		"createdTemplates": "Created templates",
 		"editor": "PDF Template Editor",
-		"createPDFTemplate": "Create pdf template",
+		"createPDFTemplate": "Create PDF template",
 		"createHeading": "Create a new template",
 		"backgroundHeading": "Upload your own PDF background:",
 		"createdSuccessfully": "Your pdf template has been created successfully.",
