@@ -2,6 +2,8 @@ import {
 	Component,
 	Input,
 	OnInit,
+	OnChanges,
+	SimpleChanges,
 	Output,
 	EventEmitter,
 	inject,
@@ -108,7 +110,7 @@ import { LearningPath } from '~/issuer/models/learningpath.model';
 		OebFeatureTeaserComponent,
 	],
 })
-export class OebIssuerDetailComponent implements OnInit {
+export class OebIssuerDetailComponent implements OnInit, OnChanges {
 	private router = inject(Router);
 	route = inject(ActivatedRoute);
 	translate = inject(TranslateService);
@@ -454,6 +456,16 @@ export class OebIssuerDetailComponent implements OnInit {
 		const apiLearningPaths = this.learningPaths as ApiLearningPath[];
 		this.apiLearningPaths = apiLearningPaths.filter((lp) => !lp.archived);
 		this.archivedLearningPaths = apiLearningPaths.filter((lp) => lp.archived);
+	}
+
+	ngOnChanges(changes: SimpleChanges) {
+		if (changes['badges'] && !changes['badges'].firstChange) {
+			this.updateResults().then(() => {
+				if (this.badgeTemplateTabs) {
+					this.badgeTemplateTabs[0].count = this.badgeResults.length;
+				}
+			});
+		}
 	}
 
 	async ngOnInit() {
