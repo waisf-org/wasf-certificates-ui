@@ -48,7 +48,7 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 
 	issuer: Issuer;
 	issuerSlug: string;
-	badges: BadgeClass[];
+	badges: BadgeClass[] = [];
 	learningPaths: ApiLearningPath[];
 
 	profileEmails: UserProfileEmail[] = [];
