@@ -48,7 +48,7 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 
 	issuer: Issuer;
 	issuerSlug: string;
-	badges: BadgeClass[];
+	badges: BadgeClass[] = [];
 	learningPaths: ApiLearningPath[];
 
 	profileEmails: UserProfileEmail[] = [];
@@ -95,7 +95,7 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 			},
 		];
 
-		const issuerPromise = this.issuerManager.issuerBySlug(this.issuerSlug);
+		const issuerPromise = this.issuerManager.issuerBySlugDirect(this.issuerSlug);
 		const badgesUpdatePromise = this.badgeClassService.badgesList.updateList();
 
 		this.issuerLoaded = issuerPromise.then(
