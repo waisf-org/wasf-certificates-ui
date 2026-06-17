@@ -73,6 +73,10 @@ export class IssuerManager {
 			.then((response) => this.issuersList.remove(issuerToDelete));
 	}
 
+	issuerBySlugDirect(issuerSlug: IssuerSlug): Promise<Issuer> {
+		return this.issuerApiService.getIssuer(issuerSlug).then((apiIssuer) => this.issuersList.addOrUpdate(apiIssuer));
+	}
+
 	issuerBySlug(issuerSlug: IssuerSlug): Promise<Issuer> {
 		return firstValueFrom(
 			combineLatest([
