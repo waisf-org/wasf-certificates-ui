@@ -573,9 +573,14 @@ export class BadgeClassEditFormComponent
 			? badgeClass.extension['extensions:CategoryExtension'].Category
 			: 'participation';
 
+		// When copying a badge from a *different* institution, the source badge's own
+		// image must not be pre-filled (the copying institution provides its own image).
+		// Editing an existing badge, or copying within the same institution, keeps it.
+		const isForeignCopy = !this.existing && badgeClass.issuerSlug !== this.issuer?.slug;
+
 		this.badgeClassForm.setValue({
 			badge_name: badgeClass.name,
-			badge_image: badgeClass.imageFrame ? badgeClass.image : null,
+			badge_image: !isForeignCopy && badgeClass.imageFrame ? badgeClass.image : null,
 			badge_customImage: null,
 			useIssuerImageInBadge: this.badgeClassForm.value.useIssuerImageInBadge,
 			badge_description: badgeClass.description,
@@ -634,26 +639,45 @@ export class BadgeClassEditFormComponent
 			copy_permissions_allow_others: this.existing ? badgeClass.canCopy('others') : false,
 		});
 
+		// Keep the badge category in sync directly from the source badge. The `category`
+		// @Input arrives asynchronously when copying (the source badge is fetched after
+		// the form initializes), so the equivalent sync in ngOnInit can run too early and
+		// leave the category (e.g. competency) showing as the default. Deriving it here,
+		// tied to the loaded badge, makes it independent of input/promise ordering.
+		if (this.category && this.categoryOptions.hasOwnProperty(this.category)) {
+			this.badgeClassForm.rawControl.controls['badge_category'].setValue(this.category);
+		}
+		this.badgeCategory = this.badgeClassForm.rawControl.controls['badge_category'].value;
+
 		if (this.badgeClassForm.controls.competencies.controls.length > 0) {
 			this.collapsedCompetenciesOpen = true;
 		}
 
-		this.currentImage = badgeClass.extension['extensions:OrgImageExtension']
-			? badgeClass.extension['extensions:OrgImageExtension'].OrgImage
-			: undefined;
+		this.currentImage =
+			!isForeignCopy && badgeClass.extension['extensions:OrgImageExtension']
+				? badgeClass.extension['extensions:OrgImageExtension'].OrgImage
+				: undefined;
 
-		setTimeout(async () => {
-			if (badgeClass.imageFrame) {
-				// regenerating the upload image for the issuer image in case it changed via copying
-				// or if it was not part of the badge image yet
-				this.generateUploadImage(this.currentImage, this.badgeClassForm.value, !this.issuer?.is_network, true);
-			} else if (badgeClass.image) {
-				const dataUrl = await this.urlToDataUrl(badgeClass.image);
-				this.currentImage = dataUrl;
+		// Skip carrying over the source image when copying across institutions (see above).
+		if (!isForeignCopy) {
+			setTimeout(async () => {
+				if (badgeClass.imageFrame) {
+					// regenerating the upload image for the issuer image in case it changed via copying
+					// or if it was not part of the badge image yet
+					this.generateUploadImage(
+						this.currentImage,
+						this.badgeClassForm.value,
+						!this.issuer?.is_network,
+						true,
+					);
+				} else if (badgeClass.image) {
+					const dataUrl = await this.urlToDataUrl(badgeClass.image);
+					this.currentImage = dataUrl;
 
-				this.customImageField.useDataUrl(dataUrl, 'BADGE', false, true);
-			}
-		}, 1);
+					this.customImageField.useDataUrl(dataUrl, 'BADGE', false, true);
+				}
+			}, 1);
+		}
 
 		this.tags = new Set();
 		this.badgeClass.tags.forEach((t) => this.tags.add(t));
