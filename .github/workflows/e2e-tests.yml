@@ -1,4 +1,4 @@
-name: 🎭 E2E Regression Tests
+name: 🎭 Playwright Tests
 
 on:
     workflow_dispatch:
@@ -10,18 +10,26 @@ on:
                 type: choice
                 options:
                     - staging
+                    - develop
 
 jobs:
     e2e:
         name: 🧪 Playwright E2E Tests
         runs-on: ubuntu-latest
         env:
-            BASE_URL: https://staging.openbadges.education
             STAGING_TEST_EMAIL: ${{ secrets.STAGING_TEST_EMAIL }}
             STAGING_TEST_PASSWORD: ${{ secrets.STAGING_TEST_PASSWORD }}
             ISSUER_SLUG: ${{ secrets.STAGING_ISSUER_SLUG }}
 
         steps:
+            - name: 🌍 Set base URL
+              run: |
+                  if [ "${{ inputs.environment }}" = "staging" ]; then
+                    echo "BASE_URL=https://staging.openbadges.education" >> $GITHUB_ENV
+                  else
+                    echo "BASE_URL=https://develop.openbadges.education" >> $GITHUB_ENV
+                  fi
+
             - name: ⬇️ Checkout repository
               uses: actions/checkout@v4
 
@@ -55,7 +63,7 @@ jobs:
               with:
                   payload: |
                       {
-                        "text": "${{ job.status == 'success' && '✅' || '❌' }} E2E Tests *${{ job.status }}* on *staging*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View results & videos>"
+                        "text": "${{ job.status == 'success' && '✅' || '❌' }} E2E Tests *${{ job.status }}* on *${{ inputs.environment }}*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View results & videos>"
                       }
               env:
                   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TEST_URL }}

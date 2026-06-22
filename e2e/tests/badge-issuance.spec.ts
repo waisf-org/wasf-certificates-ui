@@ -23,7 +23,7 @@ test('issues badges via bulk CSV import', async ({ page }) => {
 
 	const csvPath = path.join(__dirname, '..', 'fixtures', 'bulk-import.csv');
 	await page.locator('input[type="file"]').setInputFiles(csvPath);
-	await page.waitForTimeout(1000); // wait for file to be read into rawCsv
+	await page.locator('#bulk-import-btn:not(.button-is-disabled)').waitFor({ state: 'visible', timeout: 10_000 });
 
 	// import → preview
 	await page.locator('#bulk-import-btn').click();
