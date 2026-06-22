@@ -25,11 +25,10 @@ test('creates a competency badge', async ({ page }) => {
 	const trigger = page.locator('#competencies-by-hand-section');
 	if (await trigger.isVisible()) {
 		await trigger.click();
-		await page.waitForTimeout(300);
 	}
 	await page.locator('#add-competency-btn').waitFor({ state: 'visible', timeout: 5_000 });
 	await page.locator('#add-competency-btn').click();
-	await page.waitForTimeout(300);
+	await page.locator('oeb-input[id="competencyTitle_0"] input').waitFor({ state: 'visible', timeout: 5_000 });
 	await page.locator('oeb-input[id="competencyTitle_0"] input').fill('Testkompetenz');
 	await page.locator('oeb-input[id="competencyDescriptionInput_0"] textarea').fill('E2E test competency description');
 	await page.locator('brn-select[id="competencyCategory_0"] button').click();
@@ -54,7 +53,6 @@ test('creates a learning path badge', async ({ page }) => {
 
 	// Step 1 → step 2 (badge selection)
 	await lpNext().click();
-	await page.waitForTimeout(600);
 
 	// Step 2: select the first 2 available badges
 	const checkboxes = page.locator('bg-badgecard button[role="checkbox"]');

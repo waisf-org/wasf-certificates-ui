@@ -76,11 +76,10 @@ export async function createBadge(page: Page, type: 'participation' | 'competenc
 		const trigger = page.locator('#competencies-by-hand-section');
 		if (await trigger.isVisible()) {
 			await trigger.click();
-			await page.waitForTimeout(300);
 		}
 		await page.locator('#add-competency-btn').waitFor({ state: 'visible', timeout: 5_000 });
 		await page.locator('#add-competency-btn').click();
-		await page.waitForTimeout(300);
+		await page.locator('oeb-input[id="competencyTitle_0"] input').waitFor({ state: 'visible', timeout: 5_000 });
 		await page.locator('oeb-input[id="competencyTitle_0"] input').fill('Testkompetenz');
 		await page
 			.locator('oeb-input[id="competencyDescriptionInput_0"] textarea')

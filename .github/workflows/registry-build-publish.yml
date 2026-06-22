@@ -91,7 +91,6 @@ jobs:
               with:
                   context: .
                   push: true
-                  provenance: false
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
             - name: 🏗️ Build and push Docker Staging image
@@ -101,7 +100,6 @@ jobs:
               with:
                   context: .
                   push: true
-                  provenance: false
                   tags: ${{ steps.meta.outputs.tags }}-Staging
                   labels: ${{ steps.meta.outputs.labels }}-Staging
                   file: staging.Dockerfile
@@ -112,7 +110,6 @@ jobs:
               with:
                   context: .
                   push: true
-                  provenance: false
                   tags: ${{ steps.meta.outputs.tags }}-Develop
                   labels: ${{ steps.meta.outputs.labels }}-Develop
                   file: develop.Dockerfile
