@@ -5,8 +5,6 @@ import { IssuerEditComponent } from './components/issuer-edit/issuer-edit.compon
 import { BadgeClassCreateComponent } from './components/badgeclass-create/badgeclass-create.component';
 import { BadgeClassEditComponent } from './components/badgeclass-edit/badgeclass-edit.component';
 import { BadgeClassDetailComponent } from './components/badgeclass-detail/badgeclass-detail.component';
-import { BadgeClassIssueComponent } from './components/badgeclass-issue/badgeclass-issue.component';
-import { BadgeClassIssueBulkAwardComponent } from './components/badgeclass-issue-bulk-award/badgeclass-issue-bulk-award.component';
 import { IssuerStaffComponent } from './components/issuer-staff/issuer-staff.component';
 import { BadgeClassEditQrComponent } from './components/badgeclass-edit-qr/badgeclass-edit-qr.component';
 import { BadgeClassIssueQrComponent } from './components/badgeclass-issue-qr/badgeclass-issue-qr.component';
@@ -19,13 +17,11 @@ import { BadgeClassEditIssuedComponent } from './components/badgeclass-edit-issu
 import { NetworkCreateComponent } from './components/network-create/network-create.component';
 import { NetworkDashboardComponent } from './components/network-dashboard/network-dashboard.component';
 import { NetworkInviteConfirmationComponent } from './components/network-invite-confirmation/network-invite-confirmation.component';
-import { PDFTemplateCreateComponent } from './components/pdftemplate-create/pdftemplate-create.component';
-import { PDFTemplateEditComponent } from './components/pdftemplate-edit/pdftemplate-edit.component';
-import { LearningPathEditPDFTemplateComponent } from './components/learningpath-edit-pdftemplate/learningpath-edit-pdftemplate.component';
 import { NetworkEditComponent } from './components/network-edit/network-edit.component';
 import { NetworkBadgeAnalysisComponent } from './components/network-badge-analysis/network-badge-analysis.component';
 import { DashboardCompetencyTrackingComponent } from './components/network-competency-tracking/network-competency-tracking.component';
 import { IssuerQuotasComponent } from './components/issuer-quotas/issuer-quotas.component';
+import { BadgeClassMembershipGuard } from '../common/guards/badgeclass-membership.guard';
 
 export const routes = [
 	/* Issuer */
@@ -92,6 +88,7 @@ export const routes = [
 	{
 		path: 'issuers/:issuerSlug/badges/:badgeSlug',
 		component: BadgeClassDetailComponent,
+		canActivate: [BadgeClassMembershipGuard],
 	},
 	{
 		path: 'issuers/:issuerSlug/learningpaths/create',
@@ -127,23 +124,34 @@ export const routes = [
 	},
 	{
 		path: 'issuers/:issuerSlug/badges/:badgeSlug/issue',
-		component: BadgeClassIssueComponent,
+		loadComponent: () =>
+			import('./components/badgeclass-issue/badgeclass-issue.component').then((m) => m.BadgeClassIssueComponent),
 	},
 	{
 		path: 'issuers/:issuerSlug/badges/:badgeSlug/bulk-import',
-		component: BadgeClassIssueBulkAwardComponent,
+		loadComponent: () =>
+			import('./components/badgeclass-issue-bulk-award/badgeclass-issue-bulk-award.component').then(
+				(m) => m.BadgeClassIssueBulkAwardComponent,
+			),
 	},
 	{
 		path: 'issuers/:issuerSlug/pdftemplates/create',
-		component: PDFTemplateCreateComponent,
+		loadComponent: () =>
+			import('./components/pdftemplate-create/pdftemplate-create.component').then(
+				(m) => m.PDFTemplateCreateComponent,
+			),
 	},
 	{
 		path: 'issuers/:issuerSlug/pdftemplates/:pdfTemplateSlug/edit',
-		component: PDFTemplateEditComponent,
+		loadComponent: () =>
+			import('./components/pdftemplate-edit/pdftemplate-edit.component').then((m) => m.PDFTemplateEditComponent),
 	},
 	{
 		path: 'issuers/:issuerSlug/learningpaths/:learningPathSlug/pdftemplate',
-		component: LearningPathEditPDFTemplateComponent,
+		loadComponent: () =>
+			import('./components/learningpath-edit-pdftemplate/learningpath-edit-pdftemplate.component').then(
+				(m) => m.LearningPathEditPDFTemplateComponent,
+			),
 	},
 	{
 		path: 'issuers/:networkSlug/badge-analysis',

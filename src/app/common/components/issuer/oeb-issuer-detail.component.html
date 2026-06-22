@@ -109,7 +109,7 @@
 											[attr.aria-label]="'Visit ' + network.name + ' network'"
 										>
 											<img
-												class="tw-w-[33px]"
+												class="tw-w-[33px] tw-h-[33px] tw-aspect-square"
 												[src]="network.image"
 												[alt]="network.name + ' logo'"
 											/>
@@ -141,7 +141,7 @@
 											[attr.aria-label]="'Visit ' + partner.name + ' profile'"
 										>
 											<img
-												class="tw-w-[33px]"
+												class="tw-w-[33px] tw-h-[33px] tw-aspect-square"
 												[src]="partner.image"
 												[alt]="partner.name + ' logo'"
 											/>
@@ -601,7 +601,11 @@
 						class="tw-px-2 tw-py-2 tw-gap-2 tw-flex tw-items-center tw-font-semibold tw-text-lg tw-leading-[130%] tw-uppercase tw-text-oebblack tw-cursor-pointer"
 						[routerLink]="['/issuer/networks', group.networkIssuer.slug]"
 					>
-						<img class="tw-w-12" [src]="group.networkIssuer.image" alt="Network Logo" />
+						<img
+							class="tw-w-12 tw-h-12 tw-aspect-square"
+							[src]="group.networkIssuer.image"
+							alt="Network Logo"
+						/>
 						<span>{{ group.issuerName }}</span>
 					</div>
 
