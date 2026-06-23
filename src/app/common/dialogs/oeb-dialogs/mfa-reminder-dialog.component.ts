@@ -19,14 +19,12 @@ import { OebButtonComponent } from '../../../components/oeb-button.component';
 					<h3 class="tw-text-purple tw-font-bold tw-text-[22px] tw-leading-[120%] tw-m-0">
 						{{ 'TwoFactor.reminder.title' | translate }}
 					</h3>
-					<p class="tw-text-lg tw-font-semibold tw-leading-[130%] tw-m-0">
+					<p class="tw-text-lg tw-font-normal tw-text-black tw-leading-[130%] tw-m-0">
 						{{ 'TwoFactor.reminder.body' | translate }}
 					</p>
-					<p class="tw-text-lg tw-font-semibold tw-italic tw-text-purple tw-leading-[130%] tw-m-0">
+					<p class="tw-text-lg tw-font-normal tw-italic tw-text-purple tw-leading-[130%] tw-m-0">
 						{{ 'TwoFactor.reminder.hintPrefix' | translate }}
-						<strong class="tw-font-bold tw-not-italic">{{
-							'TwoFactor.reminder.hintLink' | translate
-						}}</strong>
+						<strong class="tw-font-bold">{{ 'TwoFactor.reminder.hintLink' | translate }}</strong>
 						{{ 'TwoFactor.reminder.hintSuffix' | translate }}
 					</p>
 					<div class="tw-flex tw-gap-4 tw-justify-center">
