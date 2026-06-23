@@ -19,7 +19,7 @@ jobs:
         env:
             STAGING_TEST_EMAIL: ${{ secrets.STAGING_TEST_EMAIL }}
             STAGING_TEST_PASSWORD: ${{ secrets.STAGING_TEST_PASSWORD }}
-            ISSUER_SLUG: ${{ secrets.STAGING_ISSUER_SLUG }}
+            ISSUER_SLUG: ${{ inputs.environment == 'staging' && secrets.STAGING_ISSUER_SLUG || secrets.DEVELOP_ISSUER_SLUG }}
 
         steps:
             - name: 🌍 Set base URL
