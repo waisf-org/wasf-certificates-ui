@@ -47,6 +47,21 @@ jobs:
             - name: 🧪 Run E2E tests
               run: npx playwright test
 
+            - name: 📋 Parse failed tests
+              if: always()
+              run: |
+                  FAILED=$(node -e "
+                    const r = require('./test-results/results.json');
+                    function getSpecs(suite) {
+                      return [...(suite.specs || []), ...(suite.suites || []).flatMap(getSpecs)];
+                    }
+                    const failed = r.suites.flatMap(getSpecs).filter(s => !s.ok).map(s => '• ' + s.title);
+                    console.log(failed.join('\n'));
+                  " 2>/dev/null || echo "")
+                  echo "FAILED_TESTS<<EOF" >> $GITHUB_ENV
+                  echo "$FAILED" >> $GITHUB_ENV
+                  echo "EOF" >> $GITHUB_ENV
+
             - name: 📹 Upload test videos and report
               uses: actions/upload-artifact@v4
               if: always()
@@ -63,7 +78,7 @@ jobs:
               with:
                   payload: |
                       {
-                        "text": "${{ job.status == 'success' && '✅' || '❌' }} E2E Tests *${{ job.status }}* on *${{ inputs.environment }}*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View results & videos>"
+                        "text": "${{ job.status == 'success' && '✅ All Playwright Tests passed' || '❌ Playwright Tests failed' }} on *${{ inputs.environment }}*${{ env.FAILED_TESTS != '' && format('\nFailed:\n{0}', env.FAILED_TESTS) || '' }}\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View run & download report>"
                       }
               env:
                   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TEST_URL }}
