@@ -8,13 +8,16 @@ export default defineConfig({
 	retries: 0,
 	workers: 1,
 	timeout: 90_000,
-	reporter: [['html', { open: 'never' }], ['list']],
+	reporter: [['html', { open: 'never' }], ['list'], ['json', { outputFile: 'test-results/results.json' }]],
 	use: {
 		baseURL: process.env.BASE_URL ?? 'https://staging.openbadges.education',
 		storageState: 'e2e/.auth/user.json',
 		video: 'on',
 		trace: 'retain-on-failure',
 		screenshot: 'only-on-failure',
+		launchOptions: {
+			slowMo: 500,
+		},
 	},
 	projects: [
 		{
