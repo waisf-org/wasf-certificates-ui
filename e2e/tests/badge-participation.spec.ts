@@ -9,8 +9,7 @@ test('creates a participation badge and issues it by email', async ({ page }) =>
 	await page.locator('input[type="email"]').fill('test-recipient@example.com');
 	await page.locator('#issue-badge-btn').click();
 
-	await page.waitForURL(/\/badges\/[^/?#]+/, { timeout: 30_000 });
-	await expect(page.getByTestId('badge-title')).toBeVisible();
+	await expect(page.locator('oeb-success-dialog')).toBeVisible({ timeout: 30_000 });
 });
 
 test('creates a participation badge and generates a QR code award', async ({ page }) => {
