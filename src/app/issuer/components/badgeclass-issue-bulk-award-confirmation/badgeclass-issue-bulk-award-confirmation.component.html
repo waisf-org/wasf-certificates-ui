@@ -192,6 +192,7 @@
 		></oeb-button>
 
 		<oeb-button
+			[id]="'bulk-confirm-btn'"
 			[class.button-is-disabled]="buttonDisabledClass"
 			[disabled]="buttonDisabledAttribute || hasInvalidEmails || !quotasCanIssue()"
 			(click)="!hasInvalidEmails && quotasCanIssue() && dataConfirmed()"

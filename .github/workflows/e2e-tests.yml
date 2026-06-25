@@ -1,0 +1,74 @@
+name: 🎭 Playwright Tests
+
+on:
+    workflow_dispatch:
+        inputs:
+            environment:
+                description: 'Environment to test against'
+                required: true
+                default: 'staging'
+                type: choice
+                options:
+                    - staging
+                    - develop
+
+jobs:
+    e2e:
+        name: 🧪 Playwright E2E Tests
+        runs-on: ubuntu-latest
+        env:
+            STAGING_TEST_EMAIL: ${{ secrets.STAGING_TEST_EMAIL }}
+            STAGING_TEST_PASSWORD: ${{ secrets.STAGING_TEST_PASSWORD }}
+            ISSUER_SLUG: ${{ inputs.environment == 'staging' && secrets.STAGING_ISSUER_SLUG || secrets.DEVELOP_ISSUER_SLUG }}
+
+        steps:
+            - name: 🌍 Set base URL
+              run: |
+                  if [ "${{ inputs.environment }}" = "staging" ]; then
+                    echo "BASE_URL=https://staging.openbadges.education" >> $GITHUB_ENV
+                  else
+                    echo "BASE_URL=https://develop.openbadges.education" >> $GITHUB_ENV
+                  fi
+
+            - name: ⬇️ Checkout repository
+              uses: actions/checkout@v4
+
+            - name: 🔨 Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: '.nvmrc'
+
+            - name: 📲 Install dependencies
+              run: npm ci
+
+            - name: 🎭 Install Playwright browsers
+              run: npx playwright install chromium --with-deps
+
+            - name: 🧪 Run E2E tests
+              run: npx playwright test
+
+            - name: 📹 Upload test videos and report
+              uses: actions/upload-artifact@v4
+              if: always()
+              with:
+                  name: playwright-results
+                  path: |
+                      test-results/
+                      playwright-report/
+                  retention-days: 30
+
+            - name: 📋 Generate Slack payload
+              if: always()
+              env:
+                  ENVIRONMENT: ${{ inputs.environment }}
+                  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+              run: node e2e/generate-slack-payload.js 2>/dev/null || echo '{"text":"⚠️ Could not parse test results."}' > slack-payload.json
+
+            - name: 💬 Notify Slack
+              if: always()
+              uses: slackapi/slack-github-action@v1.27.0
+              with:
+                  payload-file-path: slack-payload.json
+              env:
+                  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TEST_URL }}
+                  SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
