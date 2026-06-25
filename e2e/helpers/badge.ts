@@ -17,7 +17,7 @@ export function uniqueName(type: string): string {
 	return `E2E ${type} ${Date.now()}`;
 }
 
-export async function selectIconFromLibrary(page: Page): Promise<void> {
+export async function selectIconFromLibrary(page: Page, imagePath?: string): Promise<void> {
 	// Noun Project API is unavailable locally — upload the test PNG instead.
 	// To re-enable icon search on staging, replace this block with:
 	// await page.locator('badgeclass-edit-form #nounProject_span').first().click();
@@ -26,7 +26,7 @@ export async function selectIconFromLibrary(page: Page): Promise<void> {
 	// await page.locator('.datatable-x-row').first().waitFor({ state: 'visible', timeout: 15_000 });
 	// await page.locator('.datatable-x-row').first().click();
 	// await page.locator('#forminput').waitFor({ state: 'hidden', timeout: 10_000 });
-	const pngPath = path.resolve(__dirname, '..', 'fixtures', 'test-badge.png');
+	const pngPath = imagePath ?? path.resolve(__dirname, '..', 'fixtures', 'test-badge.png');
 	await page.locator('#imageSection input[type="file"]').nth(1).setInputFiles(pngPath);
 	// The file is read as a data URL asynchronously — wait for it to complete
 	await page.waitForTimeout(2000);
@@ -92,6 +92,7 @@ export async function createBadge(page: Page, type: 'participation' | 'competenc
 
 	await advanceToSubmit(page);
 	await page.waitForURL(/\/badges\/[^/?#]+$/, { timeout: 30_000 });
+	await page.getByTestId('badge-title').waitFor({ state: 'visible', timeout: 10_000 });
 
 	const match = page.url().match(/\/badges\/([^/?#]+)/);
 	return match ? match[1] : '';
