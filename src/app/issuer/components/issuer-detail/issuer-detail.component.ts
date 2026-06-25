@@ -49,6 +49,7 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 	issuer: Issuer;
 	issuerSlug: string;
 	badges: BadgeClass[] = [];
+	badgesLoading: boolean = true;
 	learningPaths: ApiLearningPath[];
 
 	profileEmails: UserProfileEmail[] = [];
@@ -127,8 +128,10 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 				this.badges = (badgesByIssuer[this.issuer.issuerUrl] || []).sort((a, b) =>
 					cmp(b.createdAt, a.createdAt),
 				);
+				this.badgesLoading = false;
 			})
 			.catch((error) => {
+				this.badgesLoading = false;
 				this.messageService.reportAndThrowError(
 					`Failed to load badges for ${this.issuer ? this.issuer.name : this.issuerSlug}`,
 					error,
