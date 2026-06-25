@@ -8,6 +8,7 @@
 			<oeb-issuer-detail
 				(issuerDeleted)="delete($event)"
 				[badges]="badges || []"
+				[badgesLoading]="badgesLoading"
 				[issuer]="issuer"
 				[issuerPlaceholderSrc]="issuerImagePlaceHolderUrl"
 				[crumbs]="crumbs"

@@ -483,7 +483,15 @@
 	}
 
 	<ng-template #issuerBadgesTemplate>
-		<section class="oeb-section-sm" *ngIf="!badges?.length">
+		<section class="oeb-section-sm" *ngIf="badgesLoading || !badgeResultsReady">
+			<h2
+				class="tw-font-medium md:tw-text-[22px] md:tw-leading-[26.4px] tw-text-purple tw-text-[16px] tw-leading-[19.2px] oeb-break-words"
+			>
+				{{ 'Issuer.issuerLoadingBadges' | translate }}
+			</h2>
+		</section>
+
+		<section class="oeb-section-sm" *ngIf="!badgesLoading && badgeResultsReady && !badges?.length">
 			<h2
 				class="tw-font-medium md:tw-text-[22px] md:tw-leading-[26.4px] tw-text-purple tw-text-[16px] tw-leading-[19.2px] oeb-break-words"
 			>
@@ -491,7 +499,10 @@
 			</h2>
 		</section>
 
-		<section class="oeb-section-sm tw-relative oeb-break-words" *ngIf="badges?.length">
+		<section
+			class="oeb-section-sm tw-relative oeb-break-words"
+			*ngIf="!badgesLoading && badgeResultsReady && badges?.length"
+		>
 			<h2
 				class="tw-font-medium md:tw-text-[22px] md:tw-leading-[26.4px] tw-text-purple tw-text-[16px] tw-leading-[19.2px] tw-py-4"
 			>
@@ -580,12 +591,6 @@
 							(qrCodeAward)="routeToQRCodeAward($event, issuer)"
 							(redirectToBadgeDetail)="routeToBadgeDetail($event.badge, issuer, $event.focusRequests)"
 						></badges-datatable>
-					</div>
-				}
-
-				@if (networkGroupsArray.length === 0) {
-					<div class="tw-px-2 tw-py-8 tw-text-center tw-text-gray-500">
-						{{ 'Issuer.noSharedNetworkBadges' | translate }}
 					</div>
 				}
 			</div>
