@@ -12,10 +12,17 @@ on:
                     - staging
                     - develop
 
+permissions:
+    pages: write
+    id-token: write
+
 jobs:
     e2e:
         name: 🧪 Playwright E2E Tests
         runs-on: ubuntu-latest
+        environment:
+            name: github-pages
+            url: ${{ steps.deploy.outputs.page_url }}
         env:
             STAGING_TEST_EMAIL: ${{ secrets.STAGING_TEST_EMAIL }}
             STAGING_TEST_PASSWORD: ${{ secrets.STAGING_TEST_PASSWORD }}
@@ -57,11 +64,23 @@ jobs:
                       playwright-report/
                   retention-days: 30
 
+            - name: 📄 Upload report to GitHub Pages
+              uses: actions/upload-pages-artifact@v3
+              if: always()
+              with:
+                  path: playwright-report/
+
+            - name: 🚀 Deploy report to GitHub Pages
+              id: deploy
+              if: always()
+              uses: actions/deploy-pages@v4
+
             - name: 📋 Generate Slack payload
               if: always()
               env:
                   ENVIRONMENT: ${{ inputs.environment }}
                   RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+                  REPORT_URL: ${{ steps.deploy.outputs.page_url }}
               run: node e2e/generate-slack-payload.js 2>/dev/null || echo '{"text":"⚠️ Could not parse test results."}' > slack-payload.json
 
             - name: 💬 Notify Slack
