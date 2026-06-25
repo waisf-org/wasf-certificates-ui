@@ -3,6 +3,7 @@ const fs = require('fs');
 const results = JSON.parse(fs.readFileSync('./test-results/results.json', 'utf8'));
 const environment = process.env.ENVIRONMENT || 'unknown';
 const runUrl = process.env.RUN_URL || '';
+const reportUrl = process.env.REPORT_URL || '';
 
 const fileLabels = {
 	'badge-participation.spec.ts': 'Participation badges',
@@ -35,6 +36,10 @@ for (const suite of results.suites) {
 	lines.push('');
 }
 
-lines.push(`<${runUrl}|View run & download report>`);
+if (reportUrl) {
+	lines.push(`<${runUrl}|View run> · <${reportUrl}|View report>`);
+} else {
+	lines.push(`<${runUrl}|View run & download report>`);
+}
 
 fs.writeFileSync('slack-payload.json', JSON.stringify({ text: lines.join('\n') }));
