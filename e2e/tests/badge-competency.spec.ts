@@ -37,6 +37,7 @@ test('creates a competency badge and issues it with a PDF template', async ({ pa
 	await page.locator('input[type="email"]').fill('pdf-test-recipient@example.com');
 	await page.locator('#issue-badge-btn').click();
 
-	await page.waitForURL(/\/badges\/[^/?#]+/, { timeout: 30_000 });
-	await expect(page.getByTestId('badge-title')).toBeVisible();
+	// After issuing, the app shows a success dialog (which stays open over the
+	// navigated-to detail page). Assert on the dialog rather than badge-title.
+	await expect(page.locator('oeb-success-dialog')).toBeVisible({ timeout: 30_000 });
 });

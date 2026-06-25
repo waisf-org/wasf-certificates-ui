@@ -192,6 +192,7 @@
 		"issuerHasNoBadgesYet": "has no badges yet.",
 		"issuerHasNoLearningPathYet": "has no learning paths yet.",
 		"issuerHasBadges": "has",
+		"issuerLoadingBadges": "Loading badges...",
 		"myInstitutionsText": "Through your institutions, you can <span class='tw-font-medium'>create badges and then award them to your learners</span>.",
 		"myLearningPathText": "Learning paths are created as part of the Micro Degree badge type.",
 		"myInstitutionsCreateLearningPath": "Create learning path",
