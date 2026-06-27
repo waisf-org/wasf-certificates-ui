@@ -51,18 +51,20 @@ jobs:
             - name: 🎭 Install Playwright browsers
               run: npx playwright install chromium --with-deps
 
+            - name: ⏱ Record start time
+              id: start
+              run: echo "time=$(date +%s)" >> $GITHUB_OUTPUT
+
             - name: 🧪 Run E2E tests
               run: npx playwright test
 
-            - name: 📹 Upload test videos and report
+            - name: 📹 Upload raw results on failure
               uses: actions/upload-artifact@v4
-              if: always()
+              if: failure()
               with:
                   name: playwright-results
-                  path: |
-                      test-results/
-                      playwright-report/
-                  retention-days: 30
+                  path: test-results/
+                  retention-days: 7
 
             - name: 📄 Upload report to GitHub Pages
               uses: actions/upload-pages-artifact@v3
@@ -81,6 +83,7 @@ jobs:
                   ENVIRONMENT: ${{ inputs.environment }}
                   RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
                   REPORT_URL: ${{ steps.deploy.outputs.page_url }}
+                  START_TIME: ${{ steps.start.outputs.time }}
               run: node e2e/generate-slack-payload.js 2>/dev/null || echo '{"text":"⚠️ Could not parse test results."}' > slack-payload.json
 
             - name: 💬 Notify Slack

@@ -13,8 +13,8 @@ export const urls = {
 	badgeQr: (slug: string) => `/issuer/issuers/${ISSUER_SLUG()}/badges/${slug}/qr`,
 };
 
-export function uniqueName(type: string): string {
-	return `E2E ${type} ${Date.now()}`;
+export function uniqueName(baseName: string): string {
+	return `${baseName} [E2E-${Date.now()}]`;
 }
 
 export async function selectIconFromLibrary(page: Page, imagePath?: string): Promise<void> {
@@ -61,13 +61,32 @@ export async function advanceToSubmit(page: Page): Promise<void> {
 	await page.getByTestId('submit-badge-btn').locator('button').click();
 }
 
-export async function createBadge(page: Page, type: 'participation' | 'competency', name: string): Promise<string> {
+export async function createBadge(
+	page: Page,
+	type: 'participation' | 'competency',
+	name: string,
+	lang?: 'de' | 'en',
+): Promise<string> {
 	await page.goto(urls.badgeCreate(type));
 
 	// Step 1 — details
 	const form = page.locator('badgeclass-edit-form');
 	await form.locator('input[type="text"]').first().fill(name);
 	await form.locator('#badgeclass_description_input textarea').fill('Automated E2E test badge');
+
+	if (lang) {
+		// The language oeb-select label is "SPRACHE DES BADGES" (DE) or "LANGUAGE OF THIS BADGE" (EN)
+		const langSelect = form.locator('oeb-select').filter({ hasText: /sprache|language of this/i });
+		await langSelect.locator('hlm-select-trigger').click();
+		const optionText = lang === 'de' ? /deutsch|german/i : /englisch|english/i;
+		await page
+			.locator('hlm-option')
+			.filter({ hasText: optionText })
+			.first()
+			.waitFor({ state: 'visible', timeout: 5_000 });
+		await page.locator('hlm-option').filter({ hasText: optionText }).first().click();
+	}
+
 	await selectIconFromLibrary(page);
 	await clickNext(page);
 
