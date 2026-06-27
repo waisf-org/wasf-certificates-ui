@@ -3,11 +3,12 @@ import { urls, uniqueName, createBadge, selectIconFromLibrary, advanceToSubmit }
 import path from 'path';
 
 test('edits badge name, image, duration and tags', async ({ page }) => {
-	const badgeSlug = await createBadge(page, 'participation', uniqueName('Edit'));
+	const badgeSlug = await createBadge(page, 'participation', uniqueName('Erste Hilfe Kurs'));
+	test.info().annotations.push({ type: 'badge-url', description: page.url() });
 
 	await page.goto(urls.badgeEdit(badgeSlug));
 
-	const editedName = uniqueName('Edited');
+	const editedName = uniqueName('Erste Hilfe Kurs Fortgeschritten');
 
 	// Step 1: duration and image first — image upload has async callbacks that
 	// can overwrite the name input via form resets, so fill name last

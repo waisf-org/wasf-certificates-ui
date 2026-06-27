@@ -5,7 +5,7 @@ test('creates a learning path badge', async ({ page }) => {
 	await page.goto(urls.learningPathCreate());
 
 	const form = page.locator('learningpath-edit-form');
-	await form.locator('input[type="text"]').first().fill(uniqueName('LearningPath'));
+	await form.locator('input[type="text"]').first().fill(uniqueName('Lernpfad Web-Entwicklung'));
 	await form.locator('textarea').first().fill('Automated E2E test learning path');
 	await selectIconFromLibrary(page);
 
@@ -35,5 +35,6 @@ test('creates a learning path badge', async ({ page }) => {
 	await lpSubmit.click();
 
 	await page.waitForURL(/\/learningpaths\/[^/?#]+/, { timeout: 30_000 });
+	test.info().annotations.push({ type: 'badge-url', description: page.url() });
 	await expect(page.getByTestId('lp-title')).toBeVisible();
 });

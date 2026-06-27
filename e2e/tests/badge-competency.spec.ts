@@ -3,7 +3,8 @@ import { urls, uniqueName, createBadge } from '../helpers/badge';
 import path from 'path';
 
 test('creates a competency badge and issues it via bulk CSV', async ({ page }) => {
-	const badgeSlug = await createBadge(page, 'competency', uniqueName('Competency-Bulk'));
+	const badgeSlug = await createBadge(page, 'competency', uniqueName('Digitale Kompetenzen'), 'de');
+	test.info().annotations.push({ type: 'badge-url', description: page.url() });
 
 	await page.goto(urls.badgeBulk(badgeSlug));
 
@@ -22,7 +23,8 @@ test('creates a competency badge and issues it via bulk CSV', async ({ page }) =
 });
 
 test('creates a competency badge and issues it with a PDF template', async ({ page }) => {
-	const badgeSlug = await createBadge(page, 'competency', uniqueName('Competency-PDF'));
+	const badgeSlug = await createBadge(page, 'competency', uniqueName('Python Grundkurs'));
+	test.info().annotations.push({ type: 'badge-url', description: page.url() });
 
 	await page.goto(urls.badgeIssue(badgeSlug));
 
