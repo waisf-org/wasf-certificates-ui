@@ -2,7 +2,8 @@ import { test, expect } from '@playwright/test';
 import { urls, uniqueName, createBadge } from '../helpers/badge';
 
 test('creates a participation badge and issues it by email', async ({ page }) => {
-	const badgeSlug = await createBadge(page, 'participation', uniqueName('Participation-Email'));
+	const badgeSlug = await createBadge(page, 'participation', uniqueName('Projektmanagement Grundlagen'), 'de');
+	test.info().annotations.push({ type: 'badge-url', description: page.url() });
 
 	await page.goto(urls.badgeIssue(badgeSlug));
 	await page.locator('oeb-input').first().locator('input').fill('Test Recipient');
@@ -13,7 +14,8 @@ test('creates a participation badge and issues it by email', async ({ page }) =>
 });
 
 test('creates a participation badge and generates a QR code award', async ({ page }) => {
-	const badgeSlug = await createBadge(page, 'participation', uniqueName('Participation-QR'));
+	const badgeSlug = await createBadge(page, 'participation', uniqueName('Teamarbeit Workshop'));
+	test.info().annotations.push({ type: 'badge-url', description: page.url() });
 
 	await page.goto(urls.badgeQr(badgeSlug));
 	await page.locator('oeb-input').nth(0).locator('input').fill('E2E QR Code Test');
