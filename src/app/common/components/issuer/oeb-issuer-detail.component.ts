@@ -133,6 +133,8 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 	@Input() issuerPlaceholderSrc: string;
 	@Input() issuerActionsMenu: any;
 	@Input() badges: BadgeClass[] | PublicApiBadgeClass[];
+	@Input() badgesLoading: boolean = false;
+	badgeResultsReady: boolean = false;
 	@Input() pdfTemplates: ApiPDFTemplate[];
 	@Input() networks: PublicApiIssuer[];
 	@Input() partner_issuers: PublicApiIssuer[];
@@ -460,7 +462,9 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 
 	ngOnChanges(changes: SimpleChanges) {
 		if (changes['badges'] && !changes['badges'].firstChange) {
+			this.badgeResultsReady = false;
 			this.updateResults().then(() => {
+				this.badgeResultsReady = true;
 				if (this.badgeTemplateTabs) {
 					this.badgeTemplateTabs[0].count = this.badgeResults.length;
 				}
@@ -498,6 +502,7 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 			await this.getPublicLearningPaths(this.issuer.slug);
 		}
 		await this.updateResults();
+		this.badgeResultsReady = true;
 		// must run before updateNetworkResults to populate sharedBadgeSlugs
 		await this.updateSharedNetworkResults();
 		await this.updateNetworkResults();
