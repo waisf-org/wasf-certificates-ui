@@ -1,32 +1,24 @@
 import { test, expect } from '@playwright/test';
-import { urls, uniqueName, createBadge, advanceToSubmit, selectIconFromLibrary } from '../helpers/badge';
+import { urls, uniqueName, createBadge, advanceToSubmit } from '../helpers/badge';
 
 test('copies a competency badge and saves it with a new name', async ({ page }) => {
 	const sourceName = uniqueName('Datenschutz Grundlagen');
 	await createBadge(page, 'competency', sourceName, 'de');
 	test.info().annotations.push({ type: 'badge-url', description: page.url() });
 
-	// Open the overflow menu (the trigger is a single button inside oeb-dropdown.overflow-menu)
-	const menuTrigger = page.locator('oeb-dropdown.overflow-menu').locator('button').first();
-	await menuTrigger.waitFor({ state: 'visible', timeout: 10_000 });
-	await menuTrigger.click();
+	// Open the overflow menu on the badge detail page
+	await page.locator('.overflow-menu button').first().click();
 
-	// Click the copy menu item — portal-rendered, text "Kopieren (diese Institution)" (DE) or similar
-	const copyItem = page.getByRole('menuitem').filter({ hasText: /kopieren|copy/i }).first();
+	// Click the copy menu item — text is "Kopieren (diese Institution)" (DE) or "Copy (this institution)" (EN)
+	const copyItem = page
+		.locator('[hlmmenuitem]')
+		.filter({ hasText: /kopieren|copy/i })
+		.first();
 	await copyItem.waitFor({ state: 'visible', timeout: 5_000 });
 	await copyItem.click();
 
-	// If the account has multiple issuers, an issuer-selection dialog opens first.
-	// Select the first radio (current issuer) and confirm.
-	const issuerDialog = page.locator('[role="dialog"]');
-	const dialogVisible = await issuerDialog.isVisible({ timeout: 3_000 }).catch(() => false);
-	if (dialogVisible) {
-		await issuerDialog.locator('input[type="radio"]').first().click();
-		await issuerDialog.locator('oeb-button').locator('button').click();
-	}
-
-	// copyBadge() navigates to /badges/create (no type suffix — type comes from copybadgeid state)
-	await page.waitForURL(/\/badges\/create/, { timeout: 15_000 });
+	// The create form opens pre-filled with the source badge's data
+	await page.waitForURL(/\/badges\/create\/competency/, { timeout: 15_000 });
 	const form = page.locator('badgeclass-edit-form');
 	await form.waitFor({ state: 'visible', timeout: 10_000 });
 
@@ -38,9 +30,6 @@ test('copies a competency badge and saves it with a new name', async ({ page }) 
 	await nameInput.fill(copyName);
 	await expect(nameInput).toHaveValue(copyName);
 
-	// Upload the test image — same as createBadge does — so imageValidation() passes
-	// and the CDK linear stepper allows advancing past the details step.
-	await selectIconFromLibrary(page);
 	await advanceToSubmit(page);
 	await page.waitForURL(/\/badges\/[^/?#]+$/, { timeout: 30_000 });
 	test.info().annotations.push({ type: 'badge-url', description: page.url() });
