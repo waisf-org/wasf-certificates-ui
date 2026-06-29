@@ -47,10 +47,6 @@ export class UserProfileApiService extends BaseHttpApiService {
 		}
 	}
 
-	invalidateProfileCache() {
-		this._profilePromise = null;
-	}
-
 	updatePassword(newPassword: string, currentPassword: string) {
 		return this.put<ApiUserProfile>('/v1/user/profile', {
 			password: newPassword,
@@ -74,10 +70,6 @@ export class UserProfileApiService extends BaseHttpApiService {
 			this._emailsPromise = this.get<ApiUserProfileEmail[]>('/v1/user/emails').then((r) => r.body);
 		}
 		return this._emailsPromise;
-	}
-
-	invalidateEmailsCache() {
-		this._emailsPromise = null;
 	}
 
 	fetchSocialAccounts() {

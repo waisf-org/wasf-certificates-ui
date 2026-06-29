@@ -323,7 +323,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 								pt.image,
 								1,
 								'previewCanvas',
-								this.badgeClass.image,
+								this.previewB64Img || this.badgeClass.image,
 								false,
 							);
 						} else {
