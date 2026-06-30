@@ -130,9 +130,9 @@ export class BadgeClassEditFormComponent
 	protected pdfTemplateManager = inject(PDFTemplateManager);
 
 	baseUrl: string;
-	pdfTemplatesPromise: Promise<unknown>;
+	pdfTemplatesPromise: Promise<void>;
 	pdfTemplates: ApiPDFTemplate[] = [];
-	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
+	selectPDFTemplateOptions: Array<{ label: string; value: string | null }> = [];
 	badgeCategory: string;
 
 	aiCompetenciesLoading = false;
@@ -1037,7 +1037,7 @@ export class BadgeClassEditFormComponent
 			.then((pdfTemplates) => {
 				this.pdfTemplates = pdfTemplates.sort((a, b) => a.name.localeCompare(b.name));
 				this.selectPDFTemplateOptions = [
-					{ label: 'OEB Standard', value: null },
+					{ label: this.translate.instant('PDFTemplate.oebDesign'), value: null },
 					...this.pdfTemplates.map((t) => ({ label: t.name, value: t.slug })),
 				];
 				// Defer so Angular's render cycle creates the oeb-select before writeValue fires.

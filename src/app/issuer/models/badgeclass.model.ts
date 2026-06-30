@@ -186,10 +186,10 @@ export class BadgeClass extends ManagedEntity<ApiBadgeClass, BadgeClassRef> {
 	}
 
 	get pdfTemplate(): string | null {
-		return (this.apiModel as any).pdf_template ?? null;
+		return this.apiModel.pdf_template ?? null;
 	}
 	set pdfTemplate(value: string | null) {
-		(this.apiModel as any).pdf_template = value;
+		this.apiModel.pdf_template = value;
 	}
 
 	canCopy(key: BadgeClassCopyPermissions) {

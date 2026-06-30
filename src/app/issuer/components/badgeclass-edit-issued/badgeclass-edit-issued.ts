@@ -22,7 +22,7 @@ import { HlmH1, HlmH2 } from '@spartan-ng/helm/typography';
 import { HlmP } from '@spartan-ng/helm/typography';
 import { PositiveIntegerOrNullValidator } from '~/common/validators/positive-integer-or-null.validator';
 import { OebInputComponent } from '~/components/input.component';
-import { OebSelectComponent, FormFieldSelectOption } from '~/components/select.component';
+import { OebSelectComponent } from '~/components/select.component';
 import { getDurationOptions, expirationToDays, ExpirationUnit } from '~/common/util/expiration-util';
 import { UrlValidator } from '~/common/validators/url.validator';
 import { PDFTemplateManager } from '../../services/pdftemplate-manager.service';
@@ -67,9 +67,9 @@ export class BadgeClassEditIssuedComponent extends BaseAuthenticatedRoutableComp
 	breadcrumbLinkEntries: LinkEntry[] = [];
 
 	durationOptions = null;
-	pdfTemplatesPromise: Promise<unknown>;
+	pdfTemplatesPromise: Promise<void>;
 	pdfTemplates: ApiPDFTemplate[] = [];
-	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
+	selectPDFTemplateOptions: Array<{ label: string; value: string | null }> = [];
 
 	@ViewChild('formElem')
 	formElem: ElementRef<HTMLFormElement>;
@@ -143,7 +143,7 @@ export class BadgeClassEditIssuedComponent extends BaseAuthenticatedRoutableComp
 			.then(async (pdfTemplates) => {
 				this.pdfTemplates = pdfTemplates.sort((a, b) => a.name.localeCompare(b.name));
 				this.selectPDFTemplateOptions = [
-					{ label: 'OEB Standard', value: null },
+					{ label: this.translate.instant('PDFTemplate.oebDesign'), value: null },
 					...this.pdfTemplates.map((t) => ({ label: t.name, value: t.slug })),
 				];
 				// Ensure badge class has loaded so the form value is set before we re-trigger writeValue.
