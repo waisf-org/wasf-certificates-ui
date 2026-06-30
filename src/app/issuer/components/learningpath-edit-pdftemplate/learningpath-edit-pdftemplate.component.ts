@@ -54,9 +54,9 @@ export class LearningPathEditPDFTemplateComponent extends BaseAuthenticatedRouta
 	learningPath: LearningPath;
 	learningPathLoaded: Promise<unknown>;
 	breadcrumbLinkEntries: LinkEntry[] = [];
-	pdfTemplatesPromise: Promise<unknown>;
+	pdfTemplatesPromise: Promise<void>;
 	pdfTemplates: ApiPDFTemplate[];
-	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
+	selectPDFTemplateOptions: Array<{ label: string; value: string | null }> = [];
 
 	@ViewChild('formElem')
 	formElem: ElementRef<HTMLFormElement>;
@@ -163,13 +163,10 @@ export class LearningPathEditPDFTemplateComponent extends BaseAuthenticatedRouta
 	}
 
 	getPDFTemplatesForIssuerApi(issuerSlug) {
-		this.pdfTemplatesPromise = this.pdfTemplateManager
-			.getPDFTemplatesForIssuer(issuerSlug)
-			.then(
-				(pdfTemplates) =>
-					(this.pdfTemplates = pdfTemplates.sort(
-						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-					)),
+		this.pdfTemplatesPromise = this.pdfTemplateManager.getPDFTemplatesForIssuer(issuerSlug).then((pdfTemplates) => {
+			this.pdfTemplates = pdfTemplates.sort(
+				(a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime(),
 			);
+		});
 	}
 }
