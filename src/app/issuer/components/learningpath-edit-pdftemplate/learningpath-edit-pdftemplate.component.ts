@@ -18,7 +18,7 @@ import { BgAwaitPromises } from '../../../common/directives/bg-await-promises';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { OebSelectComponent } from '../../../components/select.component';
 import { HlmH1, HlmH2 } from '@spartan-ng/helm/typography';
-import { FormFieldSelectOption } from '~/common/components/formfield-select';
+
 import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
 import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 
