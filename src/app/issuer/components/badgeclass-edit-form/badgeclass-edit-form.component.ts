@@ -23,6 +23,7 @@ import {
 	ReactiveFormsModule,
 } from '@angular/forms';
 import { Md5 } from 'ts-md5';
+import { RouterLink } from '@angular/router';
 import { BaseAuthenticatedRoutableComponent } from '../../../common/pages/base-authenticated-routable.component';
 import { MessageService } from '../../../common/services/message.service';
 import {
@@ -71,6 +72,8 @@ import { LanguageService, lngs } from '~/common/services/language.service';
 import { QuotaInformationComponent } from '../quota-information/quota-information.component';
 import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
 import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
+import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
+import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 
 const MAX_STUDYLOAD_HRS: number = 10_000;
 const MAX_HRS_PER_COMPETENCY: number = 999;
@@ -107,6 +110,7 @@ const MAX_HRS_PER_COMPETENCY: number = 999;
 		UpperCasePipe,
 		QuotaInformationComponent,
 		QuotaExceededDialog,
+		RouterLink,
 	],
 })
 export class BadgeClassEditFormComponent
@@ -123,8 +127,12 @@ export class BadgeClassEditFormComponent
 	protected catalogService = inject(CatalogService);
 	private languageService = inject(LanguageService);
 	private readonly _hlmDialogService = inject(HlmDialogService);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
 
 	baseUrl: string;
+	pdfTemplatesPromise: Promise<void>;
+	pdfTemplates: ApiPDFTemplate[] = [];
+	selectPDFTemplateOptions: Array<{ label: string; value: string | null }> = [];
 	badgeCategory: string;
 
 	aiCompetenciesLoading = false;
@@ -197,6 +205,12 @@ export class BadgeClassEditFormComponent
 			this.existingBadgeClass = badgeClass;
 			this.existing = true;
 			this.initFormFromExisting(this.existingBadgeClass);
+			// If templates already loaded, re-trigger writeValue so the select shows the saved template.
+			// This handles the race where loadPDFTemplates() resolved before this @Input arrived.
+			if (this.selectPDFTemplateOptions.length > 0) {
+				const ctrl = this.badgeClassForm.rawControl.controls['pdf_template'];
+				setTimeout(() => ctrl.setValue(badgeClass.pdfTemplate ?? null, { emitEvent: false }), 0);
+			}
 		}
 	}
 
@@ -441,7 +455,8 @@ export class BadgeClassEditFormComponent
 		.addControl('expiration_unit', 'days', Validators.required)
 		.addArray('criteria', this.criteriaForm)
 
-		.addControl('copy_permissions_allow_others', false);
+		.addControl('copy_permissions_allow_others', false)
+		.addControl('pdf_template', null);
 
 	@ViewChild('badgeStudio')
 	badgeStudio: BadgeStudioComponent;
@@ -637,6 +652,7 @@ export class BadgeClassEditFormComponent
 				translationKey: null,
 			})),
 			copy_permissions_allow_others: this.existing ? badgeClass.canCopy('others') : false,
+			pdf_template: badgeClass.pdfTemplate ?? null,
 		});
 
 		// Keep the badge category in sync directly from the source badge. The `category`
@@ -688,6 +704,7 @@ export class BadgeClassEditFormComponent
 	ngOnInit() {
 		super.ngOnInit();
 		this.fetchTags();
+		this.loadPDFTemplates();
 
 		this.durationOptions = getDurationOptions(this.translate);
 
@@ -1012,6 +1029,24 @@ export class BadgeClassEditFormComponent
 				this.existingTagsLoading = false;
 			},
 		);
+	}
+
+	loadPDFTemplates() {
+		this.pdfTemplatesPromise = this.pdfTemplateManager
+			.getPDFTemplatesForIssuer(this.issuer.slug)
+			.then((pdfTemplates) => {
+				this.pdfTemplates = pdfTemplates.sort((a, b) => a.name.localeCompare(b.name));
+				this.selectPDFTemplateOptions = [
+					{ label: this.translate.instant('PDFTemplate.oebDesign'), value: null },
+					...this.pdfTemplates.map((t) => ({ label: t.name, value: t.slug })),
+				];
+				// Defer so Angular's render cycle creates the oeb-select before writeValue fires.
+				// Use existingBadgeClass.pdfTemplate as source of truth (handles race where badge class
+				// @Input hasn't arrived yet; the @Input setter re-triggers setValue if it arrives later).
+				const ctrl = this.badgeClassForm.rawControl.controls['pdf_template'];
+				const savedValue = this.existingBadgeClass?.pdfTemplate ?? ctrl.value;
+				setTimeout(() => ctrl.setValue(savedValue ?? null, { emitEvent: false }), 0);
+			});
 	}
 
 	addTag() {
@@ -1521,6 +1556,7 @@ export class BadgeClassEditFormComponent
 					};
 				}
 				this.existingBadgeClass.copyPermissions = copy_permissions;
+				this.existingBadgeClass.pdfTemplate = formState.pdf_template ?? null;
 
 				this.savePromise = this.existingBadgeClass.save();
 			} else {
@@ -1572,6 +1608,7 @@ export class BadgeClassEditFormComponent
 						),
 					},
 					copy_permissions: copy_permissions,
+					pdf_template: formState.pdf_template ?? null,
 				} as ApiBadgeClassForCreation;
 				if (this.currentImage) {
 					badgeClassData.extensions = {
