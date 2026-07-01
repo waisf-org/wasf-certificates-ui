@@ -22,7 +22,7 @@ import { HlmH1, HlmH2 } from '@spartan-ng/helm/typography';
 import { HlmP } from '@spartan-ng/helm/typography';
 import { PositiveIntegerOrNullValidator } from '~/common/validators/positive-integer-or-null.validator';
 import { OebInputComponent } from '~/components/input.component';
-import { OebSelectComponent, FormFieldSelectOption } from '~/components/select.component';
+import { OebSelectComponent } from '~/components/select.component';
 import { getDurationOptions, expirationToDays, ExpirationUnit } from '~/common/util/expiration-util';
 import { UrlValidator } from '~/common/validators/url.validator';
 import { PDFTemplateManager } from '../../services/pdftemplate-manager.service';
