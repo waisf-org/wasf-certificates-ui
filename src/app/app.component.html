@@ -334,13 +334,6 @@
 	>
 		<div class="tw-flex tw-flex-col tw-gap-2 tw-text-[18px] tw-leading-[23.4px] tw-text-oebblack">
 			<div class="tw-flex tw-gap-4 tw-items-center tw-mt-[10px]">
-				<img
-					src="assets/oeb/images/badgy.svg"
-					class="md:tw-w-[100px] tw-w-[64px]"
-					width="100"
-					height="100"
-					alt="An image of badgy, a fictional hexagonal-shaped character resembling a badge"
-				/>
 				<p [innerHTML]="'Issuer.betaPhase' | translate"></p>
 			</div>
 			<div class="tw-flex md:tw-hidden tw-flex-col tw-text-sm md:tw-text-base tw-text-oebblack">
@@ -365,12 +358,6 @@
 
 		<div class="tw-flex tw-flex-col tw-align-stretch tw-min-w-full sm:tw-min-w-[24rem]">
 			<oeb-button
-				[routerLink]="['/public/about/newsletter']"
-				[text]="'Newsletter.signup' | translate"
-				width="full_width"
-			></oeb-button>
-			<oeb-button
-				class="tw-mt-2"
 				variant="secondary"
 				(click)="openLinkedIn()"
 				[text]="'Start.followLinkedIn' | translate"

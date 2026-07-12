@@ -10,13 +10,20 @@ export const environment: BadgrEnvironment = {
 	networksEnabled: true,
 	enableErrorInterceptor: true,
 	config: {
+		api: {
+			baseUrl: 'http://localhost:8000',
+		},
 		theme: {
-			welcomeMessage: 'Willkommen auf Open Educational Badges',
-			serviceName: 'Open Educational Badges',
-			showPoweredByBadgr: true,
+			// WASF branding. Colors/logo kept at their existing defaults for now
+			// (no final brand guideline given yet) — this block is the single
+			// place to update once one exists; nothing else needs touching.
+			welcomeMessage: 'Welcome to the World AI Sports Federation certificate system',
+			serviceName: 'World AI Sports Federation',
+			showPoweredByBadgr: false,
+			hideMarketingOptIn: true,
 			logoImg: {
-				small: 'assets/logos/Logo-Oeb.png',
-				desktop: 'assets/logos/Logo-Oeb.png',
+				small: 'assets/logos/Logo-Wasf-Placeholder.svg',
+				desktop: 'assets/logos/Logo-Wasf-Placeholder.svg',
 			},
 			loadingImg: {
 				imageUrl:

@@ -10,7 +10,7 @@
 
 					<div class="tw-relative tw-z-20">
 						<!-- Title Message -->
-						<oeb-header-text [text1]="'Signup.createAccountFor'" [text2]="'Open Educational Badges'" />
+						<oeb-header-text [text1]="'Signup.createAccountFor'" [text2]="theme.serviceName || 'Open Educational Badges'" />
 
 						@if (!oAuthManager.currentAuthorization) {
 							<p hlmP class="tw-font-normal tw-mt-3 tw-mb-5 md:tw-mt-4 md:tw-mb-6">
@@ -145,18 +145,21 @@
 								>
 								</oeb-checkbox>
 							</div>
-							<div class="tw-mt-6 md:tw-mt-7">
-								<oeb-checkbox
-									id="marketingOptIn"
-									name="marketingOptIn"
-									type="checkbox"
-									[text]="'Signup.updatesOptInText' | translate"
-									[control]="signupForm.rawControlMap.marketingOptIn"
-								>
-								</oeb-checkbox>
-							</div>
+							@if (showMarketingOptIn) {
+								<div class="tw-mt-6 md:tw-mt-7">
+									<oeb-checkbox
+										id="marketingOptIn"
+										name="marketingOptIn"
+										type="checkbox"
+										[text]="'Signup.updatesOptInText' | translate"
+										[control]="signupForm.rawControlMap.marketingOptIn"
+									>
+									</oeb-checkbox>
+								</div>
+							}
 						</fieldset>
 
+						@if (showMarketingOptIn) {
 						<div class="sib-form" style="text-align: center">
 							<div id="sib-form-container" class="sib-form-container">
 								<div
@@ -524,6 +527,7 @@
 								</div>
 							</div>
 						</div>
+						}
 
 						<p
 							hlmP
@@ -567,20 +571,6 @@
 						</div>
 					</form>
 
-					<div class="tw-w-full tw-flex tw-justify-end tw-mt-16 oeb-max-form-width">
-						<oeb-button
-							variant="meinBildungsraum"
-							[disabled]="true"
-							text="{{ 'Signup.registerWithBildungsraum' | translate }}"
-							[img]="'assets/logos/mein-bildungsraum.svg'"
-						>
-							<img
-								style="width: 28px; height: 26.75px"
-								src="assets/logos/mein-bildungsraum.svg"
-								alt="Mein Bildungsraum Logo"
-							/>
-						</oeb-button>
-					</div>
 				</div>
 			}
 		</div>
