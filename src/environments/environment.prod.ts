@@ -27,14 +27,10 @@ export const environment: BadgrEnvironment = {
 				},
 			],
 			useColorNavbar: true,
-			// TODO before launch: these still point at page slugs from the
-			// upstream German fork (Impressum/Nutzungsbedingungen) — WASF
-			// doesn't have real Privacy Policy / Terms of Service pages yet.
-			// Point these at real published wasf-website pages (or this UI's
-			// own page/<slug> routes) once that legal content exists.
-			imprintLink: 'page/impressum',
-			termsOfServiceLink: 'page/nutzungsbedingungen',
-			privacyPolicyLink: 'page/privacy-policy',
+			// Real WASF pages (bilingual EN/ZH), published on the main site.
+			imprintLink: 'https://waisf.org/about/',
+			termsOfServiceLink: 'https://waisf.org/terms/',
+			privacyPolicyLink: 'https://waisf.org/privacy/',
 			showApiDocsLink: false,
 			cssCustomProps: {
 				'--color-interactive1': '#6b3ea5',

@@ -6,15 +6,20 @@ export const environment: BadgrEnvironment = {
 	enableErrorInterceptor: true,
 	config: {
 		api: {
-			baseUrl: 'https://api.staging.openbadges.education',
+			// No separate WASF staging API exists yet; pointed at the real prod
+			// domain (not the unrelated upstream Open Educational Badges API
+			// this fork originally shipped with) so a `staging` build never
+			// talks to a third party's live service. Replace once/if a real
+			// WASF staging deployment exists.
+			baseUrl: 'https://cert.waisf.org',
 		},
 		theme: {
-			welcomeMessage: 'Willkommen auf Open Educational Badges',
-			serviceName: 'Open Educational Badges',
-			showPoweredByBadgr: true,
+			welcomeMessage: 'Welcome to WASF Certificates',
+			serviceName: 'WASF Certificates',
+			showPoweredByBadgr: false,
 			logoImg: {
-				small: 'assets/logos/Logo-Oeb.png',
-				desktop: 'assets/logos/Logo-Oeb.png',
+				small: 'assets/logos/Logo-Wasf-Placeholder.svg',
+				desktop: 'assets/logos/Logo-Wasf-Placeholder.svg',
 			},
 			loadingImg: {
 				imageUrl:
@@ -27,15 +32,15 @@ export const environment: BadgrEnvironment = {
 				},
 			],
 			useColorNavbar: true,
-			imprintLink: 'page/impressum',
-			termsOfServiceLink: 'page/nutzungsbedingungen',
-			privacyPolicyLink: 'page/privacy-policy',
+			imprintLink: 'https://waisf.org/about/',
+			termsOfServiceLink: 'https://waisf.org/terms/',
+			privacyPolicyLink: 'https://waisf.org/privacy/',
 			showApiDocsLink: false,
 			cssCustomProps: {
-				'--color-interactive1': '#492E98',
-				'--color-interactive2': '#00729C',
-				'--color-interactive2alpha50': '#00729C80',
-				'--color-theme': '#00729C',
+				'--color-interactive1': '#6b3ea5',
+				'--color-interactive2': '#2f6ec8',
+				'--color-interactive2alpha50': '#2f6ec880',
+				'--color-theme': '#2f6ec8',
 			},
 		},
 	},

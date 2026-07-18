@@ -29,7 +29,7 @@ export function setupEmbeddedBadges() {
 		const includeVerifyButton = badge.getElementsByClassName('badgr-badge-verify').length > 0;
 
 		const els = badge.getElementsByTagName('script');
-		const staticPrefix = els.length > 0 ? els[0].getAttribute('src').replace(/[^/]+$/, '') : 'https://badgr.io/';
+		const staticPrefix = els.length > 0 ? els[0].getAttribute('src').replace(/[^/]+$/, '') : 'https://cert.waisf.org/';
 
 		const as = badge.getElementsByTagName('a');
 		if (as.length > 0) {
