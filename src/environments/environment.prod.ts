@@ -6,15 +6,15 @@ export const environment: BadgrEnvironment = {
 	enableErrorInterceptor: false,
 	config: {
 		api: {
-			baseUrl: 'https://api.openbadges.education',
+			baseUrl: 'https://cert.waisf.org',
 		},
 		theme: {
-			welcomeMessage: 'Willkommen auf Open Educational Badges',
-			serviceName: 'Open Educational Badges',
-			showPoweredByBadgr: true,
+			welcomeMessage: 'Welcome to WASF Certificates',
+			serviceName: 'WASF Certificates',
+			showPoweredByBadgr: false,
 			logoImg: {
-				small: 'assets/logos/Logo-Oeb.png',
-				desktop: 'assets/logos/Logo-Oeb.png',
+				small: 'assets/logos/Logo-Wasf-Placeholder.svg',
+				desktop: 'assets/logos/Logo-Wasf-Placeholder.svg',
 			},
 			loadingImg: {
 				imageUrl:
@@ -27,15 +27,20 @@ export const environment: BadgrEnvironment = {
 				},
 			],
 			useColorNavbar: true,
+			// TODO before launch: these still point at page slugs from the
+			// upstream German fork (Impressum/Nutzungsbedingungen) — WASF
+			// doesn't have real Privacy Policy / Terms of Service pages yet.
+			// Point these at real published wasf-website pages (or this UI's
+			// own page/<slug> routes) once that legal content exists.
 			imprintLink: 'page/impressum',
 			termsOfServiceLink: 'page/nutzungsbedingungen',
 			privacyPolicyLink: 'page/privacy-policy',
 			showApiDocsLink: false,
 			cssCustomProps: {
-				'--color-interactive1': '#492E98',
-				'--color-interactive2': '#00729C',
-				'--color-interactive2alpha50': '#00729C80',
-				'--color-theme': '#00729C',
+				'--color-interactive1': '#6b3ea5',
+				'--color-interactive2': '#2f6ec8',
+				'--color-interactive2alpha50': '#2f6ec880',
+				'--color-theme': '#2f6ec8',
 			},
 		},
 	},
