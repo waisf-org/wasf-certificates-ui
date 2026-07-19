@@ -6,7 +6,11 @@ export const environment: BadgrEnvironment = {
 	enableErrorInterceptor: false,
 	config: {
 		api: {
-			baseUrl: 'https://cert.waisf.org',
+			// Separate subdomain from the Angular UI's own cert.waisf.org —
+			// the Django backend and the SPA both want to own the exact same
+			// path (/public/assertions/:slug, API content-negotiation vs.
+			// client-side route), which can't cleanly coexist on one origin.
+			baseUrl: 'https://api.cert.waisf.org',
 		},
 		theme: {
 			welcomeMessage: 'Welcome to WASF Certificates',
