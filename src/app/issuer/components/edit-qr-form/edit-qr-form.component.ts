@@ -136,7 +136,7 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 				.badgeByIssuerSlugAndSlug(this.issuerSlug, this.badgeSlug)
 				.then((badgeClass) => {
 					this.badgeClass = badgeClass;
-					const category = badgeClass.extension['extensions:CategoryExtension'].Category;
+					const category = badgeClass.extension['extensions:CategoryExtension']?.Category;
 
 					this.badgeClassManager
 						.createBadgeImage(this.issuerSlug, badgeClass.slug, category, badgeClass.imageFrame)
@@ -163,7 +163,7 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 							this.badgeInstanceCourseUrl.set(this.badgeClass.courseUrl ?? null);
 							this.qrForm.controls.courseUrl.setValue(this.badgeInstanceCourseUrl());
 
-							const category = badgeClass.extension['extensions:CategoryExtension'].Category;
+							const category = badgeClass.extension['extensions:CategoryExtension']?.Category;
 
 							this.badgeClassManager
 								.createBadgeImage(this.issuerSlug, badgeClass.slug, category, badgeClass.imageFrame)

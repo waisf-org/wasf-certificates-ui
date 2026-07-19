@@ -238,7 +238,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 					this.badgeInstanceCourseUrl.set(this.badgeClass.courseUrl ?? null);
 					this.issueForm.controls.courseUrl.setValue(this.badgeInstanceCourseUrl());
 
-					const category = badgeClass.extension['extensions:CategoryExtension'].Category;
+					const category = badgeClass.extension['extensions:CategoryExtension']?.Category;
 
 					this.badgeClassManager
 						.createBadgeImage(issuer.slug, badgeClass.slug, category, badgeClass.imageFrame)

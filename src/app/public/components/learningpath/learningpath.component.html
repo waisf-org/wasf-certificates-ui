@@ -140,7 +140,7 @@
 											[badgeIssueDate]="badge.badge.created_at"
 											[public]="true"
 											[competencies]="badge.badge.extensions['extensions:CompetencyExtension']"
-											[category]="badge.badge.extensions['extensions:CategoryExtension'].Category"
+											[category]="badge.badge.extensions['extensions:CategoryExtension']?.Category"
 											[publicUrl]="'/public/badges/' + badge.badge.slug"
 											[completed]="completedBadgeIds.includes(badge.badge.slug)"
 										></bg-badgecard>
@@ -220,7 +220,7 @@
 						[badgeIssueDate]="badge.badge.created_at"
 						[public]="true"
 						[competencies]="badge.badge.extensions['extensions:CompetencyExtension']"
-						[category]="badge.badge.extensions['extensions:CategoryExtension'].Category"
+						[category]="badge.badge.extensions['extensions:CategoryExtension']?.Category"
 						[publicUrl]="'/public/badges/' + badge.badge.slug"
 						[completed]="completedBadgeIds.includes(badge.badge.slug)"
 					></bg-badgecard>
@@ -242,7 +242,7 @@
 						[badgeIssueDate]="badge.badge.created_at"
 						[public]="true"
 						[competencies]="badge.badge.extensions['extensions:CompetencyExtension']"
-						[category]="badge.badge.extensions['extensions:CategoryExtension'].Category"
+						[category]="badge.badge.extensions['extensions:CategoryExtension']?.Category"
 						[publicUrl]="'/public/badges/' + badge.badge.slug"
 					></bg-badgecard>
 				</div>
@@ -264,7 +264,7 @@
 						[public]="true"
 						[publicUrl]="'/public/badges/' + badge.slug"
 						[competencies]="badge.extensions['extensions:CompetencyExtension']"
-						[category]="badge.extensions['extensions:CategoryExtension'].Category"
+						[category]="badge.extensions['extensions:CategoryExtension']?.Category"
 						[completed]="completedBadgeIds.includes(badge.slug)"
 					></bg-badgecard>
 				</div>

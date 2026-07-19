@@ -106,7 +106,7 @@
 											badge.badge.apiModel.extensions['extensions:CompetencyExtension']
 										"
 										[category]="
-											badge.badge.apiModel.extensions['extensions:CategoryExtension'].Category
+											badge.badge.apiModel.extensions['extensions:CategoryExtension']?.Category
 										"
 										[showCheckbox]="true"
 									></bg-badgecard>
@@ -136,7 +136,7 @@
 											[publicUrl]="badge.url"
 											[competencies]="badge.apiModel.extensions['extensions:CompetencyExtension']"
 											[category]="
-												badge.apiModel.extensions['extensions:CategoryExtension'].Category
+												badge.apiModel.extensions['extensions:CategoryExtension']?.Category
 											"
 											[showCheckbox]="true"
 											(ngModelChange)="checkboxChange($event, badge)"

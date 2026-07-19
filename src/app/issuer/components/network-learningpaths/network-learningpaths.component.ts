@@ -34,7 +34,7 @@ export class NetworkLearningPathsComponent implements OnInit {
 
 	calculateStudyLoad(lp: ApiLearningPath): number {
 		const totalStudyLoad = lp.badges.reduce(
-			(acc, b) => acc + b.badge.extensions['extensions:StudyLoadExtension'].StudyLoad,
+			(acc, b) => acc + (b.badge.extensions['extensions:StudyLoadExtension']?.StudyLoad ?? 0),
 			0,
 		);
 		return totalStudyLoad;

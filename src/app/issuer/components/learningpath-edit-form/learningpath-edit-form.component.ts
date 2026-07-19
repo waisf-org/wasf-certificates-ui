@@ -466,7 +466,7 @@ export class LearningPathEditFormComponent
 		if (event) {
 			this.selectedBadges.push(badge);
 			this.learningPathForm.controls.badges.push(typedFormGroup().addControl('badge', badge));
-			this.studyLoad += badge.extension['extensions:StudyLoadExtension'].StudyLoad;
+			this.studyLoad += badge.extension['extensions:StudyLoadExtension']?.StudyLoad ?? 0;
 		} else {
 			this.selectedBadges.splice(
 				this.selectedBadges.findIndex((b) => b.slug == badge.slug),
@@ -475,7 +475,7 @@ export class LearningPathEditFormComponent
 			this.learningPathForm.controls.badges.removeAt(
 				this.learningPathForm.controls.badges.value.findIndex((badge) => badge.badge === badge),
 			);
-			this.studyLoad -= badge.extension['extensions:StudyLoadExtension'].StudyLoad;
+			this.studyLoad -= badge.extension['extensions:StudyLoadExtension']?.StudyLoad ?? 0;
 		}
 		this.draggableList = this.selectedBadges.map((badge, index) => {
 			return {

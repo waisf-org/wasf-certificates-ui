@@ -233,12 +233,12 @@ export class PublicLearningPathComponent implements OnInit, AfterContentInit {
 			}
 			this.progressPercentage = response.progress;
 			this.minutesTotal = response.badges.reduce(
-				(acc, b) => acc + b.badge.extensions['extensions:StudyLoadExtension'].StudyLoad,
+				(acc, b) => acc + (b.badge.extensions['extensions:StudyLoadExtension']?.StudyLoad ?? 0),
 				0,
 			);
 
 			this.minutesCompleted = response.completed_badges?.reduce(
-				(acc, b) => acc + b.extensions['extensions:StudyLoadExtension'].StudyLoad,
+				(acc, b) => acc + (b.extensions['extensions:StudyLoadExtension']?.StudyLoad ?? 0),
 				0,
 			);
 			this.issuerLoaded = this.publicService.getIssuer(response.issuer_id).then((issuer) => {

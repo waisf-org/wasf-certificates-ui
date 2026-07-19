@@ -153,7 +153,7 @@ export class NetworkBadgesComponent implements OnInit {
 		const badgesByIssuer = await firstValueFrom(this.badgeClassService.getNetworkBadgesByIssuerUrl$(networkSlug));
 
 		this.badges = this.sortBadgesByCreatedAt(badgesByIssuer[this.network().issuerUrl] || []).filter(
-			(b) => b.sharedOnNetwork == null && b.extension['extensions:CategoryExtension'].Category !== 'learningpath',
+			(b) => b.sharedOnNetwork == null && b.extension['extensions:CategoryExtension']?.Category !== 'learningpath',
 		);
 
 		const requestMap = await this.loadRequestsForBadges(this.badges);

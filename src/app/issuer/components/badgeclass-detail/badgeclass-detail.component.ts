@@ -469,7 +469,7 @@ export class BadgeClassDetailComponent
 			createdAt: badgeClass.createdAt,
 			updatedAt: badgeClass.updatedAt,
 			courseUrl: badgeClass.courseUrl,
-			duration: badgeClass.extension['extensions:StudyLoadExtension'].StudyLoad,
+			duration: badgeClass.extension['extensions:StudyLoadExtension']?.StudyLoad,
 			category: badgeClass.extension['extensions:CategoryExtension']?.Category,
 			tags: badgeClass.tags,
 			issuerName: badgeClass.issuerName,
