@@ -308,18 +308,22 @@
 						'Start.privacyPolicy' | translate
 					}}</a>
 					<a class="tw-text-oebblack" [href]="theme.termsOfServiceLink">{{ 'General.tos' | translate }}</a>
-					<a class="tw-text-oebblack" href="https://github.com/waisf-org" target="_blank" rel="noopener"
-						>Source Code</a
-					>
 				}
+				<!-- AGPL "corresponding source" link — deliberately outside the CMS
+				@if/@else above so it can never be displaced once CMS footer content
+				is configured; see wasf-certificates-ui repo for this UI's own source. -->
+				<a class="tw-text-oebblack" href="https://github.com/waisf-org/wasf-certificates-ui" target="_blank" rel="noopener"
+					>Source Code</a
+				>
 			</div>
 		</div>
 
 		<div class="tw-flex tw-flex-col tw-align-stretch tw-min-w-full sm:tw-min-w-[24rem]">
 			<oeb-button
 				variant="secondary"
-				(click)="openLinkedIn()"
-				[text]="'Start.followLinkedIn' | translate"
+				(click)="openXiaohongshu()"
+				[text]="'Start.followXiaohongshu' | translate"
+				img="/breakdown/static/scss/images/social-xiaohongshu.svg"
 				width="full_width"
 			></oeb-button>
 		</div>
@@ -346,8 +350,11 @@
 				<a class="tw-text-oebblack" [href]="theme.imprintLink">{{ 'Start.imprint' | translate }}</a>
 				<a class="tw-text-oebblack" [href]="theme.privacyPolicyLink">{{ 'Start.privacyPolicy' | translate }}</a>
 				<a class="tw-text-oebblack" [href]="theme.termsOfServiceLink">{{ 'General.tos' | translate }}</a>
-				<a class="tw-text-oebblack" href="https://github.com/waisf-org" target="_blank" rel="noopener">Source Code</a>
 			}
+			<!-- AGPL "corresponding source" link — deliberately outside the CMS
+			@if/@else above so it can never be displaced once CMS footer content
+			is configured; see wasf-certificates-ui repo for this UI's own source. -->
+			<a class="tw-text-oebblack" href="https://github.com/waisf-org/wasf-certificates-ui" target="_blank" rel="noopener">Source Code</a>
 		</div>
 	</div>
 </div>

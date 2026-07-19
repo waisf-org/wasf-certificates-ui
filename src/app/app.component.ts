@@ -361,7 +361,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 		this.languageService.setLanguage(lng);
 	}
 
-	openLinkedIn() {
-		window.open('https://www.linkedin.com/company/106504068', '_blank');
+	openXiaohongshu() {
+		window.open('https://xhslink.com/m/4ZLehLF9xSt', '_blank');
 	}
 }
