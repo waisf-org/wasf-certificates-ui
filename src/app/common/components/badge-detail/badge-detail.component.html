@@ -461,6 +461,33 @@
 							</section>
 						}
 
+						<!-- Digital Signature -->
+						@if (config.digitalSignature) {
+							<section class="tw-text-oebblack tw-mb-10">
+								<h3 hlmH3 class="tw-font-semibold tw-text-oebblack tw-flex tw-items-center tw-gap-2">
+									<ng-icon hlm size="18px" name="lucideShieldCheck" class="tw-text-green-600" />
+									{{ 'RecBadgeDetail.digitalSignature' | translate }}
+								</h3>
+								<p class="tw-text-oebblack tw-text-sm tw-mb-2">
+									{{ 'RecBadgeDetail.digitalSignatureInfo' | translate }}
+								</p>
+								<p
+									class="tw-font-mono tw-text-sm tw-bg-gray-50 tw-border tw-border-solid tw-border-gray-200 tw-rounded tw-px-3 tw-py-2 tw-truncate"
+									[title]="config.digitalSignature.proofValue"
+								>
+									{{ shortSignatureValue }}
+								</p>
+								@if (config.digitalSignature.verificationMethod) {
+									<a
+										class="tw-text-link tw-underline tw-text-sm"
+										[href]="config.digitalSignature.verificationMethod"
+										target="_blank"
+										>{{ 'RecBadgeDetail.viewSigningKey' | translate }}</a
+									>
+								}
+							</section>
+						}
+
 						<section class="tw-mt-20"><ng-content /></section>
 
 						@if (getLearningPaths().length > 0) {

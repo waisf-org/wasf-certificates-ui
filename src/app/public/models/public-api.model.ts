@@ -67,6 +67,19 @@ export interface PublicApiBadgeAssertion_OB3 {
 		type: '1EdTechRevocationList';
 	};
 
+	// W3C Data Integrity Proof — the actual cryptographic signature over this
+	// credential (EdDSA/Ed25519 via the eddsa-rdfc-2022 cryptosuite), computed
+	// server-side by the Badgr fork. Surfaced on the certificate page as a
+	// visible "digitally signed" indicator — see badge-detail's Signature section.
+	proof?: Array<{
+		type: string;
+		cryptosuite?: string;
+		created?: string;
+		verificationMethod?: string;
+		proofPurpose?: string;
+		proofValue: string;
+	}>;
+
 	// Custom extensions
 	slug?: string;
 	sourceUrl?: string;

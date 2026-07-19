@@ -98,6 +98,11 @@ export class BgBadgeDetail {
 		}));
 	}
 
+	get shortSignatureValue(): string {
+		const value = this.config.digitalSignature?.proofValue ?? '';
+		return value.length > 40 ? `${value.slice(0, 28)}…${value.slice(-8)}` : value;
+	}
+
 	getLearningPaths(): PublicApiLearningPath[] {
 		return (this.config.learningPaths as PublicApiLearningPath[]).filter((l) => l.activated);
 	}

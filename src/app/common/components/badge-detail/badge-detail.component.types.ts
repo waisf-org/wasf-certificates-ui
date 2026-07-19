@@ -95,6 +95,7 @@ export interface PageConfig {
 	criteria?: Array<string | object>;
 	competencies?: CompetencyType[];
 	evidence_items?: (ApiBadgeInstanceEvidenceItem | OB3EvidenceItem)[];
+	digitalSignature?: { proofValue: string; cryptosuite?: string; verificationMethod?: string };
 	license?: boolean;
 	id?: string;
 	shareButton?: boolean;

@@ -266,6 +266,14 @@ export class PublicBadgeAssertionComponent {
 					badgeFailedImageUrl: this.badgeFailedImageUrl,
 					badgeImage: assertion.image,
 					evidence_items: this.normalizeEvidence(assertion, assertionVersion),
+					digitalSignature:
+						isOB3Assertion(assertion) && assertion.proof?.length
+							? {
+									proofValue: assertion.proof[0].proofValue,
+									cryptosuite: assertion.proof[0].cryptosuite,
+									verificationMethod: assertion.proof[0].verificationMethod,
+								}
+							: undefined,
 					competencies: assertion.badge['extensions:CompetencyExtension'],
 					license: assertion.badge['extensions:LicenseExtension'] ? true : false,
 					courseUrl: getAssertionCourseUrl(assertion),
