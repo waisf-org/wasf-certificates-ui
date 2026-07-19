@@ -107,7 +107,7 @@ export class PublicBadgeClassComponent implements OnInit {
 					issuerSlug: badge.issuer['slug'],
 					slug: badge.id,
 					category: badge['extensions:CategoryExtension']?.Category,
-					duration: badge['extensions:StudyLoadExtension'].StudyLoad,
+					duration: badge['extensions:StudyLoadExtension']?.StudyLoad,
 					tags: badge.tags,
 					issuerName: badge.issuer.name,
 					issuerImagePlacholderUrl: this.issuerImagePlaceholderUrl,
@@ -128,7 +128,11 @@ export class PublicBadgeClassComponent implements OnInit {
 				};
 
 				// wait for user profile, emails, issuer to check if user can copy
+				// (anonymous/public visitors — e.g. anyone scanning a certificate's
+				// QR code — have no profile at all, so skip the "can I copy this
+				// badge to my institution" check entirely rather than crash on it)
 				this.userProfileManager.userProfilePromise.then((profile) => {
+					if (!profile) return;
 					profile.emails.loadedPromise.then(() => {
 						this.issuerManager.myIssuers$.subscribe((issuers) => {
 							this.userIssuers = issuers.filter((issuer) => issuer.canCreateBadge);
@@ -147,7 +151,7 @@ export class PublicBadgeClassComponent implements OnInit {
 											issuerBadge.canCopy('others') ||
 											(issuerBadge.canCopy('issuer') &&
 												canCopyInOwnInstitution &&
-												issuerBadge.extension['extensions:CategoryExtension'].Category !=
+												issuerBadge.extension['extensions:CategoryExtension']?.Category !=
 													'learningpath' &&
 												issuers.some((issuer) => issuer.url == issuerBadge.issuer))
 										) {
@@ -218,7 +222,7 @@ export class PublicBadgeClassComponent implements OnInit {
 
 	calculateStudyLoad(lp: LearningPath | PublicApiLearningPath): number {
 		const totalStudyLoad = lp.badges.reduce(
-			(acc, b) => acc + b.badge.extensions['extensions:StudyLoadExtension'].StudyLoad,
+			(acc, b) => acc + (b.badge.extensions['extensions:StudyLoadExtension']?.StudyLoad ?? 0),
 			0,
 		);
 		return totalStudyLoad;
