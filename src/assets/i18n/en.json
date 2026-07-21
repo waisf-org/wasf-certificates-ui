@@ -558,8 +558,8 @@
 		"learningPathBadgeInfo": "combines several badges into a larger learning unit. When learners have earned all the badges on this <span class='tw-font-bold'>learning path</span>, they automatically receive the Micro Degree.",
 		"badgeSuccessfullyCreated": "The badge has been awarded to {{ recipient }} successfully.",
 		"standard": "Badge standard",
-		"standard-info-20": "Badges awarded on OEB before June 2025 adhered to the OpenBadges 2.0 specification. Read more about this in our <a class='tw-underline' href='/public/faq'>FAQ</a>.",
-		"standard-info-30": "Since June 2025 Badges on OEB are awarded according to the new, future proof OpenBadges 3.0 specification. Read more about this in our <a class='tw-underline' href='/public/faq'>FAQ</a>.",
+		"standard-info-20": "Badges awarded on WASF before June 2025 adhered to the OpenBadges 2.0 specification. Read more about this in our <a class='tw-underline' href='/public/faq'>FAQ</a>.",
+		"standard-info-30": "Since June 2025 Badges on WASF are awarded according to the new, future proof OpenBadges 3.0 specification. Read more about this in our <a class='tw-underline' href='/public/faq'>FAQ</a>.",
 		"copyForWhatInstitution": "For which of your institutions do you want to copy the badge?",
 		"copyPermissionInfo": "The copy status of this badge only allows copying inside this institution.",
 		"awardingInProgress": "Badge awarding in progress",
@@ -593,7 +593,7 @@
 		"descriptionSavedInBadge": "This short description will be saved in the badge.",
 		"imageRequiredError": "Please use one of the options to select an image for the badge",
 		"useOurEditor": "Use our editor",
-		"imageSublabel": "Choose an icon/image, <br> that <span class='tw-font-medium tw-underline'>is used in our OEB badge <br>frames</span>.",
+		"imageSublabel": "Choose an icon/image, <br> that <span class='tw-font-medium tw-underline'>is used in our WASF badge <br>frames</span>.",
 		"useOwnVisual": "Use own badge image",
 		"uploadOwnDesign": "Upload your own badge design <br>(max. 2 MB). You can also use <br> our <a class='tw-underline tw-text-[#1400FF]' hlmA href='./assets/Badge-Design-Vorlagen.zip'>design templates</a> for this.",
 		"imageErrorFork": "Please give the badge a valid (and unique for a fork) image",
@@ -627,7 +627,7 @@
 		"addTags": "Add tags",
 		"newTag": "Enter a tag...",
 		"tagDoesNotExist": "This tag does not exist yet",
-		"tagInfo": "Tags help categorize {{items}} and help learners on OEB search for {{items2}} on specific topics.",
+		"tagInfo": "Tags help categorize {{items}} and help learners on WASF search for {{items2}} on specific topics.",
 		"removeAlignment": "Remove link",
 		"removeAlignmentInfo": "Are you sure you want to remove the link(s)? ",
 		"irreversibleAction": "This action cannot be undone.",
@@ -695,7 +695,7 @@
 		"createAccountFor": "Create account for",
 		"weCreatedYourAccount": "We have created your account and sent you a verification email.",
 		"success_verify_email_heading": "Verify your email address",
-		"success_verify_email_desc": "Please check your inbox and <span class='tw-text-oebblack tw-font-bold'>click on “Confirm my account” in the verification email</span> to activate your OEB account.",
+		"success_verify_email_desc": "Please check your inbox and <span class='tw-text-oebblack tw-font-bold'>click on “Confirm my account” in the verification email</span> to activate your WASF account.",
 		"success_verify_email_help": "If you do not receive the email within a few minutes, check your spam folder. <br> If you still cannot find the email, <a class='tw-underline tw-text-[#1400FF]' href='mailto:admin@waisf.org'>write to us</a>.",
 		"resendEmail": "Resend verification email",
 		"emailAlreadyConfirmed": "Your email address has already been confirmed. You can log in now.",
@@ -715,7 +715,7 @@
 		"newsletterEmail": "We have also sent you an email to confirm your newsletter subscription.",
 		"confirmNewsletter": "Click on <span class ='tw-font-bold'> “Confirm newsletter subscription” </span> in the newsletter email <br> to complete the newsletter registration.",
 		"newsletterEmailNotReceived": "You did not receive a newsletter email? Please submit your data via <br> our <a class='tw-underline tw-text-purple' href='public/about/newsletter'>newsletter registration form</a> or <a class='tw-underline tw-text-purple' target='_blank' href='mailto:admin@waisf.org'>write to us.</a>",
-		"updatesOptInText": "<span class='tw-text-oebblack tw-font-bold'>Yes</span>, I would like to stay up to date and subscribe to the OEB newsletter.",
+		"updatesOptInText": "<span class='tw-text-oebblack tw-font-bold'>Yes</span>, I would like to stay up to date and subscribe to the WASF newsletter.",
 		"signingUp": "Signing up..."
 	},
 	"Captcha": {
@@ -764,12 +764,12 @@
 		"confirmedSubscription": "<span class='tw-font-bold tw-text-oebblack'>You have successfully confirmed your newsletter subscription.</span>",
 		"signup": "Newsletter registration",
 		"stayUpToDate": "Stay up to date",
-		"withOurNewsletter": "with our OEB newsletter",
+		"withOurNewsletter": "with our WASF newsletter",
 		"dontMissNews": "Don't want to miss out on the latest developments and updates relating to World AI Sports Federation?",
 		"thenSubscribe": "Then subscribe to our newsletter now:",
 		"fillRegistrationForm": "Fill out the registration form",
 		"confirmLink": "Click on the confirmation link in the email you receive",
-		"receiveNewsletter": "Receive the OEB newsletter"
+		"receiveNewsletter": "Receive the WASF newsletter"
 	},
 	"TermsOfService": {
 		"newTerms": "New Terms of Service",
@@ -821,7 +821,7 @@
 		"duplicateBadge": "You already have this badge in your backpack",
 		"unknownError": "The badge upload failed due to an unknown error",
 		"badgeUploadVersionError": "Unfortunately uploading this badge version is not possible.",
-		"uploadEmailDoesNotMatchError": "The email address in the badge does not match the email in your OEB profile.",
+		"uploadEmailDoesNotMatchError": "The email address in the badge does not match the email in your WASF profile.",
 		"addEmailToUpload": "Add the email address to your profile to upload the badge.",
 		"versionUploadInfo": "We validate badges in the 2.0 standard when they are uploaded. We can currently only validate badges in the 3.0 standard to a minimal extent. You can find more information on this in our <a class=\"tw-text-link tw-underline\" href=\"/public/faq\">FAQ</a>.",
 		"addingBadge": "Adding Badge ...",
@@ -998,7 +998,7 @@
 		"list2": "You show your learners the QR code – digitally or printed out.",
 		"list3": "Your learners scan the QR code with their smartphone and are taken to an input form where they enter their first and last names and email address. They then send the form as a badge request.",
 		"list4": "You can see the badge requests from your learners on the ",
-		"list4.2": "at OEB and can award the badges directly. They will be sent to the learners by email."
+		"list4.2": "at WASF and can award the badges directly. They will be sent to the learners by email."
 	},
 	"QrCode": {
 		"qrAward": "QR code awarding",
@@ -1127,7 +1127,7 @@
 	"PDFTemplate": {
 		"pdfTemplates": "PDF Templates",
 		"preview": "Preview",
-		"descriptionText": "With every badge, a PDF certificate in the OEB design is automatically sent to your learners. With the PDF Editor you can upload <strong>personalized backgrounds in your own design</strong> that can then be selected when <strong>creating or editing badges</strong>.",
+		"descriptionText": "With every badge, a PDF certificate in the WASF design is automatically sent to your learners. With the PDF Editor you can upload <strong>personalized backgrounds in your own design</strong> that can then be selected when <strong>creating or editing badges</strong>.",
 		"createdTemplates": "Created templates",
 		"editor": "PDF Template Editor",
 		"createPDFTemplate": "Create PDF template",
@@ -1170,10 +1170,10 @@
 		"openDeleteDialogTitle": "Are you sure you want to delete the {{ title }} PDF template?",
 		"deleteNotPossibleDialogTitle": "PDF templates that have already been used for badge awards cannot be deleted.",
 		"submitButtonText": "Save your own PDF template",
-		"oebDesign": "OEB design",
+		"oebDesign": "WASF design",
 		"createCustomPDFTemplate": "Create own PDF template",
 		"ownPDFBackground": "Own PDF background",
-		"noTemplateDefaultDesign": "If you don't use your own template, the PDF for the badge will receive our OEB design.",
+		"noTemplateDefaultDesign": "If you don't use your own template, the PDF for the badge will receive our WASF design.",
 		"exampleZipLink": "<a class='tw-block tw-mt-4 tw-underline tw-text-link' hlmA href='./assets/Sample-View-PDF-Certificates.zip' download='Sample-View-PDF-Certificates.zip'>Download example file</a>",
 		"lpChooseTemplateHeadline": "PDF certificate",
 		"lpChooseTemplateDesc": "A PDF template can be selected here.",
@@ -1219,20 +1219,20 @@
             "upgradeLine": "",
 		"buttonLabel": "Request upgrade",
 		"image": "assets/oeb/images/teasers/dashboard-teaser_de.png",
-		"imageCaption": "Example view of an OEB dashboard."
+		"imageCaption": "Example view of an WASF dashboard."
 	},
 	"PDFEditorTeaser": {
 		"heading": "PDF Editor",
-		"body": "With every badge, a PDF certificate in the OEB design is automatically sent to your learners. With the PDF Editor you can upload <strong>personalized backgrounds in your own design</strong> that can then be selected when <strong>creating or editing badges</strong>.",
+		"body": "With every badge, a PDF certificate in the WASF design is automatically sent to your learners. With the PDF Editor you can upload <strong>personalized backgrounds in your own design</strong> that can then be selected when <strong>creating or editing badges</strong>.",
 		"upgradeLine": "Upgrade to our <a class='tw-text-link tw-underline' href='/page/pricing' target='_blank'>PRO plan</a> to use the PDF Editor.",
 		"buttonLabel": "Request upgrade",
-		"defaultCaption": "Badge PDF in the OEB design.",
+		"defaultCaption": "Badge PDF in the WASF design.",
 		"customCaption": "Badge info on a personalized PDF background (scalable).",
 		"defaultImage": "assets/oeb/images/teasers/vorschau-oeb-pdf_en.png",
 		"customImage": "assets/oeb/images/teasers/vorschau-individuelles-pdf_en.png"
 	},
 	"Dashboard": {
-		"title": "OEB Dashboard",
+		"title": "WASF Dashboard",
 		"description": "Overview of competencies, badges and educational offerings in your region",
 		"noDataAvailable": "No data available",
 		"Stats": {
@@ -1421,7 +1421,7 @@
 		"Info_NETWORK_MEMBERSHIPS": "Network members added",
 		"InfoBulk": "The number of recipients exceeds your usage limit. Remove {{count}} {{ person }} from the list to award badges.",
 		"InfoNetworkInvites": "The number of invitations exceeds your usage limit. Remove {{count}} {{ institution }} from the list to invite institutions.",
-		"FeatureListPlanComparison": "Feature list: OEB plans compared",
+		"FeatureListPlanComparison": "Feature list: WASF plans compared",
 		"nextLevelHeadline": "Discover the next level with OEB!",
 		"euroPerYear": "€ / year",
 		"upgradeToPackage": "This requires an upgrade to our <span class=\"tw-font-bold tw-text-purple\">{{ package }} package</span>.",
@@ -1487,7 +1487,7 @@
 		},
 		"ReleaseInfoDialog": {
 			"headline": "Building OEB's future together",
-			"text1": "We’re putting OEB on a sustainable footing. To ensure we can keep evolving the platform beyond the initial funding phase, we are introducing new usage plans starting now.",
+			"text1": "We're putting WASF on a sustainable footing. To ensure we can keep evolving the platform beyond the initial funding phase, we are introducing new usage plans starting now.",
 			"listHeadline": "What this means for you",
 			"list1": "Your data is safe – all existing badges and awards remain unchanged.",
 			"list2": "Core features stay free for you. <a class=\"tw-text-link tw-underline\" href=\"https://oeb-cms.mycelia.education/wp-content/uploads/2026/02/E_OEB_Feature-List_03-02-26.pdf\" target=\"_blank\">Feature-Overview</a>",
