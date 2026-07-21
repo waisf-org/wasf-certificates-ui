@@ -235,7 +235,7 @@ export class SignupComponent extends BaseRoutableComponent implements OnInit, Af
 	}
 
 	get showMarketingOptIn() {
-		return !!!this.theme['hideMarketingOptIn'];
+		return false;
 	}
 
 	passwordsMatch(): ValidationErrors | null {
