@@ -37,9 +37,6 @@ export class NewsletterComponent extends BaseRoutableComponent implements OnInit
 	}
 
 	ngOnInit(): void {
-		const scriptElement = this.renderer.createElement('script');
-		scriptElement.src = 'https://sibforms.com/forms/end-form/build/main.js';
-		this.renderer.appendChild(this.elementRef.nativeElement, scriptElement);
 		this.userProfileApiService.getProfile().then((profile) => {
 			this.userProfileApiService.fetchEmails().then((emails) => {
 				this.newsletterForm.setValue({
