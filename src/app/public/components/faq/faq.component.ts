@@ -1,18 +1,14 @@
-import { Component, inject } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { CmsPageComponent } from '~/common/components/cms/cms-page.component';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
 	selector: 'app-faq',
-	template: `<cms-page [slug]="translate.currentLang == 'de' ? 'faq' : 'faq'" />`,
+	template: '',
 	standalone: true,
-	imports: [CmsPageComponent],
 })
-export class FaqComponent {
-	protected translate = inject(TranslateService);
-
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
-
-	constructor() {}
+export class FaqComponent implements OnInit {
+	// Same unconfigured WordPress CMS proxy issue as about/start — redirect to
+	// the WASF homepage instead (no dedicated FAQ page exists there yet).
+	ngOnInit() {
+		window.location.href = 'https://waisf.org/';
+	}
 }
