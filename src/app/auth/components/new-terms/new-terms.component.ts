@@ -38,7 +38,7 @@ export class NewTermsComponent extends BaseRoutableComponent {
 		if (!this.confirmed) {
 			this.openErrorDialog();
 		} else {
-			this.router.navigate(['public/about/newsletter']);
+			this.router.navigate(['issuer']);
 			this.profileManager.userProfilePromise.then((profile) => {
 				profile.agreeToLatestTerms();
 			});
