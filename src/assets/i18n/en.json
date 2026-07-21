@@ -773,6 +773,8 @@
 	},
 	"TermsOfService": {
 		"newTerms": "New Terms of Service",
+		"weHaveRevisedTerms": "We have revised our <a href='/public/terms' class='tw-underline tw-text-[#1400FF]' target='_blank'>Terms of Service</a>.",
+		"pleaseConfirmRead": "Please confirm that you have read and accept them.",
 		"iConfirm": "I have read the <a class='tw-underline tw-text-[#1400FF]' target='_blank' href='public/terms'>Terms of Service</a> and agree to them.",
 		"sendConfirmation": "Send confirmation",
 		"cantUseWithoutConfirmation": "Unfortunately, you cannot use World AI Sports Federation without confirming the Terms of Service.",
