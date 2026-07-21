@@ -126,8 +126,6 @@ export interface ApiNetworkForCreation {
 	description: string;
 	image: string;
 	url: string;
-	country: string;
-	state?: string;
 	is_network?: boolean;
 	parent_issuer?: string;
 }

@@ -139,29 +139,6 @@
 		></oeb-input>
 	}
 
-	<section class="tw-flex md:tw-flex-row tw-mt-8 tw-flex-col tw-w-full tw-gap-2 md:tw-justify-between">
-		<oeb-select
-			class="md:tw-min-w-[288px]"
-			[control]="issuerForm.rawControlMap.country"
-			label="{{ 'General.country' | translate }}"
-			placeholder="{{ 'General.select' | translate }}"
-			[dropdownMaxHeight]="500"
-			[options]="_countriesOptions"
-			#networkCountry
-		>
-		</oeb-select>
-		<oeb-select
-			class="md:tw-min-w-[288px]"
-			[control]="issuerForm.rawControlMap.state"
-			label="{{ 'General.state' | translate }}"
-			placeholder="{{ 'General.select' | translate }}"
-			[options]="_germanStateOptions"
-			[disabled]="issuerForm.rawControlMap.country.value !== 'Germany'"
-			#networkState
-		>
-		</oeb-select>
-	</section>
-
 	<oeb-input
 		class="tw-mt-8"
 		label="{{ 'Issuer.websiteUrl' | translate }}"

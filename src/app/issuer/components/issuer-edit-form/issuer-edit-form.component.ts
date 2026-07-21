@@ -24,8 +24,6 @@ import { OebCheckboxComponent } from '../../../components/oeb-checkbox.component
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { HlmP, HlmH3 } from '@spartan-ng/helm/typography';
 import { NetworkManager } from '~/issuer/services/network-manager.service';
-import { countries } from 'countries-list';
-import * as states from '../../../../assets/data/german-states.json';
 import { HlmDialogService } from '@spartan-ng/helm/dialog';
 import { DialogComponent } from '~/components/dialog.component';
 import { Network } from '~/issuer/network.model';
@@ -75,9 +73,6 @@ export class IssuerEditFormComponent implements OnInit {
 	networkParentOptionsLoaded = false;
 	addPromiseFinished: Promise<unknown>;
 	editPromiseFinished: Promise<unknown>;
-	_countriesOptions: FormFieldSelectOption[];
-	_germanStateOptions: FormFieldSelectOption[];
-
 	emailsLoaded: Promise<unknown>;
 
 	enterDescription: string;
@@ -136,15 +131,6 @@ export class IssuerEditFormComponent implements OnInit {
 				});
 			});
 
-		this._countriesOptions = Object.values(countries).map((r) => ({
-			label: r.native,
-			value: r.name,
-		}));
-
-		this._germanStateOptions = Object.values(states).map((r) => ({
-			label: r.de,
-			value: r.iso,
-		}));
 	}
 
 	ngOnInit() {
@@ -222,8 +208,6 @@ export class IssuerEditFormComponent implements OnInit {
 				this.networkForm() ? [UrlValidator.validUrl] : [Validators.required, UrlValidator.validUrl],
 			)
 			.addControl('issuer_image', '', Validators.required)
-			.addControl('country', 'Germany', Validators.required)
-			.addControl('state', '')
 			.addControl('issuer_linkedin_id', '');
 
 		if (!this.networkForm()) {
@@ -252,8 +236,6 @@ export class IssuerEditFormComponent implements OnInit {
 			issuer_description: issuerOrNetwork.description,
 			issuer_image: issuerOrNetwork.image,
 			issuer_url: issuerOrNetwork.websiteUrl,
-			country: issuerOrNetwork.country,
-			state: issuerOrNetwork.state,
 		};
 
 		const issuerSpecificValues =
@@ -330,8 +312,6 @@ export class IssuerEditFormComponent implements OnInit {
 			streetnumber: formState.issuer_streetnumber,
 			zip: formState.issuer_zip,
 			city: formState.issuer_city,
-			country: formState.country,
-			state: formState.state,
 			intendedUseVerified: formState.verify_intended_use,
 			linkedinId: formState.issuer_linkedin_id,
 		};
@@ -374,8 +354,6 @@ export class IssuerEditFormComponent implements OnInit {
 			name: formState.issuer_name,
 			description: formState.issuer_description,
 			url: formState.issuer_url,
-			country: formState.country,
-			state: formState.state,
 			image: formState.issuer_image,
 			parent_issuer: formState.parent_issuer,
 		};
